@@ -1,0 +1,71 @@
+#experiment {
+  -webkit-perspective: 800px;
+  -webkit-perspective-origin: 50% 200px;
+  -moz-perspective: 800px;
+  -moz-perspective-origin: 50% 200px;
+  perspective: 800px;
+  perspective-origin: 50% 200px;
+}
+
+#logo {
+  position: relative;
+  margin: 100px auto;
+  height: 256px;
+  width: 256px;
+  -webkit-transition: width 2s, height 2s, -webkit-transform 2s linear;
+  -webkit-transform-style: preserve-3d;
+  -moz-transition: width 2s, height 2s, -moz-transform 2s linear;
+  -moz-transform-style: preserve-3d;
+  transition: width 2s, height 2s, transform 2s linear;
+  transform-style: preserve-3d;
+}
+
+.face {
+  position: absolute;
+  height: 256px;
+  width: 256px;
+  padding: 0px;
+  background-color: rgba(256, 256, 256, 0);
+  font-size: 27px;
+  line-height: 1em;
+  color: #fff;
+  border: 0px solid #555;
+  border-radius: 3px;
+}
+/*
+#logo .one  {
+  -webkit-transform: rotateX(90deg) translateZ(200px);
+  -moz-transform: rotateX(90deg) translateZ(200px);
+  transform: rotateX(90deg) translateZ(200px);
+}
+
+#logo .two {
+  -webkit-transform: translateZ(200px);
+  -moz-transform: translateZ(200px);
+  transform: translateZ(200px);
+}
+
+#logo .three {
+  -webkit-transform: rotateY(90deg) translateZ(200px);
+  -moz-transform: rotateY(90deg) translateZ(200px);
+  transform: rotateY(90deg) translateZ(200px);
+}
+
+#logo .four {
+  -webkit-transform: rotateY(180deg) translateZ(200px);
+  -moz-transform: rotateY(180deg) translateZ(200px);
+  transform: rotateY(180deg) translateZ(200px);
+}
+
+#logo .five {
+  -webkit-transform: rotateY(-90deg) translateZ(200px);
+  -moz-transform: rotateY(-90deg) translateZ(200px);
+  transform: rotateY(-90deg) translateZ(200px);
+}
+
+#logo .six {
+  -webkit-transform: rotateX(-90deg) rotate(180deg) translateZ(200px);
+  -moz-transform: rotateX(-90deg) rotate(180deg) translateZ(200px);
+  transform: rotateX(-90deg) rotate(180deg) translateZ(200px);
+}
+ */
