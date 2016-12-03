@@ -1,17 +1,11 @@
 <!--
-    @author: Gowtham Kudupudi
--->
+ @author: Gowtham Kudupudi
+ -->
 <!DOCTYPE html>
 <html><head>
     <title>FerryFair</Title>
     <script type="text/javascript">
         var Logo;
-        var SearchTool;
-        var SearchToolOpacity=1;
-        var SearchToolBlink;
-        var Mouth;
-        var placeHolder = 'Search an item near by';
-        var caretPos=0;
         var Rotate=function(){
             var props = 'transform WebkitTransform MozTransform OTransform msTransform'.split(' '),
             prop,
@@ -25,217 +19,39 @@
             var xAngle = 0, yAngle = 0;
             setInterval(function(){
                 yAngle+=180;
-                Logo.style[prop] = "rotateX("+xAngle+"deg) rotateY("+yAngle+"deg)";
+                Logo.style[prop] = " translate(-50%,-50%) rotateX("+xAngle+"deg) rotateY("+yAngle+"deg)";
             }, 2000);
             
         };
-        var init=function(){
-            Logo=document.getElementById('logo');
-            SearchTool=document.getElementById('search-tool');
-            Mouth=document.getElementById('mouth');
-            if(location.href.indexOf('?')==-1){
-                Logo.classList.add("big");
-            }
-            setTimeout(function(){
-                Logo.classList.add("transform2s3d");
-                Logo.classList.remove("big");
-            },2000);
-            Mouth.value=placeHolder;
-            addEvent(Mouth, 'focus', function() {
-                if (this.value === placeHolder) this.value = '';
-            });
-            addEvent(Mouth, 'blur', function(event) {
-                if (this.value === '') this.value = placeHolder;
-            });
-        };
-        var addEvent = function(elem, type, fn) {
-            if (elem.addEventListener) elem.addEventListener(type, fn, false);
-            else if (elem.attachEvent) elem.attachEvent('on' + type, fn);
-        };
+    var init=function(){
+        Logo=document.getElementById('logo');
+        Rotate();
+    };
     </script>
     <style type="text/css">
         header{
             width: 100%;
         }
-        #logo {
-            height: 128px;
-            width: 128px;
-            padding:20px;
-        }
-        #logo.big{
-            height: 256px;
-            width: 256px;
-            padding:20px;
-        }
-        #search-bar{
-            width: 100%;
-        }
-        #search-tool {
-            width:20px;
-            height:32px;
-            padding-left:6px;
-            padding-right:6px;
-            position:relative;
-        }
-        #mouth {
-            height: 40px;
-            border-width:0px;
-            line-height: 32px;
-            resize: none;
-            position: relative;
-            font-family:Quicksand;
-            font-size:32px;
-            margin:0px;
-            padding:0px;
-            color:rgb(180,180,180);
-            width:380px;
-        }
-        #mouth:focus{
-            outline:none;
-            color: rgb(64,64,64);
-        }
-        #lips {
-            border-left: 1px solid black;
-            border-right: 1px solid black;
-            border-bottom: 1px solid black;
-            height: 8px;
-            margin-top: 50px;
-            border-bottom-left-radius:3px;
-            border-bottom-right-radius:3px;
-            -webkit-border-bottom-left-radius:3px;
-            -webkit-border-bottom-right-radius:3px;
-            display: inline-block;
-        }
-        #mouth-pad {
-            padding-left:6px;
-            padding-right:6px;
-            display:inline-block;
-            top:-34px;
-            position:relative;
-        }
-        .transform2s3d{
-            -webkit-transition: width 2s, height 2s, -webkit-transform 2s linear;
-            -webkit-transform-style: preserve-3d;
-            -moz-transition: width 2s, height 2s, -moz-transform 2s linear;
-            -moz-transform-style: preserve-3d;
-            transition: width 2s, height 2s, transform 2s linear;
-            transform-style: preserve-3d;
-        }
-        .middle {
-            position: relative;
-            display: block;
-            text-align: center;
-        }
-        .center {
-            text-align: center;
-            vertical-align: middle;
-            position: relative;
-            display: block;
-            margin: auto;
-        }
-        @font-face{
-            font-family:Quicksand;
-            src:url("fnt/Quicksand.woff");
-        }
-        @font-face{
-            font-family:SourceCodePro;
-            src:url("fnt/SourceCodePro.woff");
-        }
-        @font-face{
-            font-family:SourceCodeBold;
-            src:url("fnt/SourceCodeBold.woff");
-        }
-        .invisible{
-            opacity: 0;
-            filter: alpha(opacity=0);
-        }
-        #land {
-            width: 100%;
-        }
-        #compound-wall {
-            padding-left:6px;
-            padding-right:6px;
-            display:inline-block;
-            position:relative;
-        }
-        .plot {
-            position: relative;
-            display: inline-block;
-            width: 256px;
-            height: 256px;
-            border-width:1px;
-            border-color:black;
-            border-style:solid;
-            vertical-align:top;
-        }
-        .fat.plot {
-            width: 512px;
-            height: 256px;
-        }
-        .tall.plot {
-            width:  256px;
-            height: 512px;
-        }
-        .jumbo.plot{
-            width: 512px;
-            height:512px;
-        }
-        .plot .facade,
-        .plot .name{
-            display:block;
-            position:relative;
-        }
-        .plot .facade{
-            height:75%;/*192px;*/
-            border:0px;
-            border-bottom-width:1px;
-            border-color:black;
-            border-style:solid;
-        }
-        .plot .name{
-            height:25%;
-        }
-        /*.tall.plot .facade,
-        .jumbo.plot .facade{
-            height:384px;
-        }
-        .tall.plot .facade,
-        .jumbo.plot .facade{
-            height: 128px;
-        }
-        .tall.plot .facade,
-        .jumbo.plot .facade{
-            height:384px;
-        }*/
+    #logo{
+        height: 256px;
+        width: 256px;
+    }
+    .transform2s3d{
+        -webkit-transition: width 2s, height 2s, -webkit-transform 2s linear;
+        -webkit-transform-style: preserve-3d;
+        -moz-transition: width 2s, height 2s, -moz-transform 2s linear;
+        -moz-transform-style: preserve-3d;
+        transition: width 2s, height 2s, transform 2s linear;
+        transform-style: preserve-3d;
+    }
+    .centered {
+        position: fixed;
+        top: 50%;
+        left:50%;
+        transform: translate(-50%, -50%);
+    }
     </style>
 </head>
 <body onload="init()">
-    <header>
-        <img id="logo" class="center" src="img/FerryFair.svg"/>
-    </header>
-    <div id="search-bar">
-        <div class="center"><div id="lips"><form id="mouth-pad">
-            <input id="mouth" name="search" type="text"/><input id="search-tool" type="image" src="img/SearchTool.svg" alt="Search"/>
-        </form></div></div>
-    </div>
-    <div id="land">
-        <div class="middle"><div id="compound-wall">
-            <div class="plot">
-                <div class="facade"></div>
-                <div class="name"></div>
-            </div>
-            <div class="fat plot">
-                <div class="facade"></div>
-                <div class="name"></div>
-            </div>
-            <div class="tall plot">
-                <div class="facade"></div>
-                <div class="name"></div>
-            </div>
-            <div class="jumbo plot">
-                <div class="facade"></div>
-                <div class="name"><div>
-            </div>
-        </div></div>
-    <footer></footer>
+    <img id="logo" class="big transform2s3d centered" src="img/FerryFair.svg"/>
 </body></html>
