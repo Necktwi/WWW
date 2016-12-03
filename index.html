@@ -29,27 +29,23 @@
     };
     </script>
     <style type="text/css">
-        header{
-            width: 100%;
+        #logo{
+            width: 192px;
         }
-    #logo{
-        height: 256px;
-        width: 256px;
-    }
-    .transform2s3d{
-        -webkit-transition: width 2s, height 2s, -webkit-transform 2s linear;
-        -webkit-transform-style: preserve-3d;
-        -moz-transition: width 2s, height 2s, -moz-transform 2s linear;
-        -moz-transform-style: preserve-3d;
-        transition: width 2s, height 2s, transform 2s linear;
-        transform-style: preserve-3d;
-    }
-    .centered {
-        position: fixed;
-        top: 50%;
-        left:50%;
-        transform: translate(-50%, -50%);
-    }
+        .transform2s3d{
+            -webkit-transition: width 2s, height 2s, -webkit-transform 2s linear;
+            -webkit-transform-style: preserve-3d;
+            -moz-transition: width 2s, height 2s, -moz-transform 2s linear;
+            -moz-transform-style: preserve-3d;
+            transition: width 2s, height 2s, transform 2s linear;
+            transform-style: preserve-3d;
+        }
+        .centered {
+            position: fixed;
+            top: 50%;
+            left:50%;
+            transform: translate(-50%, -50%);
+        }
     </style>
 </head>
 <body onload="init()">
