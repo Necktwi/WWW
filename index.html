@@ -3,51 +3,53 @@
  -->
 <!DOCTYPE html>
 <html><head>
-    <title>FerryFair</Title>
-    <script type="text/javascript">
-        var Logo;
-        var Rotate=function(){
-            var props = 'transform WebkitTransform MozTransform OTransform msTransform'.split(' '),
-            prop,
-            el = document.createElement('div');
-            for(var i = 0, l = props.length; i < l; i++) {
-                if(typeof el.style[props[i]] !== "undefined") {
-                    prop = props[i];
-                    break;
-                }
-            }
-            var xAngle = 0, yAngle = 0;
-            setInterval(function(){
-                yAngle+=180;
-                Logo.style[prop] = " translate(-50%,-50%) rotateX("+xAngle+"deg) rotateY("+yAngle+"deg)";
-            }, 2000);
-            
-        };
-    var init=function(){
-        Logo=document.getElementById('logo');
-        Rotate();
-    };
-    </script>
-    <style type="text/css">
-        #logo{
-            width: 192px;
-        }
-        .transform2s3d{
-            -webkit-transition: width 2s, height 2s, -webkit-transform 2s linear;
-            -webkit-transform-style: preserve-3d;
-            -moz-transition: width 2s, height 2s, -moz-transform 2s linear;
-            -moz-transform-style: preserve-3d;
-            transition: width 2s, height 2s, transform 2s linear;
-            transform-style: preserve-3d;
-        }
-        .centered {
-            position: fixed;
-            top: 50%;
-            left:50%;
-            transform: translate(-50%, -50%);
-        }
-    </style>
+   <title>FerryFair</Title>
+   <script type="text/javascript">
+   var Logo;
+   var Rotate = function() {
+      var props =
+      'transform WebkitTransform MozTransform OTransform msTransform'.
+      split(' ');
+      var prop;
+      var el = document.createElement('div');
+      for (var i = 0, l = props.length; i < l; i++) {
+         if (typeof el.style[props[i]] !== "undefined") {
+            prop = props[i];
+            break;
+         }
+      }
+      var xAngle = 0, yAngle = 0;
+      setInterval(function () {
+         yAngle += 180;
+         Logo.style[prop] = " translate(-50%,-50%) rotateX(" + xAngle + 
+         "deg) rotateY(" + yAngle + "deg)";
+      }, 2000);
+   };
+   var init = function () {
+      Logo = document.getElementById('logo');
+      Rotate();
+   };
+   </script>
+   <style type="text/css">
+   #logo {
+      width: 5cm;
+   }
+   .transform2s3d {
+      -webkit-transition: width 2s, height 2s, -webkit-transform 2s linear;
+      -webkit-transform-style: preserve-3d;
+      -moz-transition: width 2s, height 2s, -moz-transform 2s linear;
+      -moz-transform-style: preserve-3d;
+      transition: width 2s, height 2s, transform 2s linear;
+      transform-style: preserve-3d;
+   }
+   .centered {
+      position: fixed;
+      top: 50%;
+      left:50%;
+      transform: translate(-50%, -50%);
+   }
+   </style>
 </head>
 <body onload="init()">
-    <img id="logo" class="big transform2s3d centered" src="img/FerryFair.svg"/>
+   <img id="logo" class="big transform2s3d centered" src="img/FerryFair.svg"/>
 </body></html>
