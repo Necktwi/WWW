@@ -4,12 +4,14 @@
 <!DOCTYPE html>
 <html><head>
    <title>FerryFair</Title>
+   <meta name="viewport" 
+      content="width=device-width, maximum-scale=1, user-scalable=no" />
    <script type="text/javascript">
    var Logo;
    var Rotate = function() {
       var props =
-      'transform WebkitTransform MozTransform OTransform msTransform'.
-      split(' ');
+         'transform WebkitTransform MozTransform OTransform msTransform'.
+         split(' ');
       var prop;
       var el = document.createElement('div');
       for (var i = 0, l = props.length; i < l; i++) {
@@ -22,7 +24,7 @@
       setInterval(function () {
          yAngle += 180;
          Logo.style[prop] = " translate(-50%,-50%) rotateX(" + xAngle + 
-         "deg) rotateY(" + yAngle + "deg)";
+            "deg) rotateY(" + yAngle + "deg)";
       }, 2000);
    };
    var init = function () {
