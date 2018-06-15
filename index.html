@@ -8,7 +8,7 @@
       content="width=device-width, maximum-scale=1, user-scalable=no" />
    <script type="text/javascript">
    var Logo;
-   var Rotate = function() {
+   var Animate = function (style) {
       var props =
          'transform WebkitTransform MozTransform OTransform msTransform'.
          split(' ');
@@ -20,21 +20,57 @@
             break;
          }
       }
-      var xAngle = 0, yAngle = 0;
-      setInterval(function () {
-         yAngle += 180;
-         Logo.style[prop] = " translate(-50%,-50%) rotateX(" + xAngle + 
-            "deg) rotateY(" + yAngle + "deg)";
-      }, 2000);
+      var xAngle = 0, yAngle = 0, zAngle = 0;
+      if (style === "rotate") {
+         setInterval(function () {
+            yAngle += 180;
+            Logo.style[prop] = " translate(-50%,-50%) rotateX(" + xAngle + 
+               "deg) rotateY(" + yAngle + "deg)";
+         }, 2000);
+      } else if (style === "swing") {
+         var Toggle = false;
+         Logo.style[prop+'-origin'] = "50% 85%";
+         setTimeout(function () {
+            zAngle += 15;
+            Logo.style[prop] = " translate(-50%,-50%) rotateZ(" + zAngle + 
+               "deg)";
+         }, 1000);
+         setTimeout(function () {
+            Logo.classList.remove('transform1s3deaseinout');
+            Logo.classList.add('transform2s3deaseinout');
+         }, 1999);
+         setInterval(function () {
+            zAngle += Toggle ? 30 : -30;
+            Toggle = !Toggle;
+            Logo.style[prop] = " translate(-50%,-50%) rotateZ(" + zAngle + 
+               "deg)";
+         }, 2000);
+      }
    };
    var init = function () {
       Logo = document.getElementById('logo');
-      Rotate();
+      Animate("swing");
    };
    </script>
    <style type="text/css">
    #logo {
       width: 5cm;
+   }
+   .transform1s3deaseinout {
+      -webkit-transition: width 1s, height 1s, -webkit-transform 1s ease-in-out;
+      -webkit-transform-style: preserve-3d;
+      -moz-transition: width 1s, height 1s, -moz-transform 1s ease-in-out;
+      -moz-transform-style: preserve-3d;
+      transition: width 1s, height 1s, transform 1s ease-in-out;
+      transform-style: preserve-3d;
+   }
+   .transform2s3deaseinout {
+      -webkit-transition: width 2s, height 2s, -webkit-transform 2s ease-in-out;
+      -webkit-transform-style: preserve-3d;
+      -moz-transition: width 2s, height 2s, -moz-transform 2s ease-in-out;
+      -moz-transform-style: preserve-3d;
+      transition: width 2s, height 2s, transform 2s ease-in-out;
+      transform-style: preserve-3d;
    }
    .transform2s3d {
       -webkit-transition: width 2s, height 2s, -webkit-transform 2s linear;
@@ -53,5 +89,6 @@
    </style>
 </head>
 <body onload="init()">
-   <img id="logo" class="big transform2s3d centered" src="img/FerryFair.svg"/>
+   <img id="logo" class="big transform1s3deaseinout centered" 
+      src="img/FerryFair.svg"/>
 </body></html>
