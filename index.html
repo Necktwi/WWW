@@ -4,6 +4,7 @@
 <!DOCTYPE html>
 <html><head>
    <title>FerryFair</Title>
+   <link rel='icon' href='img/favicon.ico' type='image/x-icon' />
    <meta name="viewport" 
       content="width=device-width, maximum-scale=1, user-scalable=no" />
    <script type="text/javascript">
@@ -32,21 +33,21 @@
          Logo.style[prop+'-origin'] = "50% 85%";
          setTimeout(function () {
             zAngle += 15;
-            altitude += -10;
+            altitude += -7;
             Logo.style[prop] = " translate("+ (-50 + altitude) +"%, " + 
                (-50 + altitude) + "%) rotateZ(" + zAngle + "deg)";
-         }, 1000);
+         }, 1500);
          setTimeout(function () {
             Logo.classList.remove('transform1s3deaseinout');
             Logo.classList.add('transform2s3deaseinout');
-         }, 1999);
+         }, 2999);
          setInterval(function () {
             zAngle += Toggle ? 30 : -30;
-            altitude += Toggle ? -20 : 20;
+            altitude += Toggle ? -14 : 14;
             Toggle = !Toggle;
             Logo.style[prop] = " translate("+ (-50 + altitude) +"%, " + 
                (-50 + altitude) + "%) rotateZ(" + zAngle + "deg)";
-         }, 2000);
+         }, 3000);
       }
    };
    var init = function () {
@@ -59,19 +60,20 @@
       width: 5cm;
    }
    .transform1s3deaseinout {
-      -webkit-transition: width 1s, height 1s, -webkit-transform 1s ease-in-out;
+      -webkit-transition: width 1.5s, height 1.5s, 
+         -webkit-transform 1.5s ease-in-out;
       -webkit-transform-style: preserve-3d;
-      -moz-transition: width 1s, height 1s, -moz-transform 1s ease-in-out;
+      -moz-transition: width 1.5s, height 1.5s, -moz-transform 1.5s ease-in-out;
       -moz-transform-style: preserve-3d;
-      transition: width 1s, height 1s, transform 1s ease-in-out;
+      transition: width 1.5s, height 1.5s, transform 1.5s ease-in-out;
       transform-style: preserve-3d;
    }
    .transform2s3deaseinout {
-      -webkit-transition: width 2s, height 2s, -webkit-transform 2s ease-in-out;
+      -webkit-transition: width 3s, height 3s, -webkit-transform 3s ease-in-out;
       -webkit-transform-style: preserve-3d;
-      -moz-transition: width 2s, height 2s, -moz-transform 2s ease-in-out;
+      -moz-transition: width 3s, height 3s, -moz-transform 3s ease-in-out;
       -moz-transform-style: preserve-3d;
-      transition: width 2s, height 2s, transform 2s ease-in-out;
+      transition: width 3s, height 3s, transform 3s ease-in-out;
       transform-style: preserve-3d;
    }
    .transform2s3d {
