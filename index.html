@@ -20,7 +20,7 @@
             break;
          }
       }
-      var xAngle = 0, yAngle = 0, zAngle = 0;
+      var xAngle = 0, yAngle = 0, zAngle = 0, altitude = 0;
       if (style === "rotate") {
          setInterval(function () {
             yAngle += 180;
@@ -32,8 +32,9 @@
          Logo.style[prop+'-origin'] = "50% 85%";
          setTimeout(function () {
             zAngle += 15;
-            Logo.style[prop] = " translate(-50%,-50%) rotateZ(" + zAngle + 
-               "deg)";
+            altitude += -10;
+            Logo.style[prop] = " translate("+ (-50 + altitude) +"%, " + 
+               (-50 + altitude) + "%) rotateZ(" + zAngle + "deg)";
          }, 1000);
          setTimeout(function () {
             Logo.classList.remove('transform1s3deaseinout');
@@ -41,9 +42,10 @@
          }, 1999);
          setInterval(function () {
             zAngle += Toggle ? 30 : -30;
+            altitude += Toggle ? -20 : 20;
             Toggle = !Toggle;
-            Logo.style[prop] = " translate(-50%,-50%) rotateZ(" + zAngle + 
-               "deg)";
+            Logo.style[prop] = " translate("+ (-50 + altitude) +"%, " + 
+               (-50 + altitude) + "%) rotateZ(" + zAngle + "deg)";
          }, 2000);
       }
    };

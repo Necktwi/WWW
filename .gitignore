@@ -1,11 +1,11 @@
 .bzrignore
 .bzr/
-build/
+build*/
 dist/
 QtBuild/
 BuildXcode/
 nbproject/private/private.xml
-**/.DS_Store
+.DS_Store
 nbproject/.DS_Store
 *.user
 
@@ -18,3 +18,6 @@ nbactions.xml
 nb-configuration.xml
 
 vgcore.*
+
+**/.DS_Store
+**/._*
