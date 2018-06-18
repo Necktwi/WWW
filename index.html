@@ -33,7 +33,7 @@
          Logo.style[prop+'-origin'] = "50% 85%";
          setTimeout(function () {
             zAngle += 15;
-            altitude += -7;
+            altitude += -5;
             Logo.style[prop] = " translate("+ (-50 + altitude) +"%, " + 
                (-50 + altitude) + "%) rotateZ(" + zAngle + "deg)";
          }, 1500);
@@ -43,7 +43,7 @@
          }, 2999);
          setInterval(function () {
             zAngle += Toggle ? 30 : -30;
-            altitude += Toggle ? -14 : 14;
+            altitude += Toggle ? -7 : 7;
             Toggle = !Toggle;
             Logo.style[prop] = " translate("+ (-50 + altitude) +"%, " + 
                (-50 + altitude) + "%) rotateZ(" + zAngle + "deg)";

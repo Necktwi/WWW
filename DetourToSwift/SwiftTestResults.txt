@@ -1,0 +1,31 @@
+%SUITE_STARTED% testSwift
+
+%TEST_STARTED% factorial
+factorial(15): 1307674368000
+%TEST_FINISHED% time: 0.000007554 factorial
+
+%TEST_STARTED% factorial_by_loop
+factorial_by_loop(15): 1307674368000
+%TEST_FINISHED% time: 0.000128169 factorial_by_loop
+
+%TEST_STARTED% fibonacci
+fibonacci(15): 610
+%TEST_FINISHED% time: 0.000011446 fibonacci
+
+%TEST_STARTED% fibonacci_by_loop
+fibonacci_by_loop(15): 610
+%TEST_FINISHED% time: 0.000014872 fibonacci_by_loop
+
+%TEST_STARTED% ClassNStruct
+{
+	Int size: 8
+	Float size: 4
+	UInt16 size: 2
+	CChar size: 1
+}
+Class size: 8
+Struct size: 15
+%TEST_FINISHED% time: 0.000127892 ClassNStruct
+
+%SUITE_FINISHED% time: 0.003174399
+Program ended with exit code: 0
