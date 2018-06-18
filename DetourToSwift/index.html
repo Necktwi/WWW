@@ -21,6 +21,9 @@
    iframe {
       border: 1px solid black;
    }
+   .compare {
+      display: inline-block;
+   }
    </style>
 </head>
 <body>
@@ -47,26 +50,13 @@
    evaluate it's speed. I have put the two C++ and Swift comparision projects
    on github.
    </p>
-   <div><table id="SwiftVsCPP"><tbody>
-   <tr>
-      <th>
-         <a href="https://github.com/necktwi/SwiftTest.git">Swift repo</a>
-         Output:
-      </th>
-      <th>
-         <a href="https://github.com/necktwi/testCPP.git">C++ repo</a>
-         Output:
-      </th>
-   </tr>
-   <tr>
-      <td>
-         <iframe src="SwiftTestResults.txt"></iframe>
-      </td>
-      <td>
-         <iframe src="CPPTestResults.txt"></iframe>
-      </td>
-   </tr>
-   </tbody></table></div>
+   <div><span class="compare">
+      <a href="https://github.com/necktwi/SwiftTest.git">Swift repo</a> Output:
+      <br/><iframe src="SwiftTestResults.txt"></iframe>
+   </span><span class="compare">
+      <a href="https://github.com/necktwi/testCPP.git">C++ repo</a> Output:
+      <br/><iframe src="CPPTestResults.txt"></iframe>
+   </span></div>
    <p>
    <b>C++ wins! It computes factorial or fibonacci in less than a nano 
    second!</b></br>
