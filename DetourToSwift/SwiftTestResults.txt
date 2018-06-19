@@ -2,19 +2,19 @@
 
 %TEST_STARTED% factorial
 factorial(15): 1307674368000
-%TEST_FINISHED% time: 0.000007554 factorial
+%TEST_FINISHED% time: 0000000000.000007783 factorial
 
 %TEST_STARTED% factorial_by_loop
 factorial_by_loop(15): 1307674368000
-%TEST_FINISHED% time: 0.000128169 factorial_by_loop
+%TEST_FINISHED% time: 0000000000.000138432 factorial_by_loop
 
 %TEST_STARTED% fibonacci
 fibonacci(15): 610
-%TEST_FINISHED% time: 0.000011446 fibonacci
+%TEST_FINISHED% time: 0000000000.000011611 fibonacci
 
 %TEST_STARTED% fibonacci_by_loop
 fibonacci_by_loop(15): 610
-%TEST_FINISHED% time: 0.000014872 fibonacci_by_loop
+%TEST_FINISHED% time: 0000000000.000014108 fibonacci_by_loop
 
 %TEST_STARTED% ClassNStruct
 {
@@ -25,7 +25,7 @@ fibonacci_by_loop(15): 610
 }
 Class size: 8
 Struct size: 15
-%TEST_FINISHED% time: 0.000127892 ClassNStruct
+%TEST_FINISHED% time: 0000000000.000129897 ClassNStruct
 
-%SUITE_FINISHED% time: 0.003174399
+%SUITE_FINISHED% time: 0000000000.001374183
 Program ended with exit code: 0
