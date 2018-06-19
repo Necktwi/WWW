@@ -1,3 +1,6 @@
 [submodule "crontab"]
 	path = crontab
 	url = https://necktwi@github.com/necktwi/crontab.git
+[submodule "DetourToSwift"]
+	path = DetourToSwift
+	url = https://necktwi@github.com/necktwi/DetourToSwift.git
