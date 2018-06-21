@@ -8,7 +8,7 @@
    <meta name="viewport" 
       content="width=device-width, maximum-scale=1, user-scalable=no" />
    <script type="text/javascript">
-   var Logo;
+   var Logo, Hull;
    var Animate = function (style) {
       var props =
          'transform WebkitTransform MozTransform OTransform msTransform'.
@@ -33,9 +33,9 @@
          Logo.style[prop+'-origin'] = "50% 85%";
          setTimeout(function () {
             zAngle += 15;
-            altitude += -5;
-            Logo.style[prop] = " translate("+ (-50 + altitude) +"%, " + 
-               (-50 + altitude) + "%) rotateZ(" + zAngle + "deg)";
+            altitude += -2;
+            Logo.style[prop] = " translate("+ ( + altitude) +"%, " + 
+               ( + altitude) + "%) rotateZ(" + zAngle + "deg)";
          }, 1500);
          setTimeout(function () {
             Logo.classList.remove('transform1s3deaseinout');
@@ -43,21 +43,27 @@
          }, 2999);
          setInterval(function () {
             zAngle += Toggle ? 30 : -30;
-            altitude += Toggle ? -7 : 7;
+            altitude += Toggle ? -5 : 5;
             Toggle = !Toggle;
-            Logo.style[prop] = " translate("+ (-50 + altitude) +"%, " + 
-               (-50 + altitude) + "%) rotateZ(" + zAngle + "deg)";
+            Logo.style[prop] = " translate("+ ( + altitude) +"%, " + 
+               ( + altitude) + "%) rotateZ(" + zAngle + "deg)";
          }, 3000);
       }
    };
    var init = function () {
       Logo = document.getElementById('logo');
+      Hull = Logo.contentDocument.getElementById("Hull");
       Animate("swing");
    };
    </script>
    <style type="text/css">
    #logo {
       width: 5cm;
+   }
+   #Waves {
+      position: absolute;
+      top: 4.5cm;
+      left: 0cm;
    }
    .transform1s3deaseinout {
       -webkit-transition: width 1.5s, height 1.5s, 
@@ -93,6 +99,10 @@
    </style>
 </head>
 <body onload="init()">
-   <img id="logo" class="big transform1s3deaseinout centered" 
-      src="img/FerryFair.svg"/>
+   <div id="Ferry" class="centered">
+   <Object id="logo" class="big transform1s3deaseinout" 
+      data="img/FerryFair.svg" type="image/svg+xml"></Object>
+   <Object id="Waves" class="" 
+      data="img/Waves.svg" type="image/svg+xml"></Object>
+   </div>
 </body></html>
