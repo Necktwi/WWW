@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg id="svg2" viewBox="0 0 288 16" xmlns="http://www.w3.org/2000/svg">
+<svg id="svg2" viewBox="0 0 288 288" xmlns="http://www.w3.org/2000/svg">
    <g id="Waves">
-      <path id="Waves" d="M -64,8 c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 
+      <path id="Waves" d="M -64,264 c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 
       c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 
       c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 c 8,-8 8,-8 16,0 c 8,8 8,8 16,0
       c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 c 8,-8 8,-8 16,0 c 8,8 8,8 16,0
@@ -14,4 +14,3 @@
       </path>
    </g>
 </svg>
-

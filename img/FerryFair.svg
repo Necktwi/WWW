@@ -50,7 +50,7 @@
       repeatCount="indefinite"
       /-->
    </g>
-   <!--g id="Waves">
+   <g id="Waves">
       <path id="Waves" d="M -64,264 c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 
       c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 
       c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 c 8,-8 8,-8 16,0 c 8,8 8,8 16,0
@@ -62,5 +62,5 @@
       >
          <animateMotion path="M 0 0 H 32" dur="2s" repeatCount="indefinite" />
       </path>
-   </g-->
+   </g>
 </svg>

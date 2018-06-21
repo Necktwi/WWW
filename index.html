@@ -29,30 +29,50 @@
                "deg) rotateY(" + yAngle + "deg)";
          }, 2000);
       } else if (style === "swing") {
-         var Toggle = false;
-         Logo.style[prop+'-origin'] = "50% 85%";
-         setTimeout(function () {
-            zAngle += 15;
-            altitude += -2;
-            Logo.style[prop] = " translate("+ ( + altitude) +"%, " + 
-               ( + altitude) + "%) rotateZ(" + zAngle + "deg)";
-         }, 1500);
-         setTimeout(function () {
-            Logo.classList.remove('transform1s3deaseinout');
-            Logo.classList.add('transform2s3deaseinout');
-         }, 2999);
-         setInterval(function () {
-            zAngle += Toggle ? 30 : -30;
-            altitude += Toggle ? -5 : 5;
-            Toggle = !Toggle;
-            Logo.style[prop] = " translate("+ ( + altitude) +"%, " + 
-               ( + altitude) + "%) rotateZ(" + zAngle + "deg)";
-         }, 3000);
+         function start_cruise(Part) {
+            Part.zAngle += 15;
+            Part.altitude += -2;
+            Part.style[prop] = " translate("+ ( + Part.altitude) +"%, " + 
+               ( + Part.altitude) + "%) rotateZ(" + Part.zAngle + "deg)";
+            if(!Part.TopPart) return;
+            setTimeout(start_cruise, Part.TopPartGap, Part.TopPart);
+         }
+         function cruise(Part) {
+            Part.zAngle += Part.Toggle ? 30 : -30;
+            Part.altitude += Part.Toggle ? -5 : 5;
+            Part.Toggle = !Part.Toggle;
+            Part.style[prop] = " translate("+ ( + Part.altitude) +"%, " + 
+               ( + Part.altitude) + "%) rotateZ(" + Part.zAngle + "deg)";
+               if(!Part.TopPart) return;
+            setTimeout(cruise, Part.TopPartGap, Part.TopPart);
+         }
+         for (var i = 0; i < Logo.childElementCount; ++i) {
+            var rect = Logo.children[i].
+            contentDocument.getElementById("Ferry").getBoundingClientRect()
+            Logo.children[i].style[prop+'-origin'] = "50% 85%";
+            Logo.children[i].Toggle = false;
+            Logo.children[i].xAngle = 0;
+            Logo.children[i].yAngle = 0;
+            Logo.children[i].zAngle = 0;
+            Logo.children[i].altitude = 0;
+            if (i+1 < Logo.childElementCount) {
+               Logo.children[i].TopPart = Logo.children[i+1];
+               Logo.children[i].TopPartGap = 
+                  Logo.children[i+1].contentDocument.getElementById("Ferry").
+                  getBoundingClientRect().bottom;
+            }
+            setTimeout(function (child) {
+               child.classList.remove('transform1s3deaseinout');
+               child.classList.add('transform2s3deaseinout');
+            }, 2999, Logo.children[i]);
+         }
+         setTimeout(start_cruise, 1500, Logo.children[0]);
+         setInterval(cruise, 3000, Logo.children[0]);
       }
    };
    var init = function () {
-      Logo = document.getElementById('logo');
-      Hull = Logo.contentDocument.getElementById("Hull");
+      Logo = document.getElementById('Ferry');
+      Hull = document.getElementById("Hull");
       Animate("swing");
    };
    </script>
@@ -60,10 +80,26 @@
    #logo {
       width: 5cm;
    }
+   #Holder {
+      width: 5cm;
+      height: 5cm;
+   }
+   #Ferry {
+      position: absolute;
+      width: 5cm;
+      height: 5cm;
+   }
+   #Ferry * {
+      position: absolute;
+      top: 0cm;
+      left: 0cm;
+      width: 5cm;
+   }
    #Waves {
       position: absolute;
-      top: 4.5cm;
+      top: 0cm;
       left: 0cm;
+      width:5cm;
    }
    .transform1s3deaseinout {
       -webkit-transition: width 1.5s, height 1.5s, 
@@ -99,10 +135,19 @@
    </style>
 </head>
 <body onload="init()">
-   <div id="Ferry" class="centered">
-   <Object id="logo" class="big transform1s3deaseinout" 
-      data="img/FerryFair.svg" type="image/svg+xml"></Object>
-   <Object id="Waves" class="" 
-      data="img/Waves.svg" type="image/svg+xml"></Object>
+   <div id="logo" class="centered">
+      <div id="Holder">
+      <div id="Ferry" >
+         <Object id="Hull" class="big transform1s3deaseinout"
+            data="img/Hull.svg" type="image/svg+xml"></Object>
+         <Object id="Item3" class="big transform1s3deaseinout"
+            data="img/Item3.svg" type="image/svg+xml"></Object>
+         <Object id="Item2" class="big transform1s3deaseinout"
+            data="img/Item2.svg" type="image/svg+xml"></Object>
+         <Object id="Item1" class="big transform1s3deaseinout"
+            data="img/Item1.svg" type="image/svg+xml"></Object>
+      </div>
+      <Object id="Waves" data="img/Waves.svg" type="image/svg+xml"></Object>
+      </div>
    </div>
 </body></html>
