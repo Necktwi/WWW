@@ -20,20 +20,20 @@ https://www.w3.org/TR/SMIL20/animation.html#animationNS-AddAndCum
       4.399 131.152 -0.749 153.546 14.412 C 178.408 31.243 183.93 66.324 167.328
       90.965" transform="matrix(0.305513, 0.952188, -0.952188, 0.305513,
       136.905878, -85.885062)"/>
-      <animateTransform attributeName="transform" begin="1.8s" dur="1.5s"
+      <animateTransform attributeName="transform" begin="3.3s" dur="1.5s"
       type="rotate" additive="sum"
       repeatCount="1" calcMode="spline" 
       keySplines=".5 0 .5 1"
       values="0 128 208; 15 128 208" fill="freeze"
       />
-      <animateTransform attributeName="transform" begin="3.3s" dur="6s"
+      <animateTransform attributeName="transform" begin="4.8s" dur="6s"
       type="rotate" additive="sum"
       repeatCount="indefinite" calcMode="spline" 
       keySplines=".5 0 .5 1; .5 0 .5 1"
       values="0 128 208; -30 128 208; 0 128 208" fill="freeze"
       keyTimes="0; 0.5; 1"
       />
-      <animateTransform attributeName="transform" begin="3.3s" dur="6s"
+      <animateTransform attributeName="transform" begin="4.8s" dur="6s"
       type="translate" additive="sum" 
       repeatCount="indefinite" calcMode="spline"
       keySplines="0 0 1 1; .5 0 .5 1; .5 0 .5 1; 0 0 1 1"
@@ -52,20 +52,20 @@ https://www.w3.org/TR/SMIL20/animation.html#animationNS-AddAndCum
       78.611 118.524 29.387 140.712 61.237 130.127 C 93.087 119.541 40.374 
       131.232 72.363 141.389 C 104.353 151.546 68.039 111.588 87.949 138.608 Z"
       >
-      <animateTransform attributeName="transform" begin="1.7s" dur="1.5s"
+      <animateTransform attributeName="transform" begin="3.2s" dur="1.5s"
       type="rotate" additive="sum"
       repeatCount="1" calcMode="spline" 
       keySplines=".5 0 .5 1"
       values="0 128 208; 15 128 208" fill="freeze"
       />
-      <animateTransform attributeName="transform" begin="3.2s" dur="6s"
+      <animateTransform attributeName="transform" begin="4.7s" dur="6s"
       type="rotate" additive="sum"
       repeatCount="indefinite" calcMode="spline" 
       keySplines=".5 0 .5 1; .5 0 .5 1"
       values="0 128 208; -30 128 208; 0 128 208" fill="freeze"
       keyTimes="0; 0.5; 1"
       />
-      <animateTransform attributeName="transform" begin="3.2s" dur="6s"
+      <animateTransform attributeName="transform" begin="4.7s" dur="6s"
       type="translate" additive="sum" 
       repeatCount="indefinite" calcMode="spline"
       keySplines="0 0 1 1; .5 0 .5 1; .5 0 .5 1; 0 0 1 1"
@@ -83,20 +83,20 @@ https://www.w3.org/TR/SMIL20/animation.html#animationNS-AddAndCum
       80.392 154.283 195.472 171.599 C 262.223 181.642 248.736 117.477 192.906 
       155.417 C 96.651 220.827 162.263 66.395 181.356 181.194 C 192.431 247.781 
       249.288 215.127 195.953 173.753 Z">
-      <animateTransform attributeName="transform" begin="1.6s" dur="1.5s"
+      <animateTransform attributeName="transform" begin="3.1s" dur="1.5s"
       type="rotate" additive="sum"
       repeatCount="1" calcMode="spline" 
       keySplines=".5 0 .5 1"
       values="0 128 208; 15 128 208" fill="freeze"
       />
-      <animateTransform attributeName="transform" begin="3.1s" dur="6s"
+      <animateTransform attributeName="transform" begin="4.6s" dur="6s"
       type="rotate" additive="sum"
       repeatCount="indefinite" calcMode="spline" 
       keySplines=".5 0 .5 1; .5 0 .5 1"
       values="0 128 208; -30 128 208; 0 128 208" fill="freeze"
       keyTimes="0; 0.5; 1"
       />
-      <animateTransform attributeName="transform" begin="3.1s" dur="6s"
+      <animateTransform attributeName="transform" begin="4.6s" dur="6s"
       type="translate" additive="sum" 
       repeatCount="indefinite" calcMode="spline"
       keySplines="0 0 1 1; .5 0 .5 1; .5 0 .5 1; 0 0 1 1"
@@ -107,20 +107,20 @@ https://www.w3.org/TR/SMIL20/animation.html#animationNS-AddAndCum
       <path id="Hull" d="M 0 160 C 0 224, 64 256, 128 256 C 192 256,256 224, 
       256 160 Z" style="fill: rgb(255, 64, 64); fill-opacity: 0.5; stroke-width:
       0.5; stroke-opacity: 0.5; stroke: rgb(128, 0, 0);">
-      <animateTransform attributeName="transform" begin="1.5s" dur="1.5s"
+      <animateTransform attributeName="transform" begin="3s" dur="1.5s"
       type="rotate" additive="sum"
       repeatCount="1" calcMode="spline" 
       keySplines="0 .3 .8 1"
       values="0 128 208; 15 128 208" fill="freeze"
       />
-      <animateTransform attributeName="transform" begin="3s" dur="6s"
+      <animateTransform attributeName="transform" begin="4.5s" dur="6s"
       type="rotate" additive="sum"
       repeatCount="indefinite" calcMode="spline" 
       keySplines=".5 0 .5 1; .5 0 .5 1"
       values="0 128 208; -30 128 208; 0 128 208" fill="freeze"
       keyTimes="0; 0.5; 1"
       />
-      <animateTransform attributeName="transform" begin="3s" dur="6s"
+      <animateTransform attributeName="transform" begin="5.0s" dur="6s"
       type="translate" additive="sum" 
       repeatCount="indefinite" calcMode="spline"
       keySplines="0 0 1 1; .5 0 .5 1; .5 0 .5 1; 0 0 1 1"
@@ -129,8 +129,8 @@ https://www.w3.org/TR/SMIL20/animation.html#animationNS-AddAndCum
       />
       </path>
    </g>
-   <g id="Waves">
-      <path id="Waves" d="M -64,264 c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 
+   <g id="Waves" transform="matrix(1 0 0 1 0 264)">
+      <path id="Waves" d="M -64,0 c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 
       c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 
       c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 c 8,-8 8,-8 16,0 c 8,8 8,8 16,0
       c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 c 8,-8 8,-8 16,0 c 8,8 8,8 16,0
@@ -139,7 +139,21 @@ https://www.w3.org/TR/SMIL20/animation.html#animationNS-AddAndCum
       style="stroke-width:0.5;
       fill: rgba(255,255,255,0); stroke-opacity: 1.0; stroke: rgb(0, 0, 256);"
       >
-      <animateMotion path="M 0 0 H 32" dur="2s" repeatCount="indefinite" />
+      <animateTransform attributeName="transform" dur="4s" begin="0s"
+         type="scale" additive="sum"
+         repeatCount="indefinite" calcMode="spline"
+         keySplines=".5 0 .5 1; .5 0 .5 1" values="1 1; 1 -1; 1 1"
+         keyTimes="0; 0.5; 1"
+      />
+      <animateTransform attributeName="transform" dur="1.5s" begin="3s"
+         type="translate" additive="sum"
+         repeatCount="1" calcMode="spline"
+         keySplines="0 .3 .8 1" values="0 0; 32 0"
+         keyTimes="0; 1"
+      />
+      <animateMotion path="M 0 0 H 32" begin="3s" dur="2s" 
+         repeatCount="indefinite" 
+      />
       </path>
    </g>
 </svg>
