@@ -7,7 +7,7 @@ https://www.w3.org/TR/SMIL20/animation.html#animationNS-AddAndCum
 <svg id="svg2" viewBox="0 0 288 288" xmlns="http://www.w3.org/2000/svg">
    <g id="Ferry" transform="matrix(1 0 0 1 16 16)">
       <g>
-      <path 
+      <path
       style="fill: rgb(0, 128, 0); stroke: rgb(0, 0, 0); stroke-width: 1px; 
       stroke-linecap: butt; stroke-linejoin: miter; stroke-opacity: 1;" 
       id="path2993" d="M 121.996 56.286 C 124.269 58.023 120.791 60.229 119.128 
@@ -142,7 +142,7 @@ https://www.w3.org/TR/SMIL20/animation.html#animationNS-AddAndCum
       <animateTransform attributeName="transform" dur="4s" begin="0s"
          type="scale" additive="sum"
          repeatCount="indefinite" calcMode="spline"
-         keySplines=".5 0 .5 1; .5 0 .5 1" values="1 1; 1 -1; 1 1"
+         keySplines=".5 0 .8 .2; .2 .8 .5 1" values="1 1; 1 0.3; 1 1"
          keyTimes="0; 0.5; 1"
       />
       <animateTransform attributeName="transform" dur="1.5s" begin="3s"

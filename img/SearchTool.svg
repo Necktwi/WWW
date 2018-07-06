@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <svg viewBox="0 0 42 66" xmlns="http://www.w3.org/2000/svg">
-  <path d="M 21 41 A 20 20 0 0 1 21 1 A 20 20 0 1 1 21 41 L 21 45 L 22 45 L 22 65 L 20 65 L 20 45 L 21 45 Z" style="stroke: black; fill: rgba(192, 192, 255, 0.498039); stroke-width: 1;"/>
-  <path d="M 21 7 A 20 40 45 0 1 33 21 A 20 20 0 0 0 21 7 Z" style="stroke: black; stroke-width: 0; fill: rgb(255, 255, 255);"/>
+  <path d="M 21 41 A 20 20 0 0 1 21 1 A 20 20 0 1 1 21 41 L 21 45 L 22 45 L 22 
+  65 L 20 65 L 20 45 L 21 45 Z" style="stroke: black; fill: rgba(192, 192, 255, 
+  0.498039); stroke-width: 1;"
+  />
+  <path d="M 21 7 A 20 40 45 0 1 33 21 A 20 20 0 0 0 21 7 Z" style=
+  "stroke: black; stroke-width: 0; fill: rgb(255, 255, 255);"
+  />
 </svg>
