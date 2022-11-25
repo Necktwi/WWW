@@ -1,6 +1,6 @@
 <!--
-    @author: Gowtham Kudupudi
-  -->
+   @author: Gowtham Kudupudi
+-->
 <!DOCTYPE html>
 <html><head>
    <title>FerryFair</Title>
@@ -9,477 +9,40 @@
       content="width=device-width, maximum-scale=1, user-scalable=no" />
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
    <script type="text/javascript" src="js/core.js"></script>
-   <script type="text/javascript">
-      var Logo;
-      var SearchTool;
-      var SearchToolOpacity=1;
-      var SearchToolBlink;
-      var Mouth;
-      var Lock;
-      var Signupdiv;
-      var Username;
-      var Password;
-      var Email;
-      var Passwords1;
-      var Passwords2;
-      var Signup;
-      var Usermenu;
-      var User;
-      var Unlock, Log;
-      var searchPlcHldr = 'Search an item near by';
-      var caretPos=0;
-      var Rotate=function(){
-         var props = 'transform WebkitTransform MozTransform OTransform msTransform'.split(' '),
-             prop,
-             el = document.createElement('div');
-         for(var i = 0, l = props.length; i < l; i++) {
-            if(typeof el.style[props[i]] !== "undefined") {
-               prop = props[i];
-               break;
-            }
-         }
-         var xAngle = 0, yAngle = 0;
-         setInterval(function(){
-            yAngle+=180;
-            Logo.style[prop] = "rotateX("+xAngle+"deg) rotateY("+yAngle+"deg)";
-         }, 2000);
-         
-      };
-      var addEvent = function(elem, type, fn) {
-         if (elem.addEventListener) elem.addEventListener(type, fn, false);
-         else if (elem.attachEvent) elem.attachEvent('on' + type, fn);
-      };
-      var setCaretPos=function(elem, caretPos) {
-         if(elem != null) {
-         if(elem.createTextRange) {
-            var range = elem.createTextRange();
-            range.move('character', caretPos);
-            range.select();
-         } else {
-            if(elem.selectionStart) {
-               //elem.focus();
-               elem.setSelectionRange(caretPos, caretPos);
-            } else;
-               //elem.focus();
-         }
-         }
-      };
-                                              
-      var inputOnFocus=function(){
-         if (this.value === this.plcHldr) {
-            setCaretPos(this,0);
-            this.style.color="rgb(192,192,192)";
-
-                                              //event.cancelBubble=true;
-         } else {
-            this.style.color="rgb(0,0,0)";
-         }
-                                              
-      };
-      var inputOnBlur=function(){
-         if (this.value === '') {
-            this.type='text';
-            this.value = this.plcHldr;
-            this.style.color="rgb(192,192,192)";
-         }
-                                              
-      };
-      var inputOnKeyDown=function(){
-         if(this.value === this.plcHldr) {
-            this.value='';
-            this.style.color="rgb(0,0,0)"
-            if(this.ctype==='password')this.type='password';
-                                              
-         }
-      };
-
-                                              
-      var init=function(){
-         Logo=document.getElementById('logo');
-         SearchTool=document.getElementById('search-tool');
-         Mouth=document.getElementById('mouth');
-         if(location.href.indexOf('?')==-1){
-            Logo.classList.add("big");
-         }
-         setTimeout(function(){
-            Logo.classList.add("transform2s3d");
-            Logo.classList.remove("big");
-         },2000);
-         Mouth.plcHldr="Search an item near by";
-         Mouth.value=Mouth.plcHldr;
-         Lock=document.getElementById("lock");
-         Username=document.getElementById("username");
-         Password=document.getElementById("password");
-         Username.plcHldr = 'Username:';
-         Password.plcHldr = 'Password:';
-         Password.ctype='password';
-         Signupdiv=document.getElementById("signupdiv");
-         Signup=document.getElementById("signup");
-         Signup.checked=false;
-         Email=document.getElementById("email");
-         Passwords1=document.getElementById("passwords1");
-         Passwords2=document.getElementById("passwords2");
-         Email.plcHldr='Email:';
-         Passwords1.plcHldr='New password:';
-         Passwords2.plcHldr='Retype password:';
-         Email.value=Email.plcHldr;
-         Passwords1.value=Passwords1.plcHldr;
-         Passwords2.value=Passwords2.plcHldr;
-         Passwords1.ctype='password';
-         Passwords2.ctype='password';
-         Log=document.getElementById("log");
-         var inputs=document.getElementsByTagName("input");
-         for (var i=0; i<inputs.length; ++i) {
-            var elm = inputs[i];
-            if(elm.type!="text")continue;
-            elm.classList.add("inptTxtBx");
-                                        
-            addEvent(elm, 'focus', inputOnFocus);
-            addEvent(elm, 'blur', inputOnBlur);
-            addEvent(elm, 'keydown', inputOnKeyDown);
-            addEvent(elm, 'click', inputOnFocus);
-         }
-         User = document.getElementById('user');
-         addEvent(Username, 'keydown', goToPassword);
-         addEvent(Password, 'keydown', authenticateUser);
-         Unlock = document.getElementById('unlock');
-         Usermenu = document.getElementById('usermenu');
-         addEvent(Passwords2, 'keydown', signup);
-         
-                                        
-      };
-      var login=function(feed){
-         var res = JSON.parse(feed.responseText);
-         if(res.login===true){
-            Password.style.display='none';
-            User.innerHTML=Username.value;
-            Usermenu.style.display='inline';
-            
-         }
-         delete Password.shuttle;
-                                        
-      }
-                                        
-      var unlock=function(){
-         var lock=document.getElementById("lock");
-         lock.style.display='none';
-         Username.style.display='inline';
-         Signupdiv.style.display='inline';
-         Username.focus();
-      };
-      var goToPassword = function() {
-         if(event.keyCode==13 && this.value !== this.plcHldr) { //13==enter
-            Username.style.display='none';
-            Password.style.display='inline';
-            Password.focus();
-                                        
-         }
-      }
-      var authenticateUser = function() {
-         if(event.keyCode==13 && this.value !== this.plcHldr) { //13==enter
-            var url = "login";
-            var f={};
-            f.content="{username:\""+Username.value+"\",password:\"";
-            f.content+=Password.value + "\"}";
-            f.postExpdtn=login;
-                                        
-            Password.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
-                                        
-         }
-      }
-      var lock = function() {
-         Usermenu.style.display='none';
-         Lock.style.display='inline';
-      }
-      var togglesignup = function() {
-         if (Signup.checked) {
-            Email.style.display='block';
-            Passwords1.style.display='block';
-            Passwords2.style.display='block';
-         } else {
-            Email.style.display='none';
-            Passwords1.style.display='none';
-            Passwords2.style.display='none';
-         }
-      }
-      var signup = function() {
-         if(event.keyCode==13 && this.value !== this.plcHldr) { //13==enter
-            var url = "signup";
-            var f={};
-            f.content="{username:\""+Username.value+"\",password:\"";
-            f.content+=Passwords2.value + "\",email:\""+Email.value+"\"}";
-            f.postExpdtn=actMail;
-                                        
-            Passwords2.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
-                                        
-         }
-      }
-      var actMail = function(feed){
-         var res = JSON.parse(feed.responseText);
-         if(res.actEmailSent){
-            Log.innerHTML="Activation mail sent. Please check your spam folder aswell";
-            Username.style.display='none';
-            Email.style.display='none';
-            Passwords1.style.display='none';
-            Passwords2.style.display='none';
-            Signupdiv.style.display='none';
-            Lock.style.display='inline';
-                                        
-         }
-         delete Passwords2.shuttle;
-                                        
-      }
-                                        
-   </script>
-   <style type="text/css">
-      header{
-      width: 100%;
-      }
-      #logo {
-      height: 3.3cm;
-      width: 3.3cm;
-      padding:0.5cm;
-      padding-top:0.2cm;
-      }
-      #logo.big {
-      height: 5cm;
-      width: 5cm;
-      padding: 0.5cm;
-      }
-      #lock {
-      height: 0.8cm;
-      width: 0.8cm;
-      position: fixed;
-      right: 0.3cm;
-      top: o.3cm;
-      }
-      #unlock {
-      height: 0.8cm;
-      width: 0.8cm;
-      vertical-align: middle;
-      }
-      #username {
-      display: none;
-      position: fixed;
-      right: 0.3cm;
-      top: 0.3cm;
-      width: 6cm;
-      color: rgb(192,192,192);
-      }
-      #email {
-      display: none;
-      width: 6cm;
-      color: rgb(192,192,192);
-      }
-      #passwords1 {
-      display: none;
-      width: 6cm;
-      color: rgb(192,192,192);
-      }
-      #passwords2 {
-      display: none;
-      width: 6cm;
-      color: rgb(192,192,192);
-      }
-      #signupdiv {
-      display: none;
-      position: fixed;
-      right: 0.3cm;
-      top: 1.1cm;
-      }
-      #password {
-      display: none;
-      position: fixed;
-      right: 0.3cm;
-      top: 0.3cm;
-      width: 6cm;
-      color: rgb(192,192,192);
-      }
-      #usermenu {
-      display: none;
-      position: fixed;
-      right: 0.3cm;
-      top: 0.3cm;
-      }    
-      #user {
-      
-      }
-      #log {
-         position: fixed;
-         bottom: 0.3cm;
-         right: 0.3cm;
-      }
-      #search-bar{
-      width: 100%;
-      }
-      #search-tool {
-      width:20px;
-      height:32px;
-      padding-left:6px;
-      padding-right:6px;
-      position:relative;
-      }
-      #mouth {
-      height: 40px;
-      border-width:0px;
-      line-height: 32px;
-      resize: none;
-      position: relative;
-      font-family:Quicksand;
-      font-size:32px;
-      margin:0px;
-      padding:0px;
-      color:rgb(192,192,192);
-      width:380px;
-      }
-      .inptTxtBx:focus{
-      outline:none;
-      }
-      #lips {
-      border-left: 1px solid black;
-      border-right: 1px solid black;
-      border-bottom: 1px solid black;
-      height: 8px;
-      margin-top: 50px;
-      border-bottom-left-radius:3px;xf
-      border-bottom-right-radius:3px;
-      -webkit-border-bottom-left-radius:3px;
-      -webkit-border-bottom-right-radius:3px;
-      display: inline-block;
-      }
-      #mouth-pad {
-      padding-left:6px;
-      padding-right:6px;
-      display:inline-block;
-      top:-34px;
-      position:relative;
-      }
-      .transform2s3d{
-      -webkit-transition: width 2s, height 2s, -webkit-transform 2s linear;
-      -webkit-transform-style: preserve-3d;
-      -moz-transition: width 2s, height 2s, -moz-transform 2s linear;
-      -moz-transform-style: preserve-3d;
-      transition: width 2s, height 2s, transform 2s linear;
-      transform-style: preserve-3d;
-      }
-      .middle {
-      position: relative;
-      display: block;
-      text-align: center;
-      }
-      .center {
-      text-align: center;
-      vertical-align: middle;
-      position: relative;
-      display: block;
-      margin: auto;
-      }
-      @font-face{
-      font-family:Quicksand;
-      src:url("fnt/Quicksand.woff");
-      }
-      @font-face{
-      font-family:SourceCodePro;
-      src:url("fnt/SourceCodePro.woff");
-      }
-      @font-face{
-      font-family:SourceCodeBold;
-      src:url("fnt/SourceCodeBold.woff");
-      }
-      .invisible{
-      opacity: 0;
-      filter: alpha(opacity=0);
-      }
-      #land {
-      width: 100%;
-      }
-      #compound-wall {
-      padding-left:6px;
-      padding-right:6px;
-      display:inline-block;
-      position:relative;
-      }
-      .plot {
-      position: relative;
-      display: inline-block;
-      width: 256px;
-      height: 256px;
-      border-width:1px;
-      border-color:black;
-      border-style:solid;
-      vertical-align:top;
-      }
-      .fat.plot {
-      width: 512px;
-      height: 256px;
-      }
-      .tall.plot {
-      width:  256px;
-      height: 512px;
-      }
-      .jumbo.plot{
-      width: 512px;
-      height:512px;
-      }
-      .plot .facade,
-      .plot .name{
-      display:block;
-      position:relative;
-      }
-      .plot .facade{
-      height:75%;/*192px;*/
-      border:0px;
-      border-bottom-width:1px;
-      border-color:black;
-      border-style:solid;
-      }
-      .plot .name{
-      height:25%;
-      }
-      /*.tall.plot .facade,
-      .jumbo.plot .facade{
-      height:384px;
-      }
-      .tall.plot .facade,
-      .jumbo.plot .facade{
-      height: 128px;
-      }
-      .tall.plot .facade,
-      .jumbo.plot .facade{
-      height:384px;
-      }*/
-   </style>
-   </head>
-   <body onload="init()">
-      <header>
-         <img id="lock" src="img/Lock.svg" onclick="unlock()"/>
-         <input id="username" alt="Username"/>
-         <input id="password" alt="Password"/>
-         <div id="signupdiv">
-            <input id="email" alt="Email"/>
-            <input id="passwords1" alt="Password"/>
-            <input id="passwords2" alt="Password"/>
-            <span>Signup </span>
-            <input id="signup" alt="Signup" type="checkbox"
-                   onclick="togglesignup()"/>
-         </div>
-         <div id="usermenu">
-            <span id="user"></span>
-            <img id="unlock" src="img/Unlock.svg" onclick="lock()"/>
-         </div>
-         <div id="log"></div>
-         <img id="logo" class="center" src="img/FerryFair.svg"/>
-      </header>
-      <div id="search-bar">
-         <div class="center"><div id="lips"><form id="mouth-pad">
-            <input id="mouth" name="search" type="text"/>
-            <input id="search-tool" type="image" src="img/SearchTool.svg" alt="Search"/>
-         </form></div></div>
+   <script type="text/javascript" src="js/init.js"></script>
+   <link type="text/css" href="css/main.css" rel="stylesheet"/>
+</head>
+<body onload="init()">
+   <header>
+      <img id="lock" src="img/Lock.svg" onclick="unlock()"/>
+      <input id="username" alt="Username"/>
+      <input id="password" alt="Password"/>
+      <div id="signupdiv">
+         <input id="email" alt="Email"/>
+         <input id="passwords1" alt="Password"/>
+         <input id="passwords2" alt="Password"/>
+         <span>Signup </span>
+         <input id="signup" alt="Signup" type="checkbox"
+                onclick="togglesignup()"/>
       </div>
-      <div id="land">
-         <div class="middle"><div id="compound-wall">
-            <div class="plot">
-               <div class="facade"></div>
+      <div id="usermenu">
+         <span id="user"></span>
+         <img id="unlock" src="img/Unlock.svg" onclick="lock()"/>
+      </div>
+      <div id="log"></div>
+      <img id="logo" class="center" src="img/FerryFair.svg"/>
+   </header>
+   <div id="search-bar">
+      <div class="center"><div id="lips"><form id="mouth-pad">
+         <input id="mouth" name="search" type="text"/>
+         <input id="search-tool" type="image" src="img/SearchTool.svg"
+                alt="Search"/>
+      </form></div></div>
+   </div>
+   <div id="land">
+      <div class="middle"><div id="compound-wall">
+         <div class="plot">
+            <div class="facade"></div>
                <div class="name"></div>
             </div>
             <div class="fat plot">
@@ -494,7 +57,8 @@
                <div class="facade"></div>
                <div class="name"></div>
             </div>
-         </div></div>
-      </div>
-      <footer></footer>
+         </div>
+      </div></div>
+   </div>
+   <footer></footer>
 </body></html>
