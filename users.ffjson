@@ -1,1 +1,10 @@
-{}
+{
+	gowtham: {
+		inactive: false,
+		password: "tornshoes",
+		email: "gowtham.kudupudi@gmail.com",
+		activationKey: "hzTtH1lIXLpO1GbN",
+		name: "gowtham"
+	},
+	gowtham.kudupudi@gmail.com: gowtham
+}

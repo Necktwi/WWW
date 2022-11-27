@@ -153,12 +153,18 @@ var onBID=function(feed){
    }
    if (res.sid){
    }
+   if (res.username && res.email) {
+      Username.value=res.username;
+      Email.value=res.email;
+      login(feed);
+   }
    delete shuttle;
 }
       
 var login=function(feed){
    var res = JSON.parse(feed.responseText);
    if(res.login===true){
+      Lock.style.display='none';
       Password.style.display='none';
       User.innerHTML=Username.value;
       Usermenu.style.display='inline';
