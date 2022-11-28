@@ -79,24 +79,26 @@ header{
     width: 100%;
 }
 #search-tool {
-    width:20px;
-    height:32px;
-    padding-left:6px;
-    padding-right:6px;
+    width:0.5292cm; /*20px on iphone 12 mini*/
+    height:0.7cm;
+    padding-left:0px;
+    padding-right:0px;
+    border-radius:0px;
     position:relative;
+    margin-left:0.08cm;
 }
 #mouth {
-    height: 40px;
+    height: 0.83cm;
     border-width:0px;
-    line-height: 32px;
+    line-height: 0.8cm;
     resize: none;
     position: relative;
     font-family:Quicksand;
-    font-size:32px;
+    font-size:0.72cm;
     margin:0px;
     padding:0px;
     color:rgb(192,192,192);
-    width:380px;
+    width:8.4cm;
 }
 .inptTxtBx:focus{
     outline:none;
@@ -105,8 +107,8 @@ header{
     border-left: 1px solid black;
     border-right: 1px solid black;
     border-bottom: 1px solid black;
-    height: 8px;
-    margin-top: 50px;
+    height: 0.2cm;
+    margin-top: 0.7cm;
     border-bottom-left-radius:3px;
     border-bottom-right-radius:3px;
     -webkit-border-bottom-left-radius:3px;
@@ -117,8 +119,9 @@ header{
     padding-left:6px;
     padding-right:6px;
     display:inline-block;
-    top:-34px;
+    top:-0.7cm;
     position:relative;
+    font-size:0px;
 }
 .transform2s3d{
     -webkit-transition: width 2s, height 2s, -webkit-transform 2s linear;
@@ -168,24 +171,24 @@ header{
 .plot {
     position: relative;
     display: inline-block;
-    width: 256px;
-    height: 256px;
+    width: 4cm;
+    height: 4cm;
     border-width:1px;
     border-color:black;
     border-style:solid;
     vertical-align:top;
 }
 .fat.plot {
-    width: 512px;
-    height: 256px;
+    width: 8cm;
+    height: 4cm;
 }
 .tall.plot {
-    width:  256px;
-    height: 512px;
+    width:  4cm;
+    height: 8cm;
 }
 .jumbo.plot{
-    width: 512px;
-    height:512px;
+    width: 8cm;
+    height: 8cm;
 }
 .plot .facade,
 .plot .name{
