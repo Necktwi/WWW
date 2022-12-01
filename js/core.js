@@ -1,1 +1,1 @@
-../../I/ferry/lib/core.js
+../../ferry/lib/core.js

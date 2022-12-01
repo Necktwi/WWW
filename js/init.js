@@ -74,18 +74,27 @@ var inputOnBlur=function(){
       showPlaceHolder.call(this);
    }
 };
+var isPrintable=function(keycode){
+   return (keycode > 47 && keycode < 58)   || // number keys
+      (keycode > 64 && keycode < 91)       || // letter keys
+      (keycode > 95 && keycode < 112)      || // numpad keys
+      (keycode > 185 && keycode < 193)     || // ;=,-./` (in order)
+      (keycode > 218 && keycode < 223);       // [\]' (in order)
+}
 var inputOnKeyDown=function(){
+   console.log(String.fromCharCode(event.charCode));
    if ((event.keyCode == 8 || event.keyCode == 46)
        && this.value.length==1) { // Backspace
       showPlaceHolder.call(this);
       event.preventDefault();
-   } else if(this.value === this.plcHldr &&
-             !(event.keyCode == 8 || event.keyCode == 46)) {
-      this.value='';
-      this.style.color="rgb(0,0,0)"
-      if(this.ctype==='password')this.type='password';  
-   } else if(this.value === this.plcHldr && event.keyCode == 46) {
-      event.preventDefault();
+   } else if(this.value === this.plcHldr) {
+      if(isPrintable(event.keyCode)) {
+         this.value='';
+         this.style.color="rgb(0,0,0)"
+         if(this.ctype==='password')this.type='password';  
+      } else {
+         event.preventDefault();
+      }
    }
 };
 var init=function(){
