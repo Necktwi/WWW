@@ -18,3 +18,7 @@ nbactions.xml
 nb-configuration.xml
 
 vgcore.*
+
+rbs.ffjson
+users.ffjson
+
