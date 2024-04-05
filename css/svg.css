@@ -1,0 +1,45 @@
+@namespace svg url(http://www.w3.org/2000/svg);
+
+#logo #path2993 {
+    stroke: rgb(0,0,0);
+}
+
+.dark #logo #path2993 {
+    stroke: rgb(255,255,255);
+}
+
+#logo #path2997 {
+    stroke: rgb(0, 0, 0);
+}
+
+.dark #logo #path2997 {
+    stroke: rgb(255, 255, 255);
+}
+
+#logo #path2999 {
+    stroke: rgb(0, 0, 0);
+}
+
+.dark #logo #path2999 {
+    stroke: rgb(255, 255, 255);
+}
+
+#logo #Hull {
+    fill: rgb(255, 64, 64); 
+    stroke: rgb(128, 0, 0);
+}
+
+.dark #logo #Hull {
+    fill: rgb(255, 128, 128);
+    stroke: rgb(255, 192, 192);
+}
+
+#logo #Waves {
+    fill: rgba(255, 255, 255, 0); 
+    stroke: rgb(0, 0, 256);
+}
+
+.dark #logo #Waves {
+    fill: rgba(255, 255, 255, 0);
+    stroke: rgb(128, 128, 256);
+}

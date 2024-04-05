@@ -4,11 +4,13 @@ Gowtham Kudupudi 21/07/18
 based on
 https://www.w3.org/TR/SMIL20/animation.html#animationNS-AddAndCum
 -->
-<svg id="svg2" viewBox="0 0 288 288" xmlns="http://www.w3.org/2000/svg">
-   <g id="Ferry" transform="matrix(1 0 0 1 16 16)">
+<svg id="svg2" viewBox="0 0 288 288" xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+   <link type="text/css" href="svg.css" rel="stylesheet"/>
+   <g id="Ferry" transform="matrix(1 0 0 1 16 16)" style="fill: rgb(0, 0, 0)">
       <g>
       <path
-      style="fill: rgb(0, 128, 0); stroke: rgb(0, 0, 0); stroke-width: 1px; 
+      style="fill: rgb(0, 128, 0); stroke-width: 1px; 
       stroke-linecap: butt; stroke-linejoin: miter; stroke-opacity: 1;" 
       id="path2993" d="M 121.996 56.286 C 124.269 58.023 120.791 60.229 119.128 
       60.09 C 114.622 59.714 113.149 54.167 114.44 50.505 C 116.749 43.955 
