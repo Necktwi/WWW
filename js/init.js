@@ -169,7 +169,6 @@ var onBID=function(feed){
    }
    delete shuttle;
 }
-      
 var login=function(feed){
    var res = JSON.parse(feed.responseText);
    if(res.login===true){

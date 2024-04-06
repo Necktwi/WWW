@@ -12,11 +12,26 @@
    <script type="text/javascript" src="js/core.js"></script>
    <script type="text/javascript" src="js/init.js"></script>
    <link type="text/css" href="css/main.css" rel="stylesheet"/>
+   <link type="text/css" href="css/main-dark.css" rel="stylesheet"/>
    <link type="text/css" href="css/svg.css" rel="stylesheet"/>
 </head>
 <body onload="init()" class="dark">
    <header>
-      <img id="lock" src="img/Lock.svg" onclick="unlock()"/>
+      <!--img id="lock" src="img/Lock.svg" onclick="unlock()"/-->
+      <svg id="lock" height="24" viewBox="0 0 24 24" width="24"
+           xmlns="http://www.w3.org/2000/svg"
+           xmlns:xlink="http://www.w3.org/1999/xlink"
+           onclick="unlock()">
+         <path
+            id="lock"
+            style="stroke-opacity: 1"
+            d="M12 2C9.243 2 7 4.243 7 7v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12
+               a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7c0-2.757-2.243-5-5-5z
+               M9 7c0-1.654 1.346-3 3-3s3 1.346 3 3v3H9V7z
+               m4 10.723V20h-2v-2.277a1.993 1.993 0 0 1 .567-3.677
+               A2.001 2.001 0 0 1 14 16
+               a1.99 1.99 0 0 1-1 1.723z"/>
+      </svg>
       <input id="username" alt="Username"/>
       <input id="password" alt="Password"/>
       <div id="signupdiv">
@@ -40,9 +55,10 @@
             style="fill: rgb(0, 0, 0)">
             <g>
                <path
-                  id="path2993"
+                  id="spiral"
                   style="fill: rgb(0, 128, 0); stroke-width: 1px; 
-                         stroke-linecap: butt; stroke-linejoin: miter; stroke-opacity: 1;" 
+                         stroke-linecap: butt; stroke-linejoin: miter;
+                         stroke-opacity: 1;" 
                   d="M 121.996 56.286
                      C 124.269 58.023 120.791 60.229 119.128 60.09
                      C 114.622 59.714 113.149 54.167 114.44 50.505
@@ -80,7 +96,7 @@
                   keyTimes="0; 0.05; 0.5; 0.95; 1"/>
             </g>
             <path
-               id="path2997" 
+               id="feet" 
                style="fill:#ffff00;fill-rule:evenodd;stroke-width:1px;
                       stroke-linecap:butt;stroke-linejoin:miter;
                       stroke-opacity:1"
@@ -117,11 +133,10 @@
                   keyTimes="0; 0.05; 0.5; 0.95; 1"/>
             </path>
             <path
-               id="path2999"
+               id="bubble"
                style="fill-rule: evenodd;
                       stroke-width: 1px; stroke-linecap: butt;
-                      stroke-linejoin: miter; stroke-opacity: 1;
-                      fill: rgb(0, 217, 255);"
+                      stroke-linejoin: miter; stroke-opacity: 1;"
                d="M 195.953 173.753
                   C 104 102.422 271.148 117.1 167.868 170.734
                   C 107.962 201.844 156.588 245.827 179.456 182.317
@@ -193,7 +208,7 @@
                   c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 c 8,-8 8,-8 16,0
                   c 8,8 8,8 16,0 c 8,-8 8,-8 16,0 c 8,8 8,8 16,0
                   c 8,-8 8,-8 16,0 c 8,8 8,8 16,0"
-               style="stroke-width:1.0;
+               style="stroke-width:2.0;
                       stroke-opacity: 1.0;">
                <animateTransform
                   attributeName="transform" dur="4s" begin="0s" type="scale"
@@ -215,8 +230,21 @@
    <div id="search-bar">
       <div class="center"><div id="lips"><form id="mouth-pad">
          <input id="mouth" name="search" type="text"/>
-         <input id="search-tool" type="image" src="img/SearchTool.svg"
-                alt="Search"/>
+         <!--input id="search-tool" type="image" src="img/SearchTool.svg"
+                alt="Search"/-->
+         <svg id="search-tool" alt="Search" viewBox="0 0 42 66"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink">
+            <path
+               id="mirror"
+               d="M 21 41 A 20 20 0 0 1 21 1 A 20 20 0 1 1 21 41 L 21 45
+                  L 22 45 L 22 65 L 20 65 L 20 45 L 21 45 Z"
+               style="stroke-width: 1;"/>
+            <path
+               id="stock"
+               d="M 21 7 A 20 40 45 0 1 33 21 A 20 20 0 0 0 21 7 Z"
+               style="stroke-opacity: 1.0;"/>
+         </svg>
       </form></div></div>
    </div>
    <div id="land">

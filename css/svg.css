@@ -1,26 +1,28 @@
 @namespace svg url(http://www.w3.org/2000/svg);
 
-#logo #path2993 {
+#logo #spiral {
     stroke: rgb(0,0,0);
 }
 
-.dark #logo #path2993 {
+.dark #logo #spiral {
     stroke: rgb(255,255,255);
 }
 
-#logo #path2997 {
+#logo #feet {
     stroke: rgb(0, 0, 0);
 }
 
-.dark #logo #path2997 {
+.dark #logo #feet {
     stroke: rgb(255, 255, 255);
 }
 
-#logo #path2999 {
+#logo #bubble {
+    fill: rgb(0, 217, 255);
     stroke: rgb(0, 0, 0);
 }
 
-.dark #logo #path2999 {
+.dark #logo #bubble {
+    fill: rgb(0, 128, 255);
     stroke: rgb(255, 255, 255);
 }
 
@@ -42,4 +44,34 @@
 .dark #logo #Waves {
     fill: rgba(255, 255, 255, 0);
     stroke: rgb(128, 128, 256);
+}
+
+svg path#lock {
+    fill: rgb(184,115,51);
+}
+
+.dark svg path#lock {
+    stroke: rgb(255,255,255);
+}
+
+#search-tool path#mirror {
+    stroke: black;
+    fill: rgba(192, 192, 255, 0.498039);
+}
+
+#search-tool path#stock {
+    stroke: black;
+    stroke-width: 0;
+    fill: rgb(255, 255, 255);
+}
+
+.dark #search-tool path#mirror {
+    stroke: white;
+    fill: rgba(80, 80, 255, 0.9);
+}
+
+.dark #search-tool path#stock {
+    stroke: white;
+    stroke-width: 2.0;
+    fill: rgb(0, 0, 0);
 }
