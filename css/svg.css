@@ -54,6 +54,14 @@ svg path#lock {
     stroke: rgb(255,255,255);
 }
 
+svg path#unlock {
+    fill: rgb(184,115,51);
+}
+
+.dark svg path#unlock {
+    stroke: rgb(255,255,255);
+}
+
 #search-tool path#mirror {
     stroke: black;
     fill: rgba(192, 192, 255, 0.498039);

@@ -14,6 +14,7 @@ var Signup;
 var Usermenu;
 var User;
 var Unlock, Log;
+var AddItem, ChoosePic;
 var searchPlcHldr = 'Search an item near by';
 var caretPos=0;
 var browserID;
@@ -56,21 +57,25 @@ var setCaretPos=function(elem, caretPos) {
 var inputOnFocus=function(){
    if (this.value === this.plcHldr) {
       setCaretPos(this,0);
-      this.style.color="rgb(192,192,192)";
+      this.classList.remove("typing");
+      //this.style.color="rgb(192,192,192)";
       //event.cancelBubble=true;
    } else {
       if(this.ctype==='password')this.type='password';
-      this.style.color="rgb(0,0,0)";
+      //this.style.color="rgb(0,0,0)";
+      this.classList.add("typing");
    }
 };
 var showPlaceHolder = function () {
    this.type='text';
    this.value = this.plcHldr;
-   this.style.color="rgb(192,192,192)";
+   //this.style.color="rgb(192,192,192)";
+   this.classList.remove("typing");
    setCaretPos(this,0);
 };
 var inputOnBlur=function(){
    if (this.value === '') {
+      this.classList.remove("typing");
       showPlaceHolder.call(this);
    }
 };
@@ -90,8 +95,8 @@ var inputOnKeyDown=function(){
    } else if(this.value === this.plcHldr) {
       if(isPrintable(event.keyCode)) {
          this.value='';
-         this.style.color="rgb(0,0,0)"
-         if(this.ctype==='password')this.type='password';  
+         this.classList.add("typing");
+         if(this.ctype==='password')this.type='password';
       } else {
          event.preventDefault();
       }
@@ -154,6 +159,10 @@ var init=function(){
    f.content="{bid:\""+browserID+"\"}";
    f.postExpdtn=onBID;
    shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
+   AddItem=document.getElementById("AddItem");
+   AddItem.plcHldr="Add an item to market";
+   ChoosePic=document.getElementById("ChoosePic");
+   document.body.style.display='inline';
 };
 var onBID=function(feed){
    var res = JSON.parse(feed.responseText);
@@ -177,6 +186,14 @@ var login=function(feed){
       User.innerHTML=Username.value;
       Usermenu.style.display='inline';
       Signupdiv.style.display='none';
+   } else {
+      Log.innerHTML="No No...! Check username and password :)";
+      Lock.style.display='none';
+      Password.style.display='none';
+      Signupdiv.style.display='none';
+      Usermenu.style.display='none';
+      Lock.style.display='inline';
+      
    }
    delete Password.shuttle;
 }
@@ -234,7 +251,8 @@ var signup = function() {
 var actMail = function(feed){
    var res = JSON.parse(feed.responseText);
    if(res.actEmailSent){
-      Log.innerHTML="Activation mail sent. Please check your spam folder aswell";
+      Log.innerHTML=
+         "Activation mail sent. Please check your spam folder aswell";
       Username.style.display='none';
       Email.style.display='none';
       Passwords1.style.display='none';
@@ -276,4 +294,56 @@ var makeid = function (length) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
    }
    return result;
+}
+
+var addItem = function () {
+   AddItem.value="Upload";
+   ChoosePic.classList.remove("hidden");
+}
+
+var uploadFile = function(infoBox) {
+	var file = this.files[0];
+	var feed = new Object();
+	var fileName = document.createElement('span');
+	fileName.id = file.name;
+	fileName.innerHTML = file.name;
+	infoBox.appendChild(fileName);
+	var pInd = new Image();
+	pInd.src = 'images/loading.gif';
+	pInd.id = 'pInd';
+	feed.pInd = pInd;
+	var gauge = document.createElement('span');
+	gauge.id = 'gauge';
+	feed.elm = this;
+	feed.upldOnProgress = function(e) {
+	   if (e.lengthComputable) {
+		   gauge.innerHTML = '(' + parseInt(e.loaded / e.total * 100) + '%)';
+	   }
+	}
+	feed.postExpedition = function(feed) {
+	   feed.response = null;
+	   try {
+		   feed.response = eval("(" + feed.responseText + ")");
+	   } catch (err) {
+		   feed.response = {};
+	   }
+	   if (feed.response.success) {
+		   feed.pInd.parentElement.removeChild(feed.pInd);
+		   feed.elm.postUpload(feed);
+	   } else if (feed.response.error) {
+		   feed.pInd.src = '/images/x.png';
+		   feed.pInd.parentElement.children['gauge'].innerHTML = '';
+		   statusField.innerHTML = feed.response.error;
+	   }
+	}
+	feed.reqHeaders = [
+      ["X-Requested-With", "XMLHttpRequest"],
+      ["X-File-Name", encodeURIComponent(name)],
+      ["Content-Type", "application/octet-stream"]];
+	feed.ferry = new core.shuttle(
+      "uplaod" + encodeURIComponent(file.fileName),
+      file, feed.postExpedition, feed);
+	fileName.insertAdjacentElement('beforeBegin', document.createElement('br'));
+	fileName.insertAdjacentElement('beforeBegin', pInd);
+	fileName.insertAdjacentElement('afterEnd', gauge);
 }

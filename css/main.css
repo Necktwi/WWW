@@ -4,13 +4,16 @@ header{
 #logo {
     height: 3.3cm;
     width: 3.3cm;
-    padding:0.5cm;
+    padding:0cm;
     padding-top:0.2cm;
+    padding-bottom:0.5cm;
 }
 #logo.big {
     height: 5cm;
     width: 5cm;
-    padding: 0.5cm;
+    padding: 0cm;
+    padding-top: 0.2cm;
+    padding-bottom: 0.5cm;
 }
 #lock {
     height: 0.8cm;
@@ -30,22 +33,21 @@ header{
     right: 0.3cm;
     top: 0.3cm;
     width: 6cm;
-    color: rgb(192,192,192);
 }
 #email {
     display: none;
     width: 6cm;
-    color: rgb(192,192,192);
 }
 #passwords1 {
     display: none;
     width: 6cm;
-    color: rgb(192,192,192);
 }
 #passwords2 {
     display: none;
     width: 6cm;
-    color: rgb(192,192,192);
+}
+#signupSpan {
+    
 }
 #signupdiv {
     display: none;
@@ -59,7 +61,6 @@ header{
     right: 0.3cm;
     top: 0.3cm;
     width: 6cm;
-    color: rgb(192,192,192);
 }
 #usermenu {
     display: none;
@@ -97,11 +98,24 @@ header{
     font-size:0.72cm;
     margin:0px;
     padding:0px;
-    color:rgb(192,192,192);
     width:8.4cm;
 }
-.inptTxtBx:focus{
+.inptTxtBx {
+    color: rgb(192,192,192);
+}
+.inptTxtBx:focus {
     outline:none;
+    color: rgb(192,192,192);
+}
+.inptTxtBx.typing:focus {
+    outline:none;
+    color: black;
+}
+.inptTxtBx.typing:blur {
+    color: black;
+}
+inptTxtBx.typing {
+    color: black;
 }
 #lips {
     border-left: 1px solid black;
@@ -159,6 +173,9 @@ header{
 .invisible{
     opacity: 0;
     filter: alpha(opacity=0);
+}
+.hidden {
+    display: none;
 }
 #land {
     width: 100%;
