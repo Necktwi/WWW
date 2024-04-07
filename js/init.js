@@ -162,6 +162,21 @@ var init=function(){
    AddItem=document.getElementById("AddItem");
    AddItem.plcHldr="Add an item to market";
    ChoosePic=document.getElementById("ChoosePic");
+   // When user clicks on a button, trigger file selection dialog
+   ChoosePic.onclick = function(ev) {
+      ChoosePic.click();
+   };
+   // If user selected a file, read it into memory and trigger sendFileData()
+   ChoosePic.onchange = function(ev) {
+      if (!ev.target.files[0]) return;
+      var f = ev.target.files[0], r = new FileReader();
+      r.readAsArrayBuffer(f);
+      r.onload = function() {
+         ev.target.value = '';
+         sendFileData(f.name, new Uint8Array(r.result), 2048);
+      };
+   };
+
    document.body.style.display='inline';
 };
 var onBID=function(feed){
@@ -341,9 +356,38 @@ var uploadFile = function(infoBox) {
       ["X-File-Name", encodeURIComponent(name)],
       ["Content-Type", "application/octet-stream"]];
 	feed.ferry = new core.shuttle(
-      "uplaod" + encodeURIComponent(file.fileName),
+      "uplaod?file=" + encodeURIComponent(file.name),
       file, feed.postExpedition, feed);
 	fileName.insertAdjacentElement('beforeBegin', document.createElement('br'));
 	fileName.insertAdjacentElement('beforeBegin', pInd);
 	fileName.insertAdjacentElement('afterEnd', gauge);
 }
+
+// Helper function to display upload status
+var setStatus = function(text) {
+  document.getElementById('log').innerText = text;
+};
+
+
+// Send a large blob of data chunk by chunk
+var sendFileData = function(name, data, chunkSize) {
+  var sendChunk = function(offset) {
+    var chunk = data.subarray(offset, offset + chunkSize) || '';
+    var opts = {method: 'POST', body: chunk};
+    var url = '/upload?offset=' + offset + '&file=' + encodeURIComponent(name);
+    var ok;
+    setStatus(
+        'Uploading ' + name + ', bytes ' + offset + '..' +
+        (offset + chunk.length) + ' of ' + data.length);
+    fetch(url, opts)
+        .then(function(res) {
+          if (res.ok && chunk.length > 0) sendChunk(offset + chunk.length);
+          ok = res.ok;
+          return res.text();
+        })
+        .then(function(text) {
+          if (!ok) setStatus('Error: ' + text);
+        });
+  };
+  sendChunk(0);
+};
