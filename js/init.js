@@ -14,9 +14,10 @@ var Signup;
 var Usermenu;
 var User;
 var Unlock, Log;
-var AddItem, ChoosePic;
-var searchPlcHldr = 'Search an item near by';
+var UserThings, UserActions, AddThing, ChoosePic, NewThingImgs;
+var searchPlcHldr = 'Search a thing near by';
 var caretPos=0;
+const MaxImgsPerThing=3;
 var browserID;
 var Rotate=function(){
    var props = 'transform WebkitTransform MozTransform OTransform msTransform'.split(' '),
@@ -113,7 +114,7 @@ var init=function(){
       Logo.classList.add("transform2s3d");
       Logo.classList.remove("big");
    },2000);
-   Mouth.plcHldr="Search an item near by";
+   Mouth.plcHldr="Search a thing near by";
    Mouth.value=Mouth.plcHldr;
    Lock=document.getElementById("lock");
    Username=document.getElementById("username");
@@ -152,6 +153,7 @@ var init=function(){
    addEvent(Password, 'keydown', authenticateUser);
    Unlock = document.getElementById('unlock');
    Usermenu = document.getElementById('usermenu');
+   UserThings = document.getElementById('UserThings');
    addEvent(Passwords2, 'keydown', signup);
    browserID = getCookie("bid");
    var url = "cookie";
@@ -159,26 +161,65 @@ var init=function(){
    f.content="{bid:\""+browserID+"\"}";
    f.postExpdtn=onBID;
    shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
-   AddItem=document.getElementById("AddItem");
-   AddItem.plcHldr="Add an item to market";
-   ChoosePic=document.getElementById("ChoosePic");
-   // When user clicks on a button, trigger file selection dialog
-   ChoosePic.onclick = function(ev) {
-      ChoosePic.click();
-   };
-   // If user selected a file, read it into memory and trigger sendFileData()
-   ChoosePic.onchange = function(ev) {
-      if (!ev.target.files[0]) return;
-      var f = ev.target.files[0], r = new FileReader();
-      r.readAsArrayBuffer(f);
-      r.onload = function() {
-         ev.target.value = '';
-         sendFileData(f.name, new Uint8Array(r.result), 2048);
-      };
-   };
-
+   UserThings=document.getElementById("UserThings");
+   UserActions=document.getElementById("UserActions");
+   AddThing=document.getElementById("AddThing");
+   AddThing.plcHldr="Add a thing to the fair";
+   NewThingImgs=document.getElementById("NewThingImgs");
+   NewThingImgs.count=0;
+   // ChoosePic=document.getElementById("ChoosePic");
+   // ChoosePic.onclick = function(ev) {
+   //    ChoosePic.click();
+   // };
+   // ChoosePic.onchange = function(ev) {
+   //    if (!ev.target.files[0]) return;
+   //    var f = ev.target.files[0], r = new FileReader();
+   //    r.readAsArrayBuffer(f);
+   //    r.onload = function() {
+   //       ev.target.value = '';
+   //       var postUpload = function() {
+   //          ++NewThingImgs.count;
+   //          var newImg=document.getElementById("NI"+NewThingImgs.count);
+   //          newImg.src=
+   //             "/upload/"+Username.value+"/"+encodeURIComponent(f.name);
+   //       }
+   //       sendFileData(f.name, new Uint8Array(r.result), 2048, postUpload);
+   //    };
+   // };
+   var newimgs = NewThingImgs.children;
+   for (var i=0; i<newimgs.length; ++i) {
+      var editBtn = document.createElement("input");
+      editBtn.type="file";
+      editBtn.classList.add("editBtn");
+      editBtn.thingId=-1;
+      editBtn.picId=i;
+      editBtn.onchange=selectFiles;
+      newimgs[i].append(editBtn);
+   }
    document.body.style.display='inline';
 };
+
+var selectFiles = function(ev) {
+   if (!ev.target.files[0]) return;
+   var btn = ev.target;
+   var f = btn.files[0], r = new FileReader();
+   r.readAsArrayBuffer(f);
+   r.onload = function() {
+      ev.target.value = '';
+      var postUpload = function(btn) {
+         ++NewThingImgs.count;
+         var thissvg=btn.previousElementSibling;
+         var newimg=document.createElement("img");
+         newimg.classList.add("fixedSize");
+         thissvg.classList.add("hidden");
+         newImg.src=
+            "/upload/"+Username.value+"/"+btn.itemId+"."+btn.picId+".jpg";
+         btn.insertAdjacentElement('beforeBegin', newimg);
+      }
+      sendFileData(f.name, new Uint8Array(r.result), 2048, btn, postUpload);
+   };
+}
+
 var onBID=function(feed){
    var res = JSON.parse(feed.responseText);
    if (res.bid){
@@ -193,14 +234,15 @@ var onBID=function(feed){
    }
    delete shuttle;
 }
-var login=function(feed){
+var login=function(feed) {
    var res = JSON.parse(feed.responseText);
-   if(res.login===true){
+   if(res.login===true) {
       Lock.style.display='none';
       Password.style.display='none';
       User.innerHTML=Username.value;
       Usermenu.style.display='inline';
       Signupdiv.style.display='none';
+      UserActions.classList.remove("hidden");
    } else {
       Log.innerHTML="No No...! Check username and password :)";
       Lock.style.display='none';
@@ -239,8 +281,22 @@ var authenticateUser = function() {
    }
 }
 var lock = function() {
-   Usermenu.style.display='none';
-   Lock.style.display='inline';
+   var url = "logout";
+   var f={};
+   f.content="";
+   f.postExpdtn=logout;
+   Unlock.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
+}
+var logout=function(feed){
+   var res = JSON.parse(feed.responseText);
+   if(res.logout===true){
+      Usermenu.style.display='none';
+      Lock.style.display='inline';
+      UserActions.classList.add("hidden");
+   } else {
+      Log.innerHTML="Huh! Something went wrong! Try again:)";
+   }
+   delete Unlock.shuttle;
 }
 var togglesignup = function() {
    if (Signup.checked) {
@@ -311,9 +367,9 @@ var makeid = function (length) {
    return result;
 }
 
-var addItem = function () {
-   AddItem.value="Upload";
-   ChoosePic.classList.remove("hidden");
+var addThing = function () {
+   AddThing.value="Upload";
+   NewThingImgs.classList.remove("hidden");
 }
 
 var uploadFile = function(infoBox) {
@@ -370,24 +426,32 @@ var setStatus = function(text) {
 
 
 // Send a large blob of data chunk by chunk
-var sendFileData = function(name, data, chunkSize) {
-  var sendChunk = function(offset) {
-    var chunk = data.subarray(offset, offset + chunkSize) || '';
-    var opts = {method: 'POST', body: chunk};
-    var url = '/upload?offset=' + offset + '&file=' + encodeURIComponent(name);
-    var ok;
-    setStatus(
-        'Uploading ' + name + ', bytes ' + offset + '..' +
-        (offset + chunk.length) + ' of ' + data.length);
-    fetch(url, opts)
-        .then(function(res) {
-          if (res.ok && chunk.length > 0) sendChunk(offset + chunk.length);
-          ok = res.ok;
-          return res.text();
-        })
-        .then(function(text) {
-          if (!ok) setStatus('Error: ' + text);
-        });
-  };
+var sendFileData = function(name, data, chunkSize, btn, postUpload) {
+   var sendChunk = function(offset) {
+      var chunk = data.subarray(offset, offset + chunkSize) || '';
+      var opts = {method: 'POST', body: chunk};
+      var url = '/upload?offset=' + offset;
+      url += '&chunkSize=' + chunkSize;
+      url += '&totalSize=' + data.length;
+      url += "&thingId=" + btn.thingId;
+      url += "&picId=" + btn.picId;
+      var ok;
+      setStatus(
+         'Uploading ' + name + ', bytes ' + offset + '..' +
+            (offset + chunk.length) + ' of ' + data.length);
+      fetch(url, opts)
+         .then(function(res) {
+            if (res.ok && chunk.length > 0) sendChunk(offset + chunk.length);
+            ok = res.ok;
+            return res.text();
+         })
+         .then(function(text) {
+            if (!ok) setStatus('Error: ' + text);
+            else if(offset >= data.length){
+               setStatus(name + ' uploaded!');
+               postUpload(btn);
+            }
+         });
+   };
   sendChunk(0);
 };

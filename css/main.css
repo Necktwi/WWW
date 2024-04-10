@@ -1,5 +1,6 @@
 header{
     width: 100%;
+    z-index: 10;
 }
 #logo {
     height: 3.3cm;
@@ -20,12 +21,14 @@ header{
     width: 0.8cm;
     position: fixed;
     right: 0.3cm;
-    top: o.3cm;
+    top: 0.3cm;
+    z-index: 11;
 }
 #unlock {
     height: 0.8cm;
     width: 0.8cm;
     vertical-align: middle;
+    z-index: 11;
 }
 #username {
     display: none;
@@ -138,6 +141,40 @@ inptTxtBx.typing {
     position:relative;
     font-size:0px;
 }
+
+#NewThingImgs div {
+    display: inline-block;
+    width: 6cm;
+    height:8cm;
+}
+
+#NewThingImgs svg.fixedSize {
+    width: 6cm;
+    height: 8cm;
+    background-color: rgb(64,64,64);
+}
+
+#NewThingImgs svg path {
+    fill: rgb(128, 128, 128);
+}
+
+#NewThingImgs div input.editBtn {
+    /* display: block; */
+    /* width: 0.8cm; */
+    /* height: 0.8cm; */
+    top: -1cm;
+    position: relative;
+    /* background-image: url('/images/myIconSet.png'); */
+    /* background-position: 0px -140px; */
+    /* background-size: 938px; */
+    /* filter: invert(1); */
+    /* border-color: black; */
+    /* border-left-width: 2px; */
+    /* border-right-width: 2px; */
+    /* border-top-width: 2px; */
+    /* border-bottom-width: 2px; */
+}
+
 .transform2s3d{
     -webkit-transition: width 2s, height 2s, -webkit-transform 2s linear;
     -webkit-transform-style: preserve-3d;

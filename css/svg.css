@@ -1,47 +1,47 @@
 @namespace svg url(http://www.w3.org/2000/svg);
 
-#logo #spiral {
+svg #spiral {
     stroke: rgb(0,0,0);
 }
 
-.dark #logo #spiral {
+.dark svg #spiral {
     stroke: rgb(255,255,255);
 }
 
-#logo #feet {
+svg #feet {
     stroke: rgb(0, 0, 0);
 }
 
-.dark #logo #feet {
+.dark svg #feet {
     stroke: rgb(255, 255, 255);
 }
 
-#logo #bubble {
+svg #bubble {
     fill: rgb(0, 217, 255);
     stroke: rgb(0, 0, 0);
 }
 
-.dark #logo #bubble {
+.dark svg #bubble {
     fill: rgb(0, 128, 255);
     stroke: rgb(255, 255, 255);
 }
 
-#logo #Hull {
+svg #Hull {
     fill: rgb(255, 64, 64); 
     stroke: rgb(128, 0, 0);
 }
 
-.dark #logo #Hull {
+.dark svg #Hull {
     fill: rgb(255, 128, 128);
     stroke: rgb(255, 192, 192);
 }
 
-#logo #Waves {
+svg #Waves {
     fill: rgba(255, 255, 255, 0); 
     stroke: rgb(0, 0, 256);
 }
 
-.dark #logo #Waves {
+.dark svg #Waves {
     fill: rgba(255, 255, 255, 0);
     stroke: rgb(128, 128, 256);
 }
