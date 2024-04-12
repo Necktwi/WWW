@@ -1,0 +1,55 @@
+.dark {
+    color: white;
+    background-color: black;
+}
+
+.dark #lips {
+    border-color: rgb(255,255,255);
+}
+
+.dark #signupSpan {
+    color: white;
+}
+
+.dark #signup {
+    color:white;
+    background-color: black;
+    border-color: white;
+}
+
+.dark .inptTxtBx {
+    color: rgb(90,90,90);
+    background-color: black;
+    border-color: white;
+}
+.dark .inptTxtBx:focus {
+    outline:none;
+    color: rgb(90,90,90);
+}
+.dark .inptTxtBx.typing:focus {
+    outline:none;
+    color: white;
+}
+.dark .inptTxtBx.typing {
+    color: white;
+}
+
+.dark #log {
+    color: white;
+}
+
+.dark .plot {
+    border-color: white;
+}
+.dark .plot .facade {
+    border-color: white;
+}
+.dark #NewThingImgs svg.fixedSize {
+    width: 6cm;
+    height: 8cm;
+    background-color: rgb(64,64,64);
+}
+
+.dark #NewThingImgs svg path {
+    fill: rgb(128, 128, 128);
+}

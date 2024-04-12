@@ -31,42 +31,38 @@ header{
     z-index: 11;
 }
 #username {
-    display: none;
     position: fixed;
     right: 0.3cm;
     top: 0.3cm;
     width: 6cm;
 }
 #email {
-    display: none;
+    display:block;
     width: 6cm;
 }
 #passwords1 {
-    display: none;
+    display:block;
     width: 6cm;
 }
 #passwords2 {
-    display: none;
+    display:block;
     width: 6cm;
 }
 #signupSpan {
     
 }
 #signupdiv {
-    display: none;
     position: fixed;
     right: 0.3cm;
     top: 1.1cm;
 }
 #password {
-    display: none;
     position: fixed;
     right: 0.3cm;
     top: 0.3cm;
     width: 6cm;
 }
 #usermenu {
-    display: none;
     position: fixed;
     right: 0.3cm;
     top: 0.3cm;
@@ -148,7 +144,7 @@ inptTxtBx.typing {
     height:8cm;
 }
 
-#NewThingImgs svg.fixedSize {
+#NewThingImgs svg.fixedSize img.fixedSize {
     width: 6cm;
     height: 8cm;
     background-color: rgb(64,64,64);
@@ -212,7 +208,8 @@ inptTxtBx.typing {
     filter: alpha(opacity=0);
 }
 .hidden {
-    display: none;
+    visibility: hidden;
+    position: absolute;
 }
 #land {
     width: 100%;

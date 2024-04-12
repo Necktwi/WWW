@@ -22,3 +22,7 @@ vgcore.*
 rbs.ffjson
 users.ffjson
 
+upload/*
+
+# emacs
+._*

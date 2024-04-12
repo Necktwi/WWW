@@ -206,17 +206,20 @@ var selectFiles = function(ev) {
    r.readAsArrayBuffer(f);
    r.onload = function() {
       ev.target.value = '';
-      var postUpload = function(btn) {
-         ++NewThingImgs.count;
-         var thissvg=btn.previousElementSibling;
+      btn.postChunk = function() {
+         var jso=JSON.parse(this.text);
+         this.thingId=jso["thingId"];
+      }
+      btn.postUpload = function() {
+         var thissvg=this.previousElementSibling;
          var newimg=document.createElement("img");
          newimg.classList.add("fixedSize");
          thissvg.classList.add("hidden");
-         newImg.src=
-            "/upload/"+Username.value+"/"+btn.itemId+"."+btn.picId+".jpg";
-         btn.insertAdjacentElement('beforeBegin', newimg);
+         newimg.src=
+            "/upload/"+Username.value+"/"+this.thingId+"."+this.picId+".jpg";
+         this.insertAdjacentElement('beforeBegin', newimg);
       }
-      sendFileData(f.name, new Uint8Array(r.result), 2048, btn, postUpload);
+      sendFileData(f.name, new Uint8Array(r.result), 2048, btn);
    };
 }
 
@@ -237,36 +240,35 @@ var onBID=function(feed){
 var login=function(feed) {
    var res = JSON.parse(feed.responseText);
    if(res.login===true) {
-      Lock.style.display='none';
-      Password.style.display='none';
+      Lock.classList.add("hidden");
+      Password.classList.add("hidden");
       User.innerHTML=Username.value;
-      Usermenu.style.display='inline';
-      Signupdiv.style.display='none';
+      Usermenu.classList.remove("hidden");
+      Signupdiv.classList.add("hidden");
       UserActions.classList.remove("hidden");
    } else {
       Log.innerHTML="No No...! Check username and password :)";
-      Lock.style.display='none';
-      Password.style.display='none';
-      Signupdiv.style.display='none';
-      Usermenu.style.display='none';
-      Lock.style.display='inline';
+      Lock.classList.add("hidden");
+      Password.classList.add("hidden");
+      Signupdiv.classList.remove("hidden");
+      Usermenu.classList.add("hidden");
+      Lock.classList.remove("hidden");
       
    }
    delete Password.shuttle;
 }
 var unlock=function(){
-   var lock=document.getElementById("lock");
-   lock.style.display='none';
-   Username.style.display='inline';
-   Signupdiv.style.display='inline';
+   Lock.classList.add("hidden");
+   Username.classList.remove("hidden");
+   Signupdiv.classList.remove("hidden");
    Signup.checked=false;
    Username.focus();
 };
 var usrnmEvent = function() {
    if(event.keyCode==13 && this.value !== this.plcHldr) { //13==enter
-      Username.style.display='none';
+      Username.classList.add("hidden");
       if(Password.value!=Password.plcHldr)Password.type='password';
-      Password.style.display='inline';
+      Password.classList.remove('hidden');
       Password.focus();
    }
 }
@@ -290,8 +292,8 @@ var lock = function() {
 var logout=function(feed){
    var res = JSON.parse(feed.responseText);
    if(res.logout===true){
-      Usermenu.style.display='none';
-      Lock.style.display='inline';
+      Usermenu.classList.add("hidden");
+      Lock.classList.remove("hidden");
       UserActions.classList.add("hidden");
    } else {
       Log.innerHTML="Huh! Something went wrong! Try again:)";
@@ -300,19 +302,23 @@ var logout=function(feed){
 }
 var togglesignup = function() {
    if (Signup.checked) {
-      Email.style.display='block';
-      Passwords1.style.display='block';
-      Passwords2.style.display='block';
+      Password.classList.add("hidden");
+      Username.classList.remove("hidden");
+      Email.classList.remove("hidden");
+      Passwords1.classList.remove("hidden");
+      Passwords2.classList.remove("hidden");
    } else {
-      Email.style.display='none';
-      Passwords1.style.display='none';
-      Passwords2.style.display='none';
+      Email.classList.add("hidden");
+      Passwords1.classList.add("hidden");
+      Passwords2.classList.add("hidden");
    }
 }
 var signup = function() {
    if(event.keyCode==13 && this.value !== this.plcHldr) { //13==enter
       var url = "signup";
       var f={};
+      Password.classList.add("hidden");
+      Username.classList.remove("hidden");
       f.content="{username:\""+Username.value+"\",password:\"";
       f.content+=Passwords2.value + "\",email:\""+Email.value+"\"}";
       f.postExpdtn=actMail;
@@ -324,13 +330,15 @@ var actMail = function(feed){
    if(res.actEmailSent){
       Log.innerHTML=
          "Activation mail sent. Please check your spam folder aswell";
-      Username.style.display='none';
-      Email.style.display='none';
-      Passwords1.style.display='none';
-      Passwords2.style.display='none';
-      Signupdiv.style.display='none';
-      Lock.style.display='inline';
-      
+      Username.classList.add("hidden");
+      Email.classList.add("hidden");
+      Passwords1.classList.add("hidden");
+      Passwords2.classList.add("hidden");
+      Signupdiv.classList.add("hidden");
+      Lock.classList.remove("hidden");
+   } else {
+      Log.innerHTML=
+         "Email already registered! Check for Actiavation mail or use another email id";
    }
    delete Passwords2.shuttle;   
 }
@@ -426,7 +434,7 @@ var setStatus = function(text) {
 
 
 // Send a large blob of data chunk by chunk
-var sendFileData = function(name, data, chunkSize, btn, postUpload) {
+var sendFileData = function(name, data, chunkSize, btn) {
    var sendChunk = function(offset) {
       var chunk = data.subarray(offset, offset + chunkSize) || '';
       var opts = {method: 'POST', body: chunk};
@@ -441,7 +449,6 @@ var sendFileData = function(name, data, chunkSize, btn, postUpload) {
             (offset + chunk.length) + ' of ' + data.length);
       fetch(url, opts)
          .then(function(res) {
-            if (res.ok && chunk.length > 0) sendChunk(offset + chunk.length);
             ok = res.ok;
             return res.text();
          })
@@ -449,7 +456,16 @@ var sendFileData = function(name, data, chunkSize, btn, postUpload) {
             if (!ok) setStatus('Error: ' + text);
             else if(offset >= data.length){
                setStatus(name + ' uploaded!');
-               postUpload(btn);
+               if(btn.postUpload) {
+                  btn.text=text;
+                  btn.postUpload();
+               }
+            } else {
+               if(btn.postChunk){
+                  btn.text=text;
+                  btn.postChunk();
+               }
+               if (ok && chunk.length > 0) sendChunk(offset + chunk.length);
             }
          });
    };
