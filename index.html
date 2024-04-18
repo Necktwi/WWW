@@ -78,8 +78,6 @@
    </script>
    <style type="text/css">
       #logo {
-          width: 75%;
-          height: 75%;
       }
       body.dark {
           background-color: black;
@@ -130,8 +128,8 @@
           stroke: rgb(128, 128, 256);
       }
    #Holder {
-      width: 5cm;
-      height: 5cm;
+       width: 75%;
+       height: 75%;
    }
    .transform1s3deaseinout {
       -webkit-transition: width 1.5s, height 1.5s, 
@@ -167,6 +165,7 @@
    </style>
 </head>
 <body onload="init()" class="dark">
+   <div id="Holder" class="center">   
    <svg id="logo" class="center" viewBox="0 0 288 288"
         xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -345,4 +344,5 @@
          </path>
       </g>
    </svg>
+   </div>
 </body></html>
