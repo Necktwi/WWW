@@ -144,7 +144,7 @@ inptTxtBx.typing {
     height:8cm;
 }
 
-#NewThingImgs svg.fixedSize img.fixedSize {
+svg.fixedSize, img.fixedSize {
     width: 6cm;
     height: 8cm;
     background-color: rgb(64,64,64);

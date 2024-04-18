@@ -14,7 +14,8 @@ var Signup;
 var Usermenu;
 var User;
 var Unlock, Log;
-var UserThings, UserActions, AddThing, ChoosePic, NewThingImgs;
+var UserThing, UserThings, UserActions, AddThing, ChoosePic, NewThingImgs;
+var SVGS;
 var searchPlcHldr = 'Search a thing near by';
 var caretPos=0;
 const MaxImgsPerThing=3;
@@ -154,6 +155,8 @@ var init=function(){
    Unlock = document.getElementById('unlock');
    Usermenu = document.getElementById('usermenu');
    UserThings = document.getElementById('UserThings');
+   UserThing = GetElementInsideContainer(UserThings, "UserThing");
+   UserThing.remove();
    addEvent(Passwords2, 'keydown', signup);
    browserID = getCookie("bid");
    var url = "cookie";
@@ -167,25 +170,15 @@ var init=function(){
    AddThing.plcHldr="Add a thing to the fair";
    NewThingImgs=document.getElementById("NewThingImgs");
    NewThingImgs.count=0;
-   // ChoosePic=document.getElementById("ChoosePic");
-   // ChoosePic.onclick = function(ev) {
-   //    ChoosePic.click();
-   // };
-   // ChoosePic.onchange = function(ev) {
-   //    if (!ev.target.files[0]) return;
-   //    var f = ev.target.files[0], r = new FileReader();
-   //    r.readAsArrayBuffer(f);
-   //    r.onload = function() {
-   //       ev.target.value = '';
-   //       var postUpload = function() {
-   //          ++NewThingImgs.count;
-   //          var newImg=document.getElementById("NI"+NewThingImgs.count);
-   //          newImg.src=
-   //             "/upload/"+Username.value+"/"+encodeURIComponent(f.name);
-   //       }
-   //       sendFileData(f.name, new Uint8Array(r.result), 2048, postUpload);
-   //    };
-   // };
+   SVGS=document.getElementById("SVGS");
+   var ni1=GetElementInsideContainer(NewThingImgs, "NI1");
+   for (var i=1; i<MaxImgsPerThing; ++i) {
+      var ni = ni1.cloneNode(true);
+      var spiral = GetElementInsideContainer(ni, "SpiralSVG");
+      var thisSVG = SVGS.children[i].cloneNode(true);
+      ni.replaceChild(thisSVG,spiral);
+      ni1.insertAdjacentElement('afterEnd', ni);
+   }
    var newimgs = NewThingImgs.children;
    for (var i=0; i<newimgs.length; ++i) {
       var editBtn = document.createElement("input");
@@ -230,8 +223,8 @@ var onBID=function(feed){
    }
    if (res.sid){
    }
-   if (res.username && res.email) {
-      Username.value=res.username;
+   if (res.name && res.email) {
+      Username.value=res.name;
       Email.value=res.email;
       login(feed);
    }
@@ -239,23 +232,55 @@ var onBID=function(feed){
 }
 var login=function(feed) {
    var res = JSON.parse(feed.responseText);
-   if(res.login===true) {
+   if(res.password) {
       Lock.classList.add("hidden");
       Password.classList.add("hidden");
       User.innerHTML=Username.value;
+      User.obj=res;
       Usermenu.classList.remove("hidden");
       Signupdiv.classList.add("hidden");
       UserActions.classList.remove("hidden");
+      updateUser(res);
    } else {
       Log.innerHTML="No No...! Check username and password :)";
       Lock.classList.add("hidden");
       Password.classList.add("hidden");
-      Signupdiv.classList.remove("hidden");
+      Signupdiv.classList.add("hidden");
       Usermenu.classList.add("hidden");
       Lock.classList.remove("hidden");
       
    }
    delete Password.shuttle;
+}
+var updateUser = function(res) {
+   if (res.things) {
+      for (var i=0; i<res.things.length; ++i) {
+         var thing=res.things[i];
+         var newThing = UserThings.children.length<=i;
+         var thingN=
+             newThing?UserThing.cloneNode(true):UserThings.children[i];
+         thingN.thingId=i;
+         if (newThing) {
+            var img=GetElementInsideContainer(thingN, "ThingImg");
+            img.src="/upload/"+res.name+"/"+i+".0.jpg";
+         }
+         var id=GetElementInsideContainer(thingN, "ThingId");
+         id.innerText=thing.id;
+         if (thing.name && thing.name.length) {
+            var name=GetElementInsideContainer(thingN, "ThingName");
+            name.innerText=thing.name;
+         }
+         if (thing.location && thing.location.length) {
+            var location=GetElementInsideContainer(thingN, "ThingLocation");
+            location.innerText=thing.location;
+         }
+         var UserThingEditBtn =
+             GetElementInsideContainer(thingN, "ThingEditBtn");
+         UserThingEditBtn.onclick=editThing;
+         if(newThing)UserThings.append(thingN);
+      }
+      UserThings.classList.remove("hidden");
+   }
 }
 var unlock=function(){
    Lock.classList.add("hidden");
@@ -265,7 +290,7 @@ var unlock=function(){
    Username.focus();
 };
 var usrnmEvent = function() {
-   if(event.keyCode==13 && this.value !== this.plcHldr) { //13==enter
+   if (event.keyCode==13 && this.value !== this.plcHldr) { //13==enter
       Username.classList.add("hidden");
       if(Password.value!=Password.plcHldr)Password.type='password';
       Password.classList.remove('hidden');
@@ -378,6 +403,84 @@ var makeid = function (length) {
 var addThing = function () {
    AddThing.value="Upload";
    NewThingImgs.classList.remove("hidden");
+   AddThing.onclick=addNewThing;
+}
+
+var addNewThing = function () {
+   var url = "updateItem";
+   var f={};
+   var content = {};
+   content.things=[];
+   var UserThing = this.parentElement;
+   var thing={};
+   var ThingNameB = GetElementInsideContainer(UserThing, "NewThingNameBox");
+   var ThingLocationB = GetElementInsideContainer(UserThing,
+                                                  "NewThingLocationBox");
+   thing.name=ThingNameB.value;
+   thing.location=ThingLocationB.value;
+   content.things[UserThings.children.length]=thing;
+   f.user=content;
+   f.content=JSON.stringify(content);
+   f.reqHeaders=[["content-type", "text/json"]];
+   f.postExpdtn=function(feed) {
+      var res=JSON.parse(feed.responseText);
+      if (res) {
+         updateUser(res);
+      }
+      delete f.shuttle;
+   };
+   f.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
+   
+   AddThing.value=AddThing.plcHldr;
+   AddThing.onclick=addThing;
+}
+
+var editThing = function() {
+   var UserThing = this.parentElement;
+   var ThingName = GetElementInsideContainer(UserThing, "ThingName");
+   ThingName.classList.add("hidden");
+   var ThingNameB = GetElementInsideContainer(UserThing, "ThingNameBox");
+   ThingNameB.classList.remove("hidden");
+   var ThingLocation = GetElementInsideContainer(UserThing, "ThingLocation");
+   ThingLocation.classList.add("hidden");
+   var ThingLocationB = GetElementInsideContainer(UserThing,
+                                                  "ThingLocationBox");
+   ThingLocationB.classList.remove("hidden");
+   this.value="Update";
+   this.onclick=updateThing;
+}
+var updateThing = function() {
+   var url = "updateItem";
+   var f={};
+   var content = {};
+   content.things=[];
+   var UserThing = this.parentElement;
+   var thing={};thing.id=UserThing.thingId;
+   var ThingName = GetElementInsideContainer(UserThing, "ThingName");
+   var ThingNameB = GetElementInsideContainer(UserThing, "ThingNameBox");
+   var ThingLocation = GetElementInsideContainer(UserThing, "ThingLocation");
+   var ThingLocationB = GetElementInsideContainer(UserThing,
+                                                  "ThingLocationBox");
+   thing.name=ThingNameB.value;
+   thing.location=ThingLocationB.value;
+   content.things[thing.id]=thing;
+   f.user=content;
+   f.content=JSON.stringify(content);
+   f.reqHeaders=[["content-type", "text/json"]];
+   f.postExpdtn=function(feed){
+      var res=JSON.parse(feed.responseText);
+      if (res.password) {
+         updateUser(f.user);
+      }
+      delete f.shuttle;
+   };
+   f.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
+   ThingName.classList.remove("hidden");
+   ThingNameB.classList.add("hidden");
+   ThingLocation.classList.remove("hidden");
+   ThingLocationB.classList.add("hidden");
+   this.value="Edit";
+   this.onclick=editThing;
 }
 
 var uploadFile = function(infoBox) {
@@ -471,3 +574,12 @@ var sendFileData = function(name, data, chunkSize, btn) {
    };
   sendChunk(0);
 };
+
+function GetElementInsideContainer(container, childID) {
+    var elms = container.children;
+    for (var i = 0; i < elms.length; i++) {
+        if (elms[i].id === childID) {
+            return elms[i];
+        }
+    }
+}
