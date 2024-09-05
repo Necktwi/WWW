@@ -4,11 +4,11 @@
 <!DOCTYPE html>
 <html><head>
    <title>FerryFair</Title>
-   <link rel='icon' href='img/favicon.ico' type='image/x-icon' />
+   <link rel='icon' href='img/favicon.ico' type='image/x-icon'/>
    <meta name="viewport" 
          content="width=device-width,initial-scale=1,maximum-scale=1"
          content="user-scalable=no" />
-   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
    <script type="text/javascript" src="js/core.js"></script>
    <script type="text/javascript" src="js/init.js"></script>
    <link type="text/css" href="css/main.css" rel="stylesheet"/>
@@ -259,7 +259,13 @@
    </div>
    <div id="UserThings" class="hidden center">
       <div id="UserThing" class="thing">
-         <img id="ThingImg" class="fixedSize"/><br/>
+         <div id='Imgs' class="">
+            <div id="ImgHldr" class="center">
+               <img id="ThingImg" class="fixedSize center"/>
+               <input id="SIB" type="file" class="editBtn hidden"
+                   onchange="selectFiles.call(this, event);"/>
+            </div>
+         </div>
          <label id="ThingNameL">Name: </label>
          <span id="ThingName"></span>
          <input id="ThingNameBox" class="hidden"/>
@@ -275,44 +281,6 @@
       </div>
    </div>
    <form id="UserActions" class="center hidden">
-      <div id='NewThingImgs' class="hidden">
-         <div id="NI1">
-            <svg id="SpiralSVG" class="fixedSize" viewBox="0 0 288 288"
-                 xmlns="http://www.w3.org/2000/svg"
-                 xmlns:xlink="http://www.w3.org/1999/xlink">
-               <g transform="matrix(2 0 0 2 -105 46)"
-                  style="fill: rgb(0, 0, 0)">
-                  <path
-                     id="spiral"
-                     style="stroke-width: 1px; 
-                            stroke-linecap: butt; stroke-linejoin: miter;
-                            stroke-opacity: 1;"
-                     d="M 121.996 56.286
-                        C 124.269 58.023 120.791 60.229 119.128 60.09
-                        C 114.622 59.714 113.149 54.167 114.44 50.505
-                        C 116.749 43.955 124.804 42.112 130.601 44.866
-                        C 139.108 48.903 141.337 59.883 137.106 67.846
-                        C 131.467 78.459 117.643 81.115 107.658 75.318
-                        C 95.087 68.019 92.038 51.099 99.331 38.945
-                        C 108.161 24.222 127.939 20.735 142.074 29.638
-                        C 158.73 40.133 162.6 63.081 152.216 79.407
-                        C 140.227 98.254 114.45 102.571 96.183 90.543
-                        C 75.425 76.876 70.73 47.87 84.221 27.382
-                        C 99.354 4.399 131.152 -0.749 153.546 14.412
-                        C 178.408 31.243 183.93 66.324 167.328 90.965"
-                     transform="matrix(0.305513, 0.952188, -0.952188, 0.305513,
-                                136.905878, -85.885062)">
-                  </path>
-               </g>
-            </svg>
-         </div>
-      </div>
-      <label id="NewThingNameL">Name: </label>
-      <input id="NewThingNameBox"/>
-      <br/>
-      <label id="NewThingLocationL">Location: </label>
-      <input id="NewThingLocationBox"/>
-      <br/>            
       <input
          id="AddThing" type="button" value="Add a thing to the fair"
          onclick="addThing()" class=""/>
