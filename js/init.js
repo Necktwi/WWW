@@ -3,9 +3,9 @@ var SearchTool;
 var SearchToolOpacity=1;
 var SearchToolBlink;
 var Mouth;
-var Lock;
+var Lock,Desc,LockBlock;
 var Signupdiv;
-var Username;
+var Username, Credentials;
 var Password;
 var Email;
 var Passwords1;
@@ -90,21 +90,37 @@ var isPrintable=function(keycode){
       (keycode > 218 && keycode < 223);       // [\]' (in order)
 }
 var inputOnKeyDown=function(){
-   console.log(String.fromCharCode(event.charCode));
-   if ((event.keyCode == 8 || event.keyCode == 46)
-       && this.value.length==1) { // Backspace
+   console.log("onKeyDown: "+this.value + ", " + event.keyCode);
+   if ((event.keyCode == 8 || event.keyCode == 46 || event.keyCode == 229 ||
+        event.inputType === 'deleteContentBackward') && this.value.length<=1) {
+      // Backspace
       showPlaceHolder.call(this);
       event.preventDefault();
    } else if(this.value === this.plcHldr) {
-      if(isPrintable(event.keyCode)) {
-         this.value='';
+      if (event.data !== null || isPrintable(event.keyCode)) {
+         this.value=event.data;
          this.classList.add("typing");
-         if(this.ctype==='password')this.type='password';
-      } else {
-         event.preventDefault();
+         // if(this.ctype==='password')
+         //    this.type='password';
       }
+      event.preventDefault();
    }
 };
+var onBeforeInput = function () {
+   console.log("beforeInput: " + this.value);
+   if (this.value === this.plcHldr) {
+      this.value='';
+      this.classList.add("typing");
+      if(this.ctype==='password')this.type='password';
+   }
+}
+var onKeyPress = function () {
+   console.log("keyPress: "+event.target.value);
+}
+var onInput = function () {
+   console.log("onInput: "+event.target.value);
+}
+
 var init=function(){
    Logo=document.getElementById('logo');
    SearchTool=document.getElementById('search-tool');
@@ -119,36 +135,42 @@ var init=function(){
    Mouth.plcHldr=searchPlcHldr;
    Mouth.value=Mouth.plcHldr;
    Lock=document.getElementById("lock");
+   Desc=document.getElementById("Desc");
+   LockBlock=document.getElementById("LockBlock");
    Username=document.getElementById("username");
    Password=document.getElementById("password");
-   Username.plcHldr = 'Username:';
-   Password.plcHldr = 'Password:';
-   Password.ctype='password';
-   Password.value=Password.plcHldr;
+   Credentials=document.getElementById("Credentials");
+   //Username.plcHldr = 'Username:';
+   //Password.plcHldr = 'Password:';
+   Password.type='password';
+   //Password.value=Password.plcHldr;
    Signupdiv=document.getElementById("signupdiv");
    Signup=document.getElementById("signup");
    Signup.checked=false;
    Email=document.getElementById("email");
    Passwords1=document.getElementById("passwords1");
    Passwords2=document.getElementById("passwords2");
-   Email.plcHldr='Email:';
-   Passwords1.plcHldr='New password:';
-   Passwords2.plcHldr='Retype password:';
-   Email.value=Email.plcHldr;
-   Passwords1.value=Passwords1.plcHldr;
-   Passwords2.value=Passwords2.plcHldr;
-   Passwords1.ctype='password';
-   Passwords2.ctype='password';
+   //Email.plcHldr='Email:';
+   //Passwords1.plcHldr='New password:';
+   //Passwords2.plcHldr='Retype password:';
+   //Email.value=Email.plcHldr;
+   //Passwords1.value=Passwords1.plcHldr;
+   //Passwords2.value=Passwords2.plcHldr;
+   Passwords1.type='password';
+   Passwords2.type='password';
    Log=document.getElementById("log");
-   var inputs=document.getElementsByTagName("input");
+   var inputs=document.getElementsByClassName("labeled");
    for (var i=0; i<inputs.length; ++i) {
       var elm = inputs[i];
       if(elm.type!="text")continue;
       elm.classList.add("inptTxtBx");
       addEvent(elm, 'focus', inputOnFocus);
       addEvent(elm, 'blur', inputOnBlur);
-      addEvent(elm, 'keydown', inputOnKeyDown);
       addEvent(elm, 'click', inputOnFocus);
+      //addEvent(elm, 'keydown', inputOnKeyDown);
+      //addEvent(elm, 'keypress', onKeyPress);
+      //addEvent(elm, 'input', onInput);
+      addEvent(elm, 'beforeinput', inputOnKeyDown);
    }
    User = document.getElementById('user');
    addEvent(Username, 'keydown', usrnmEvent);
@@ -221,8 +243,8 @@ var onBID=function(feed){
 var login=function(feed) {
    var res = JSON.parse(feed.responseText);
    if(res.password) {
-      Lock.classList.add("hidden");
-      Password.classList.add("hidden");
+      LockBlock.classList.replace("inlineVisible","inlineHidden");
+      Credentials.classList.add("hidden");
       User.innerHTML=Username.value;
       User.obj=res;
       Usermenu.classList.remove("hidden");
@@ -231,12 +253,11 @@ var login=function(feed) {
       updateUser(res);
    } else {
       Log.innerHTML="No No...! Check username and password :)";
-      Lock.classList.add("hidden");
+      LockBlock.classList.replace("inlineVisible","inlineHidden");
       Password.classList.add("hidden");
       Signupdiv.classList.add("hidden");
       Usermenu.classList.add("hidden");
-      Lock.classList.remove("hidden");
-      
+      LockBlock.classList.replace("inlineHidden", "inlineVisible");
    }
    delete Password.shuttle;
 }
@@ -279,7 +300,7 @@ var updateUser = function(res) {
          }
          var dummies=imgs.getElementsByClassName("dummy");
          for (var j=0; j<dummies.length; ++j) {
-            dummies[j].classList.add("hidden");
+            dummies[j].classList.replace("inlineVisible","inlineHidden");
          }
          var id=GetElementInsideContainer(thingN, "ThingId");
          id.innerText=thing.id;
@@ -299,9 +320,9 @@ var updateUser = function(res) {
       UserThings.classList.remove("hidden");
    }
 }
-var unlock=function(){
-   Lock.classList.add("hidden");
-   Username.classList.remove("hidden");
+var unlock = function(){
+   LockBlock.classList.replace("inlineVisible","inlineHidden");
+   Credentials.classList.remove("hidden");
    Signupdiv.classList.remove("hidden");
    Signup.checked=false;
    Username.focus();
@@ -335,8 +356,9 @@ var logout=function(feed){
    var res = JSON.parse(feed.responseText);
    if(res.logout===true){
       Usermenu.classList.add("hidden");
-      Lock.classList.remove("hidden");
+      LockBlock.classList.replace("inlineHidden", "inlineVisible");
       UserActions.classList.add("hidden");
+      UserThings.innerHTML="";
    } else {
       Log.innerHTML="Huh! Something went wrong! Try again:)";
    }
@@ -377,7 +399,7 @@ var actMail = function(feed){
       Passwords1.classList.add("hidden");
       Passwords2.classList.add("hidden");
       Signupdiv.classList.add("hidden");
-      Lock.classList.remove("hidden");
+      LockBlock.classList.replace("inlineHidden", "inlineVisible");
    } else {
       Log.innerHTML=
          "Email already registered! Check for Actiavation mail or use another email id";
@@ -418,6 +440,9 @@ var makeid = function (length) {
 }
 
 var addThing = function () {
+   if (!userData["things"]) {
+      userData["things"]=[];
+   }
    userData["things"][userData["things"].length] = {
       "id":-1,
       "name":"",
@@ -451,7 +476,7 @@ var editThing = function() {
    }
    var dummies=imgs.getElementsByClassName("dummy");
    for (var i=0; i<dummies.length; ++i) {
-      dummies[i].classList.remove("hidden");
+      dummies[i].classList.replace("inlineHidden","inlineVisible");;
    }
    for (var i=imgs.children.length; i<MaxImgsPerThing; ++i) {
       var imgHldr = UserThing.children[0].children[0].cloneNode(true);

@@ -15,50 +15,12 @@
    <link type="text/css" href="css/main-dark.css" rel="stylesheet"/>
    <link type="text/css" href="css/svg.css" rel="stylesheet"/>
 </head>
-<body onload="init()" style="display:none" class="dark">
+   <body onload="init()" style="display:none" class="dark">
+   <script>0</script>
    <header>
-      <svg id="lock" height="24" viewBox="0 0 24 24" width="24"
-           xmlns="http://www.w3.org/2000/svg"
-           xmlns:xlink="http://www.w3.org/1999/xlink"
-           onclick="unlock()">
-         <path
-            id="lock"
-            style="stroke-opacity: 1"
-            d="M12 2C9.243 2 7 4.243 7 7v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12
-               a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7c0-2.757-2.243-5-5-5z
-               M9 7c0-1.654 1.346-3 3-3s3 1.346 3 3v3H9V7z
-               m4 10.723V20h-2v-2.277a1.993 1.993 0 0 1 .567-3.677
-               A2.001 2.001 0 0 1 14 16
-               a1.99 1.99 0 0 1-1 1.723z"/>
-      </svg>
-      <input id="username" alt="Username" class="hidden"/>
-      <input id="password" alt="Password" class="hidden"/>
-      <div id="signupdiv" class="hidden">
-         <input id="email" alt="Email" class="hidden"/>
-         <input id="passwords1" alt="Password" class="hidden"/>
-         <input id="passwords2" alt="Password" class="hidden"/>
-         <span id="signupSpan">Signup </span>
-         <input id="signup" alt="Signup" type="checkbox"
-                onclick="togglesignup()"/>
-      </div>
-      <div id="usermenu" class="hidden">
-         <span id="user"></span>
-         <svg id="unlock" height="24" viewBox="0 0 24 24" width="24"
-              xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink"
-              onclick="lock()">
-            <path
-               id="unlock"
-               style="stroke-opacity: 1"
-               d="M18 10H9V7c0-1.654 1.346-3 3-3s3 1.346 3 3h2
-                  c0-2.757-2.243-5-5-5S7 4.243 7 7v3H6a2 2 0 0 0-2 2v8
-                  a2 2 0 0 0 2 2h12 a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2z
-                  m-7.939 5.499A2.002 2.002 0 0 1 14 16 a1.99 1.99 0 0 1-1 1.723
-                  V20h-2v-2.277a1.992 1.992 0 0 1-.939-2.224z"/>
-         </svg>
-      </div>
       <div id="log"></div>
-      <svg id="logo" class="center" viewBox="0 0 288 288"
+      <table><tr><td>
+      <svg id="logo" class="" viewBox="0 0 288 288"
            xmlns="http://www.w3.org/2000/svg"
            xmlns:xlink="http://www.w3.org/1999/xlink">
          <g id="Ferry" transform="matrix(1 0 0 1 16 16)"
@@ -235,11 +197,61 @@
                   repeatCount="indefinite"/>
             </path>
          </g>
+      </svg></td>
+      <td style="vertical-align: top">
+      <span id="LockBlock" class="inlineVisible">
+      <svg id="lock" height="24" viewBox="0 0 24 24" width="24"
+           xmlns="http://www.w3.org/2000/svg"
+           xmlns:xlink="http://www.w3.org/1999/xlink"
+           onclick="unlock()">
+         <path
+            id="lock"
+            style="stroke-opacity: 1"
+            d="M12 2C9.243 2 7 4.243 7 7v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12
+               a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7c0-2.757-2.243-5-5-5z
+               M9 7c0-1.654 1.346-3 3-3s3 1.346 3 3v3H9V7z
+               m4 10.723V20h-2v-2.277a1.993 1.993 0 0 1 .567-3.677
+               A2.001 2.001 0 0 1 14 16
+               a1.99 1.99 0 0 1-1 1.723z"/>
       </svg>
+      <span id="Desc" class="">signin/signup<br/>
+      to add ur things to the fair</span></span>
+      <span id="Credentials" class="hidden">
+      <label>Username:</label><br/>
+      <input id="username" alt="Username" class=""/><br/>
+      <label>Password:</label><br/>
+      <input id="password" alt="Password" class=""/><br/>
+      </span>
+      <div id="signupdiv" class="hidden">
+         <input id="email" alt="Email" class="hidden"/>
+         <input id="passwords1" alt="Password" class="hidden"/>
+         <input id="passwords2" alt="Password" class="hidden"/>
+         <span id="signupSpan">Signup </span>
+         <input id="signup" alt="Signup" type="checkbox"
+                onclick="togglesignup()"/>
+      </div>
+      <div id="usermenu" class="hidden">
+         <svg id="unlock" height="24" viewBox="0 0 24 24" width="24"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              onclick="lock()">
+            <path
+               id="unlock"
+               style="stroke-opacity: 1"
+               d="M18 10H9V7c0-1.654 1.346-3 3-3s3 1.346 3 3h2
+                  c0-2.757-2.243-5-5-5S7 4.243 7 7v3H6a2 2 0 0 0-2 2v8
+                  a2 2 0 0 0 2 2h12 a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2z
+                  m-7.939 5.499A2.002 2.002 0 0 1 14 16 a1.99 1.99 0 0 1-1 1.723
+                  V20h-2v-2.277a1.992 1.992 0 0 1-.939-2.224z"/>
+         </svg>
+         <span id="user"></span>
+      </div>
+      </td>
+      </tr></table>
    </header>
    <div id="search-bar">
-      <div class="center"><div id="lips"><form id="mouth-pad">
-         <input id="mouth" name="search" type="text"/>
+      <div class=""><div id="lips"><form id="mouth-pad">
+         <input id="mouth" name="search" type="text" class="labeled"/>
          <!--input id="search-tool" type="image" src="img/SearchTool.svg"
                 alt="Search"/-->
          <svg id="search-tool" alt="Search" viewBox="0 0 42 66"
@@ -257,15 +269,16 @@
          </svg>
       </form></div></div>
    </div>
-   <div id="UserThings" class="hidden center">
+   <div id="UserThings" class="hidden">
       <div id="UserThing" class="thing">
          <div id='Imgs' class="">
-            <div id="ImgHldr" class="center">
+            <div id="ImgHldr" class="center inlineVisible">
                <img id="ThingImg" class="fixedSize center"/>
                <input id="SIB" type="file" class="editBtn hidden"
                    onchange="selectFiles.call(this, event);"/>
             </div>
          </div>
+         <br/>
          <label id="ThingNameL">Name: </label>
          <span id="ThingName"></span>
          <input id="ThingNameBox" class="hidden"/>
@@ -280,13 +293,13 @@
          <input id="ThingEditBtn" type="Button" value="Edit"/>
       </div>
    </div>
-   <form id="UserActions" class="center hidden">
+   <form id="UserActions" class="hidden">
       <input
          id="AddThing" type="button" value="Add a thing to the fair"
          onclick="addThing()" class=""/>
    </form>
    <div id="land">
-      <div class="middle"><div id="compound-wall">
+      <div class=""><div id="compound-wall">
          <div class="plot">
             <div class="facade"></div>
                <div class="name"></div>
@@ -306,7 +319,8 @@
          </div>
       </div></div>
    </div>
-<footer></footer>
+   <br/><br/>
+<footer>© Gowtham Kudupudi</footer>
 <div id="SVGS" class="hidden">
    <svg id="SpiralSVG" class="fixedSize" viewBox="0 0 288 288"
         xmlns="http://www.w3.org/2000/svg"

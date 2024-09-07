@@ -1,13 +1,14 @@
 header{
    width: 100%;
    z-index: 10;
+   position: relative;
 }
 #logo {
    height: 3.3cm;
    width: 3.3cm;
-   padding:0cm;
-   padding-top:0.2cm;
-   padding-bottom:0.5cm;
+   padding-right:0.5cm;
+   /*padding-top:0.2cm;
+   padding-bottom:0.5cm;*/
 }
 #logo.big {
    height: 5cm;
@@ -19,21 +20,13 @@ header{
 #lock {
    height: 0.8cm;
    width: 0.8cm;
-   position: fixed;
-   right: 0.3cm;
-   top: 0.3cm;
-   z-index: 11;
 }
 #unlock {
    height: 0.8cm;
    width: 0.8cm;
-   vertical-align: middle;
-   z-index: 11;
+   /* vertical-align: middle; */
 }
 #username {
-   position: fixed;
-   right: 0.3cm;
-   top: 0.3cm;
    width: 6cm;
 }
 #email {
@@ -52,23 +45,19 @@ header{
    
 }
 #signupdiv {
-   position: fixed;
-   right: 0.3cm;
-   top: 1.1cm;
 }
 #password {
-   position: fixed;
-   right: 0.3cm;
-   top: 0.3cm;
    width: 6cm;
 }
 #usermenu {
-   position: fixed;
-   right: 0.3cm;
-   top: 0.3cm;
-}    
+}
+#Desc {
+   position: relative;
+   top: -0.06cm;   
+}
 #user {
-   
+   position: relative;
+   top: -0.06cm;
 }
 #log {
    position: fixed;
@@ -97,7 +86,7 @@ header{
    font-size:0.72cm;
    margin:0px;
    padding:0px;
-   width:7.5cm;
+   width:7.55cm;
 }
 .inptTxtBx {
    color: rgb(192,192,192);
@@ -139,7 +128,6 @@ inptTxtBx.typing {
 }
 
 #ImgHldr {
-   display: inline-block;
    width: 6cm;
    height:8cm;
 }
@@ -219,6 +207,14 @@ svg.fixedSize, img.fixedSize {
 .hidden {
    visibility: hidden;
    position: absolute;
+}
+.inlineVisible {
+   display: inline-block;
+}
+.inlineHidden {
+   display: block;
+   position: absolute;
+   visibility: hidden;
 }
 #land {
    width: 100%;
