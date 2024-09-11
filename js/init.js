@@ -3,14 +3,14 @@ var SearchTool;
 var SearchToolOpacity=1;
 var SearchToolBlink;
 var Mouth;
-var Lock,Desc,LockBlock;
+var Lock,Desc,LockBlock,CMPD;
 var Signupdiv;
 var Username, Credentials;
 var Password;
 var Email;
-var Passwords1;
-var Passwords2;
-var Signup;
+var Passwords1, Password1L, Password2L, CaptchaImg, Captcha, NewL;
+var Passwords2, ConsentL, Consent, NonRecovery;
+var SignIn,SignUp,Recover;
 var Usermenu;
 var User;
 var Unlock, Log;
@@ -21,6 +21,9 @@ var caretPos=0;
 const MaxImgsPerThing=3;
 var browserID;
 var userData;
+var ferrylog = function (msg) {
+   Log.innerHTML=msg;
+}
 var Rotate=function(){
    var props = 'transform WebkitTransform MozTransform OTransform msTransform'.split(' '),
        prop,
@@ -90,7 +93,7 @@ var isPrintable=function(keycode){
       (keycode > 218 && keycode < 223);       // [\]' (in order)
 }
 var inputOnKeyDown=function(){
-   console.log("onKeyDown: "+this.value + ", " + event.keyCode);
+   //console.log("onKeyDown: "+this.value + ", " + event.keyCode);
    if ((event.keyCode == 8 || event.keyCode == 46 || event.keyCode == 229 ||
         event.inputType === 'deleteContentBackward') && this.value.length<=1) {
       // Backspace
@@ -120,6 +123,12 @@ var onKeyPress = function () {
 var onInput = function () {
    console.log("onInput: "+event.target.value);
 }
+var viewportHandler = function() {
+   var viewport = event.target;
+   var bottom =
+       (CMPD*(window.innerHeight-event.target.height)+0.2).toString()+"cm";
+   Log.style.bottom=bottom;
+}
 
 var init=function(){
    Logo=document.getElementById('logo');
@@ -128,28 +137,43 @@ var init=function(){
    if(location.href.indexOf('?')==-1){
       Logo.classList.add("big");
    }
-   setTimeout(function(){
+   setTimeout(function() {
       Logo.classList.add("transform2s3d");
       Logo.classList.remove("big");
+      CMPD=0.8/Lock.getBoundingClientRect().width;
+      window.visualViewport.addEventListener("resize", viewportHandler);
    },2000);
+   setTimeout(function() {
+      Logo.classList.add("small");
+   },5000);
    Mouth.plcHldr=searchPlcHldr;
    Mouth.value=Mouth.plcHldr;
    Lock=document.getElementById("lock");
+   CMPD=0.8/Lock.getBoundingClientRect().width;
    Desc=document.getElementById("Desc");
    LockBlock=document.getElementById("LockBlock");
    Username=document.getElementById("username");
+   UsernameL=document.getElementById("UsernameL");
    Password=document.getElementById("password");
+   PasswordL=document.getElementById("PasswordL");
    Credentials=document.getElementById("Credentials");
+   NonRecovery=document.getElementById("NonRecovery");
    //Username.plcHldr = 'Username:';
    //Password.plcHldr = 'Password:';
    Password.type='password';
    //Password.value=Password.plcHldr;
    Signupdiv=document.getElementById("signupdiv");
-   Signup=document.getElementById("signup");
-   Signup.checked=false;
+   SignIn=document.getElementById("SignIn");
+   Recover=document.getElementById("Recover");
+   SignUp=document.getElementById("SignUp");
+   SignIn.checked=true;
    Email=document.getElementById("email");
+   EmailL=document.getElementById("EmailL");
    Passwords1=document.getElementById("passwords1");
    Passwords2=document.getElementById("passwords2");
+   Password1L=document.getElementById("Password1L");
+   Password2L=document.getElementById("Password2L");
+   NewL=document.getElementById("NewL");
    //Email.plcHldr='Email:';
    //Passwords1.plcHldr='New password:';
    //Passwords2.plcHldr='Retype password:';
@@ -158,7 +182,10 @@ var init=function(){
    //Passwords2.value=Passwords2.plcHldr;
    Passwords1.type='password';
    Passwords2.type='password';
-   Log=document.getElementById("log");
+   CaptchaImg=document.getElementById("CaptchaImg");
+   Captcha=document.getElementById("Captcha");
+   Log=document.getElementById("Log");
+   NonRecovery=document.getElementById("NonRecovery");
    var inputs=document.getElementsByClassName("labeled");
    for (var i=0; i<inputs.length; ++i) {
       var elm = inputs[i];
@@ -178,9 +205,12 @@ var init=function(){
    Unlock = document.getElementById('unlock');
    Usermenu = document.getElementById('usermenu');
    UserThings = document.getElementById('UserThings');
+   Consent = document.getElementById('Consent');
+   ConsentL = document.getElementById('ConsentL');
    UserThing = GetElementInsideContainer(UserThings, "UserThing");
    UserThing.remove();
    addEvent(Passwords2, 'keydown', signup);
+   addEvent(Captcha, 'keydown', signup);
    browserID = getCookie("bid");
    var url = "cookie";
    var f={};
@@ -214,7 +244,8 @@ var selectFiles = function(ev) {
          newimg.classList.add("fixedSize");
          thissvg.classList.add("hidden");
          newimg.src=
-            "/upload/"+Username.value+"/"+this.thingId+"."+this.picId+".jpg";
+            "/upload/"+Username.value+"/"+this.thingId+"."+this.picId+".jpg?"+
+            new Date().getTime();
          this.insertAdjacentElement('beforeBegin', newimg);
          var thisThing = this.parentElement.parentElement.parentElement;
          thisThing.thingId=this.thingId;
@@ -225,11 +256,14 @@ var selectFiles = function(ev) {
       sendFileData(f.name, new Uint8Array(r.result), 2048, btn);
    };
 }
-
+var about = function () {
+   ferrylog("Gowtham Kudupudi");
+}
 var onBID=function(feed){
    var res = JSON.parse(feed.responseText);
    if (res.bid){
       setCookie("bid", res.bid, 7);
+      browserID=getCookie("bid");
    }
    if (res.sid){
    }
@@ -237,6 +271,13 @@ var onBID=function(feed){
       Username.value=res.name;
       Email.value=res.email;
       login(feed);
+   }
+   delete shuttle;
+}
+var onCaptcha=function(feed){
+   var res = JSON.parse(feed.responseText);
+   if (res.cap) {
+      CaptchaImg.src="/tmp/"+browserID+".jpg?"+new Date().getTime();
    }
    delete shuttle;
 }
@@ -251,13 +292,14 @@ var login=function(feed) {
       Signupdiv.classList.add("hidden");
       UserActions.classList.remove("hidden");
       updateUser(res);
+      ferrylog("Signed in!");
    } else {
-      Log.innerHTML="No No...! Check username and password :)";
-      LockBlock.classList.replace("inlineVisible","inlineHidden");
-      Password.classList.add("hidden");
-      Signupdiv.classList.add("hidden");
-      Usermenu.classList.add("hidden");
-      LockBlock.classList.replace("inlineHidden", "inlineVisible");
+      ferrylog("No No...! Check username and password :)");
+      // LockBlock.classList.replace("inlineVisible","inlineHidden");
+      // Credentials.classList.remove("hidden");
+      // Signupdiv.classList.add("hidden");
+      // Usermenu.classList.add("hidden");
+      // LockBlock.classList.replace("inlineHidden", "inlineVisible");
    }
    delete Password.shuttle;
 }
@@ -276,14 +318,14 @@ var updateUser = function(res) {
             var img = imgHldr.children[0];
             var SIB = imgHldr.children[1];
             if (res.things[i].pics.length) {
-               img.src="/upload/"+res.name+"/"+i+"."+0+".jpg";
+               img.src="/upload/"+res.name+"/"+i+"."+0+".jpg?"+new Date().getTime();
                SIB.thingId=thing.id;
-               SIB.nextSibling.picId=0;
+               SIB.picId=0;
                for (var j=1; j<res.things[i].pics.length; ++j) {
                   imgHldr = imgs.children[0].cloneNode(true);
                   img = imgHldr.children[0];
                   SIB = imgHldr.children[1];
-                  img.src="/upload/"+res.name+"/"+i+"."+j+".jpg";
+                  img.src="/upload/"+res.name+"/"+i+"."+j+".jpg?"+new Date().getTime();
                   SIB.thingId=thing.id;
                   SIB.picId=j;
                   imgs.children[j-1].insertAdjacentElement(
@@ -323,15 +365,11 @@ var updateUser = function(res) {
 var unlock = function(){
    LockBlock.classList.replace("inlineVisible","inlineHidden");
    Credentials.classList.remove("hidden");
-   Signupdiv.classList.remove("hidden");
-   Signup.checked=false;
+   SignUp.checked=false;
    Username.focus();
 };
 var usrnmEvent = function() {
    if (event.keyCode==13 && this.value !== this.plcHldr) { //13==enter
-      Username.classList.add("hidden");
-      if(Password.value!=Password.plcHldr)Password.type='password';
-      Password.classList.remove('hidden');
       Password.focus();
    }
 }
@@ -340,7 +378,7 @@ var authenticateUser = function() {
       var url = "login";
       var f={};
       f.content="{username:\""+Username.value+"\"";
-      f.content+=",password:\""+Password.value +"\"}";
+      f.content+=",password:\""+core.MD5(Password.value) +"\"}";
       f.postExpdtn=login;
       Password.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
    }
@@ -365,46 +403,59 @@ var logout=function(feed){
    delete Unlock.shuttle;
 }
 var togglesignup = function() {
-   if (Signup.checked) {
-      Password.classList.add("hidden");
-      Username.classList.remove("hidden");
-      Email.classList.remove("hidden");
-      Passwords1.classList.remove("hidden");
-      Passwords2.classList.remove("hidden");
+   if (SignUp.checked || Recover.checked) {
+      var url = "captcha";
+      var f={};
+      f.content="";
+      f.postExpdtn=onCaptcha;
+      shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
+      PasswordL.classList.add("hidden");
+      Signupdiv.classList.remove("hidden");
+      if (Recover.checked){
+         UsernameL.classList.add("hidden");
+         NewL.classList.remove("hidden");
+      } else {
+         UsernameL.classList.remove("hidden");
+         NewL.classList.add("hidden");
+      }
    } else {
-      Email.classList.add("hidden");
-      Passwords1.classList.add("hidden");
-      Passwords2.classList.add("hidden");
+      Signupdiv.classList.add("hidden");
+      PasswordL.classList.remove("hidden");
+      UsernameL.classList.remove("hidden");
+      Password.focus();
    }
 }
 var signup = function() {
    if(event.keyCode==13 && this.value !== this.plcHldr) { //13==enter
       var url = "signup";
       var f={};
-      Password.classList.add("hidden");
-      Username.classList.remove("hidden");
-      f.content="{username:\""+Username.value+"\",password:\"";
-      f.content+=Passwords2.value + "\",email:\""+Email.value+"\"}";
+      if (!(validUsername(Username.value) && Passwords1.value.length<=24 &&
+            Passwords1.value==Passwords2.value
+            && validPassword(Passwords2.value))) {
+         ferrylog("Passwords didn't match or username not made of [a-zA-Z.]"+
+                  " or Password not made of [a-zA-Z0-9.@#$%] and " +
+                  "they shoud b <24.");
+         return;
+      }
+      f.content="{email:\""+Email.value+"\",captcha:\""+ Captcha.value+"\""
+      if (!Recover.checked) {
+         f.content += "username:\""+Username.value+"\"";
+      }
+      f.content+= ",password:\""+
+            core.MD5(Passwords2.value)+"\",consent:" + Consent.checked + "}";
       f.postExpdtn=actMail;
       Passwords2.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
    }
 }
 var actMail = function(feed){
    var res = JSON.parse(feed.responseText);
-   if(res.actEmailSent){
-      Log.innerHTML=
-         "Activation mail sent. Please check your spam folder aswell";
-      Username.classList.add("hidden");
-      Email.classList.add("hidden");
-      Passwords1.classList.add("hidden");
-      Passwords2.classList.add("hidden");
-      Signupdiv.classList.add("hidden");
-      LockBlock.classList.replace("inlineHidden", "inlineVisible");
-   } else {
-      Log.innerHTML=
-         "Email already registered! Check for Actiavation mail or use another email id";
+   ferrylog(res.msg);
+   if (res.actEmailSent == 2) {
+      SignIn.checked=true;
+      togglesignup();
    }
-   delete Passwords2.shuttle;   
+   togglesignup();
+   delete Passwords2.shuttle;
 }
 var getCookie = function(cname) {
    let name = cname + "=";
@@ -513,7 +564,7 @@ var updateThing = function() {
    content.things[thing.id]=thing;
    f.user=content;
    f.content=JSON.stringify(content);
-   f.reqHeaders=[["content-type", "text/json"]];
+   f.reqHeaders=[["Content-type", "text/json"]];
    f.postExpdtn=function(feed){
       var res=JSON.parse(feed.responseText);
       if (res.password) {
@@ -577,12 +628,6 @@ var uploadFile = function(infoBox) {
 	fileName.insertAdjacentElement('afterEnd', gauge);
 }
 
-// Helper function to display upload status
-var setStatus = function(text) {
-  document.getElementById('log').innerText = text;
-};
-
-
 // Send a large blob of data chunk by chunk
 var sendFileData = function(name, data, chunkSize, btn) {
    var sendChunk = function(offset) {
@@ -594,18 +639,17 @@ var sendFileData = function(name, data, chunkSize, btn) {
       url += "&thingId=" + btn.thingId;
       url += "&picId=" + btn.picId;
       var ok;
-      setStatus(
-         'Uploading ' + name + ', bytes ' + offset + '..' +
-            (offset + chunk.length) + ' of ' + data.length);
+      ferrylog('Uploading ' + name + ', bytes ' + offset + '..' +
+               (offset + chunk.length) + ' of ' + data.length);
       fetch(url, opts)
          .then(function(res) {
             ok = res.ok;
             return res.text();
          })
          .then(function(text) {
-            if (!ok) setStatus('Error: ' + text);
+            if (!ok) ferrylog('Error: ' + text);
             else if(offset+chunk.length >= data.length){
-               setStatus(name + ' uploaded!');
+               ferrylog(name + ' uploaded!');
                if(btn.postUpload) {
                   btn.text=text;
                   btn.postUpload();
@@ -635,4 +679,28 @@ function GetElementInsideContainer(container, childID) {
       }
    }
    return false;
+}
+
+function validUsername (username) {
+   for (var i=0; i<username.length;++i) {
+      if (!((username.charCodeAt(i)>=65 && username.charCodeAt(i)<=90) ||
+            (username.charCodeAt(i)>=97 && username.charCodeAt(i)<=122) ||
+            (username.charAt(i)=='.'))) {
+         return false;
+      }
+   }
+   return true;
+}
+function validPassword (password) {
+   for (var i=0; i<password.length;++i) {
+      if (!((password.charCodeAt(i)>=65 && password.charCodeAt(i)<=90) ||
+            (password.charCodeAt(i)>=97 && password.charCodeAt(i)<=122) ||
+            (password.charCodeAt(i)>=48 && password.charCodeAt(i)<=57) ||
+            (password.charAt(i)=='.' || password.charAt(i)=='@' ||
+             password.charAt(i)=='#') ||
+            (password.charAt(i)=='$' || password.charAt(i)=='%'))) {
+         return false;
+      }
+   }
+   return true;
 }

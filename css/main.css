@@ -1,21 +1,24 @@
+body{
+   margin: 0px;
+}
 header{
    width: 100%;
    z-index: 10;
-   position: relative;
+   position: sticky;
+   top: 0;
 }
 #logo {
    height: 3.3cm;
    width: 3.3cm;
-   padding-right:0.5cm;
-   /*padding-top:0.2cm;
-   padding-bottom:0.5cm;*/
+   padding-right: 0.1cm;
 }
 #logo.big {
    height: 5cm;
    width: 5cm;
-   padding: 0cm;
-   padding-top: 0.2cm;
-   padding-bottom: 0.5cm;
+}
+#logo.small {
+   height: 1cm;
+   width: 1cm;
 }
 #lock {
    height: 0.8cm;
@@ -27,19 +30,35 @@ header{
    /* vertical-align: middle; */
 }
 #username {
-   width: 6cm;
+   width: 5cm;
 }
 #email {
    display:block;
-   width: 6cm;
+   width: 5cm;
 }
 #passwords1 {
    display:block;
-   width: 6cm;
+   width: 5cm;
 }
 #passwords2 {
    display:block;
-   width: 6cm;
+   width: 5cm;
+}
+#ConsentL {
+   marging-top: 3px;
+}
+#ConsentImg {
+   width: 0.6cm;
+   position: relative;
+   top: 0.14cm;
+}
+#Captcha {
+   width: 5cm;
+}
+#CaptchaImg {
+   width: 5.2cm;
+   margin-top: 3px;
+   margin-left: 1px;
 }
 #signupSpan {
    
@@ -47,7 +66,7 @@ header{
 #signupdiv {
 }
 #password {
-   width: 6cm;
+   width: 5cm;
 }
 #usermenu {
 }
@@ -59,10 +78,10 @@ header{
    position: relative;
    top: -0.06cm;
 }
-#log {
+#Log {
    position: fixed;
-   bottom: 0.3cm;
-   right: 0.3cm;
+   bottom: 0.2cm;
+   right: 0.2cm;
 }
 #search-bar{
    width: 100%;
@@ -220,8 +239,8 @@ svg.fixedSize, img.fixedSize {
    width: 100%;
 }
 #compound-wall {
-   padding-left:6px;
-   padding-right:6px;
+   padding-left:0px;
+   padding-right:0px;
    display:inline-block;
    position:relative;
 }

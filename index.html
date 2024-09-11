@@ -18,8 +18,8 @@
    <body onload="init()" style="display:none" class="dark">
    <script>0</script>
    <header>
-      <div id="log"></div>
-      <table><tr><td>
+      <div id="Log"></div>
+      <table><tr><td style="vertical-align: top;">
       <svg id="logo" class="" viewBox="0 0 288 288"
            xmlns="http://www.w3.org/2000/svg"
            xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -198,7 +198,7 @@
             </path>
          </g>
       </svg></td>
-      <td style="vertical-align: top">
+      <td style="vertical-align: top; padding-top: 0.12cm">
       <span id="LockBlock" class="inlineVisible">
       <svg id="lock" height="24" viewBox="0 0 24 24" width="24"
            xmlns="http://www.w3.org/2000/svg"
@@ -216,19 +216,51 @@
       </svg>
       <span id="Desc" class="">signin/signup<br/>
       to add ur things to the fair</span></span>
-      <span id="Credentials" class="hidden">
-      <label>Username:</label><br/>
-      <input id="username" alt="Username" class=""/><br/>
-      <label>Password:</label><br/>
-      <input id="password" alt="Password" class=""/><br/>
-      </span>
+      <div id="Credentials" class="hidden">
+      <div id="UsernameL">Username: <br/>
+      <input id="username" alt="Username" class=""/></div>
+      <div id="PasswordL" class="">Password: <br/>
+      <input id="password" alt="Password" class=""/></div>
       <div id="signupdiv" class="hidden">
-         <input id="email" alt="Email" class="hidden"/>
-         <input id="passwords1" alt="Password" class="hidden"/>
-         <input id="passwords2" alt="Password" class="hidden"/>
-         <span id="signupSpan">Signup </span>
-         <input id="signup" alt="Signup" type="checkbox"
-                onclick="togglesignup()"/>
+         <div id="EmailL">Email: 
+         <input id="email" alt="Email" class=""/></div>
+         <div id="Password1L">
+            <span id="NewL" class="hidden">New </span>Password: 
+         <input id="passwords1" alt="Password"/></div>
+         <div id="Password2L">Retype Password: 
+         <input id="passwords2" alt="Password" class=""/></div>
+         <div id="ConsentL">
+            <svg id="ConsentImg" viewBox="0 0 512 512"
+                 xmlns="http://www.w3.org/2000/svg">
+               <path
+                  d="M85.57,446.25H426.43a32,32,0,0,0,28.17-47.17L284.18,82.58
+                     c-12.09-22.44-44.27-22.44-56.36,0
+                     L57.4,399.08A32,32,0,0,0,85.57,446.25Z"
+                  style="fill:#ffff00;stroke:none;stroke-linecap:round;
+                         stroke-linejoin:round;stroke-width:32px"/>
+               <path
+                  d="M250.26,195.39l5.74,122,5.73-121.95a5.74,5.74,0,0,0-5.79-6
+                     h0A5.74,5.74,0,0,0,250.26,195.39Z"
+                  style="fill:none;stroke:#000000;stroke-linecap:round;
+                         stroke-linejoin:round;stroke-width:32px"/>
+               <path d="M256,397.25a20,20,0,1,1,20-20A20,20,0,0,1,256,397.25Z"
+                     style="fill:#000000;"/>
+            </svg>
+            I shall use this tool at my own risk 
+         <input id="Consent" alt="Consent" type="checkbox"></div>
+         <label id="CaptchaL">Captcha: </label><br/>
+         <input id="Captcha" alt="Captcha"/><br/>
+         <img id="CaptchaImg" src=""><br/>
+      </div>
+      <label id="SignInL">SignIn </label>
+      <input id="SignIn" alt="SignIn" type="radio" value="0" checked
+             onclick="togglesignup()"/ name="accountIntx"></br>
+      <label id="SignUpL">SignUp </label>
+      <input id="SignUp" alt="SignUp" type="radio" value="1"
+             onclick="togglesignup()"/ name="accountIntx"></br>
+      <label id="RecoverL">ResetPassword </label>
+      <input id="Recover" alt="Recover" type="radio" value="2"
+             onclick="togglesignup()"/ name="accountIntx"></br>
       </div>
       <div id="usermenu" class="hidden">
          <svg id="unlock" height="24" viewBox="0 0 24 24" width="24"
@@ -248,27 +280,27 @@
       </div>
       </td>
       </tr></table>
-   </header>
-   <div id="search-bar">
-      <div class=""><div id="lips"><form id="mouth-pad">
-         <input id="mouth" name="search" type="text" class="labeled"/>
-         <!--input id="search-tool" type="image" src="img/SearchTool.svg"
+      <div id="search-bar">
+         <div class=""><div id="lips"><form id="mouth-pad">
+            <input id="mouth" name="search" type="text" class="labeled"/>
+            <!--input id="search-tool" type="image" src="img/SearchTool.svg"
                 alt="Search"/-->
-         <svg id="search-tool" alt="Search" viewBox="0 0 42 66"
-              xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink">
-            <path
-               id="mirror"
-               d="M 21 41 A 20 20 0 0 1 21 1 A 20 20 0 1 1 21 41 L 21 45
-                  L 22 45 L 22 65 L 20 65 L 20 45 L 21 45 Z"
-               style="stroke-width: 1;"/>
-            <path
-               id="stock"
-               d="M 21 7 A 20 40 45 0 1 33 21 A 20 20 0 0 0 21 7 Z"
-               style="stroke-opacity: 1.0;"/>
-         </svg>
-      </form></div></div>
-   </div>
+            <svg id="search-tool" alt="Search" viewBox="0 0 42 66"
+                 xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink">
+               <path
+                  id="mirror"
+                  d="M 21 41 A 20 20 0 0 1 21 1 A 20 20 0 1 1 21 41 L 21 45
+                     L 22 45 L 22 65 L 20 65 L 20 45 L 21 45 Z"
+                  style="stroke-width: 1;"/>
+               <path
+                  id="stock"
+                  d="M 21 7 A 20 40 45 0 1 33 21 A 20 20 0 0 0 21 7 Z"
+                  style="stroke-opacity: 1.0;"/>
+            </svg>
+         </form></div></div>
+      </div>
+   </header>
    <div id="UserThings" class="hidden">
       <div id="UserThing" class="thing">
          <div id='Imgs' class="">
@@ -320,7 +352,7 @@
       </div></div>
    </div>
    <br/><br/>
-<footer>© Gowtham Kudupudi</footer>
+<footer onclick="about()">© FerryFair</footer>
 <div id="SVGS" class="hidden">
    <svg id="SpiralSVG" class="fixedSize" viewBox="0 0 288 288"
         xmlns="http://www.w3.org/2000/svg"
