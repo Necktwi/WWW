@@ -39,7 +39,6 @@ var Rotate=function(){
       yAngle+=180;
       Logo.style[prop] = "rotateX("+xAngle+"deg) rotateY("+yAngle+"deg)";
    }, 2000);
-   
 };
 var addEvent = function(elem, type, fn) {
    if (elem.addEventListener) elem.addEventListener(type, fn, false);
@@ -437,7 +436,7 @@ var signup = function() {
                   "they shoud b <24.");
          return;
       }
-      f.content="{email:\""+Email.value+"\",captcha:\""+ Captcha.value+"\""
+      f.content="{email:\""+Email.value+"\",captcha:\""+ Captcha.value+"\","
       if (!Recover.checked) {
          f.content += "username:\""+Username.value+"\"";
       }
