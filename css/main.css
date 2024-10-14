@@ -6,11 +6,15 @@ header{
    z-index: 10;
    position: sticky;
    top: 0;
+   background-color: rgba(0,0,0,0.3);
+   backdrop-filter: blur(2px);
+   -webkit-backdrop-filter: blur(2px);
 }
 #logo {
    height: 3.3cm;
    width: 3.3cm;
    padding-right: 0.1cm;
+   position: relative;
 }
 #logo.big {
    height: 5cm;
@@ -83,8 +87,9 @@ header{
    bottom: 0.2cm;
    right: 0.2cm;
 }
-#search-bar{
+#search-bar {
    width: 100%;
+   height: 1cm;
 }
 #search-tool {
    width:0.5292cm; /*20px on iphone 12 mini*/
@@ -121,15 +126,28 @@ header{
 .inptTxtBx.typing:blur {
    color: black;
 }
+#ImgsHldr {
+   position: relative;
+   margin-bottom: 0.1cm;
+}
+#NxtBtnHldr {
+   position: absolute;
+   font-size: 0.5cm;
+   bottom:0cm;
+}
+#ThingNameBox {
+   position: relative;
+}
 inptTxtBx.typing {
    color: black;
 }
 #lips {
+   position: absolute;
+   height: 0.2cm;
+   bottom: 0.1cm;
    border-left: 1px solid black;
    border-right: 1px solid black;
    border-bottom: 1px solid black;
-   height: 0.2cm;
-   margin-top: 0.7cm;
    border-bottom-left-radius:3px;
    border-bottom-right-radius:3px;
    -webkit-border-bottom-left-radius:3px;
@@ -184,7 +202,7 @@ svg.fixedSize, img.fixedSize {
    display:block;
 }
 #SIB {
-   top: -1cm;
+   top: -1.3cm;
    position: relative;
 }
 .transform2s3d{
@@ -226,6 +244,7 @@ svg.fixedSize, img.fixedSize {
 .hidden {
    visibility: hidden;
    position: absolute;
+   width: 0px;
 }
 .inlineVisible {
    display: inline-block;

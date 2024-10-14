@@ -19,9 +19,13 @@
 
 .dark .inptTxtBx {
     color: rgb(90,90,90);
-    background-color: black;
     border-color: white;
+    background-color: rgba(0,0,0,0.6);
+    border-color: white;
+    backdrop-filter: blur(4px);
+    border-radius: 5px;
 }
+
 .dark .inptTxtBx:focus {
     outline:none;
     color: rgb(90,90,90);

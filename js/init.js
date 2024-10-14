@@ -21,9 +21,14 @@ var caretPos=0;
 const MaxImgsPerThing=3;
 var browserID;
 var userData;
-var ferrylog = function (msg) {
+var clearLogInterval;
+
+var ferrylog = function (msg, interval=15000) {
    Log.innerHTML=msg;
+   clearInterval(clearLogInterval);
+   clearLogInterval = setInterval(function(){Log.innerHTML=""}, interval);
 }
+
 var Rotate=function(){
    var props = 'transform WebkitTransform MozTransform OTransform msTransform'.split(' '),
        prop,
@@ -122,6 +127,36 @@ var onKeyPress = function () {
 var onInput = function () {
    console.log("onInput: "+event.target.value);
 }
+var getLocation = function () {
+   var locateBtn = event.target;
+   var locationBox = GetElementInsideContainer(locateBtn.parentElement,
+                                               "ThingLocationBox");
+   var showPosition = function (position) {
+      locationBox.value = position.coords.latitude + "," +
+         position.coords.longitude;
+      ferrylog("Located U!");
+   }
+
+   if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition);
+      ferrylog("Locating U! Wait for a while ...", 100000)
+   } else {
+      ferrylog("Geolocation is not supported by this browser.");
+   }
+}
+
+var nxtImg = function (reverse) {
+   var nxtBtn = event.target;
+   var imgs = nxtBtn.parentElement.parentElement.firstElementChild;
+   var img = imgs.getElementsByClassName("inlineVisible")[0];
+   var nxtImg = reverse?
+       (img.previousElementSibling?img.previousElementSibling:
+        imgs.lastElementChild):
+       (img.nextElementSibling?img.nextElementSibling:imgs.firstElementChild);
+   img.classList.replace("inlineVisible", "inlineHidden");
+   nxtImg.classList.replace("inlineHidden", "inlineVisible");
+}
+
 var viewportHandler = function() {
    var viewport = event.target;
    var bottom =
@@ -311,17 +346,19 @@ var updateUser = function(res) {
          var thingN=
              newThing?UserThing.cloneNode(true):UserThings.children[i];
          thingN.thingId=thing.id;
-         var imgs = thingN.children[0];
+         var imgsHldr = thingN.children[0];
+         var imgs=imgsHldr.children[0];
          if (newThing) {
             var imgHldr = imgs.children[0];
             var img = imgHldr.children[0];
             var SIB = imgHldr.children[1];
+            SIB.thingId=thing.id;
+            SIB.picId=0;
             if (res.things[i].pics.length) {
                img.src="/upload/"+res.name+"/"+i+"."+0+".jpg?"+new Date().getTime();
-               SIB.thingId=thing.id;
-               SIB.picId=0;
                for (var j=1; j<res.things[i].pics.length; ++j) {
                   imgHldr = imgs.children[0].cloneNode(true);
+                  imgHldr.classList.replace("inlineVisible", "inlineHidden");
                   img = imgHldr.children[0];
                   SIB = imgHldr.children[1];
                   img.src="/upload/"+res.name+"/"+i+"."+j+".jpg?"+new Date().getTime();
@@ -331,7 +368,9 @@ var updateUser = function(res) {
                      'afterEnd', imgHldr);
                }
             } else {
-               imgs.removeChild(imgHldr);
+               var SVG = SVGS.children[0].cloneNode(true);
+               imgHldr.replaceChild(SVG, img);
+               imgHldr.classList.add("dummy");
             }
          }
          for (var j=0; j<imgs.children.length; ++j) {
@@ -340,9 +379,10 @@ var updateUser = function(res) {
                classList.add("hidden");
          }
          var dummies=imgs.getElementsByClassName("dummy");
-         for (var j=0; j<dummies.length; ++j) {
-            dummies[j].classList.replace("inlineVisible","inlineHidden");
-         }
+         if (imgs.children.length>1 && imgs.children.length>dummies.length)
+            for (var j=0; j<dummies.length; ++j) {
+               dummies[j].classList.replace("inlineVisible","inlineHidden");
+            }
          var id=GetElementInsideContainer(thingN, "ThingId");
          id.innerText=thing.id;
          if (thing.name && thing.name.length) {
@@ -351,7 +391,8 @@ var updateUser = function(res) {
          }
          if (thing.location && thing.location.length) {
             var location=GetElementInsideContainer(thingN, "ThingLocation");
-            location.innerText=thing.location;
+            location.innerText=thing.location.length?thing.location.join(","):
+               thing.location;
          }
          var UserThingEditBtn =
              GetElementInsideContainer(thingN, "ThingEditBtn");
@@ -504,7 +545,7 @@ var addThing = function () {
       UserThings.children[UserThings.children.length-1], "ThingEditBtn"));
 }
 
-var editThing = function() {
+var editThing = function(newThing) {
    UserActions.classList.add("hidden");
    var thisUserThing = this.parentElement;
    var ThingName = GetElementInsideContainer(thisUserThing, "ThingName");
@@ -516,20 +557,23 @@ var editThing = function() {
                                                  "ThingLocation");
    var ThingLocationB = GetElementInsideContainer(thisUserThing,
                                                   "ThingLocationBox");
+   var ThingLocateBtn = GetElementInsideContainer(thisUserThing,
+                                                  "ThingLocateBtn");
    ThingLocationB.value=ThingLocation.innerText;
    ThingLocation.classList.add("hidden");
    ThingLocationB.classList.remove("hidden");
+   ThingLocateBtn.classList.remove("hidden");
    var imgs=GetElementInsideContainer(thisUserThing, "Imgs");
    for (var i=0;i<imgs.children.length; ++i) {
       var SIB = imgs.children[i].children[1];
       SIB.classList.remove("hidden");
    }
    var dummies=imgs.getElementsByClassName("dummy");
-   for (var i=0; i<dummies.length; ++i) {
-      dummies[i].classList.replace("inlineHidden","inlineVisible");;
-   }
+   // for (var i=0; i<dummies.length; ++i) {
+   //    dummies[i].classList.replace("inlineHidden","inlineVisible");;
+   // }
    for (var i=imgs.children.length; i<MaxImgsPerThing; ++i) {
-      var imgHldr = UserThing.children[0].children[0].cloneNode(true);
+      var imgHldr = imgs.children[0].cloneNode(true);
       var img = imgHldr.children[0];
       var thisSVG = SVGS.children[i].cloneNode(true);
       imgHldr.replaceChild(thisSVG,img);
@@ -537,9 +581,10 @@ var editThing = function() {
       imgHldr.children[1].picId=i;
       imgHldr.children[1].thingId=thisUserThing.thingId;
       imgHldr.children[1].classList.remove("hidden");
-      if (i)
+      if (i) {
+         imgHldr.classList.replace("inlineVisible", "inlineHidden")
          imgs.children[i-1].insertAdjacentElement('afterEnd', imgHldr);
-      else
+      } else
          imgs.insertAdjacentElement('afterBegin', imgHldr);
    }
    this.value="Update";
@@ -558,13 +603,20 @@ var updateThing = function() {
    var ThingLocation = GetElementInsideContainer(UserThing, "ThingLocation");
    var ThingLocationB = GetElementInsideContainer(UserThing,
                                                   "ThingLocationBox");
+   var ThingLocateBtn = GetElementInsideContainer(UserThing,
+                                                  "ThingLocateBtn");
+   if (!validThingName(ThingNameB.value)) {
+      ferrylog("Invalid ThingName");
+      return false;
+   }
    thing.name=ThingNameB.value;
-   thing.location=ThingLocationB.value;
+   var location = ThingLocationB.value.split(',');
+   thing.location = [parseFloat(location[0]), parseFloat(location[1])];
    content.things[thing.id]=thing;
    f.user=content;
    f.content=JSON.stringify(content);
    f.reqHeaders=[["Content-type", "text/json"]];
-   f.postExpdtn=function(feed){
+   f.postExpdtn = function (feed) {
       var res=JSON.parse(feed.responseText);
       if (res.password) {
          updateUser(res);
@@ -576,6 +628,7 @@ var updateThing = function() {
    ThingNameB.classList.add("hidden");
    ThingLocation.classList.remove("hidden");
    ThingLocationB.classList.add("hidden");
+   ThingLocateBtn.classList.add("hidden");
    this.value="Edit";
    this.onclick=editThing;
 }
@@ -688,7 +741,7 @@ function validUsername (username) {
          return false;
       }
    }
-   return true;
+   return (username.length && username.length < 24);
 }
 function validPassword (password) {
    for (var i=0; i<password.length;++i) {
@@ -701,5 +754,9 @@ function validPassword (password) {
          return false;
       }
    }
-   return true;
+   return (password.length && password.length < 24);
+}
+
+var validThingName = function (thingName) {
+   return validUsername(thingName);
 }
