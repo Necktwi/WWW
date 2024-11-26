@@ -251,15 +251,18 @@
          <input id="Captcha" alt="Captcha"/><br/>
          <img id="CaptchaImg" src=""><br/>
       </div>
-      <label id="SignInL">SignIn </label>
-      <input id="SignIn" alt="SignIn" type="radio" value="0" checked
-             onclick="togglesignup()"/ name="accountIntx"></br>
-      <label id="SignUpL">SignUp </label>
-      <input id="SignUp" alt="SignUp" type="radio" value="1"
-             onclick="togglesignup()"/ name="accountIntx"></br>
-      <label id="RecoverL">ResetPassword </label>
-      <input id="Recover" alt="Recover" type="radio" value="2"
-             onclick="togglesignup()"/ name="accountIntx"></br>
+      <input id="SubmitBtn" value="Submit" type="button"/>
+      <nobr><label id="SignInL">
+         <input id="SignIn" alt="SignIn" type="radio" value="0" checked
+             onclick="togglesignup()"/ name="accountIntx">
+      SignIn </label></nobr>
+      <nobr><input id="SignUp" alt="SignUp" type="radio" value="1"
+             onclick="togglesignup()"/ name="accountIntx">
+      <label id="SignUpL">SignUp </label></nobr>
+      <nobr><label id="RecoverL">
+         <input id="Recover" alt="Recover" type="radio" value="2"
+                onclick="togglesignup()"/ name="accountIntx">
+      ResetPassword</label></nobr>
       </div>
       <div id="usermenu" class="hidden">
          <svg id="unlock" height="24" viewBox="0 0 24 24" width="24"

@@ -2,12 +2,12 @@ var Logo;
 var SearchTool;
 var SearchToolOpacity=1;
 var SearchToolBlink;
-var Mouth;
+var Mouth,MouthPad;
 var Lock,Desc,LockBlock,CMPD;
 var Signupdiv;
 var Username, Credentials;
 var Password;
-var Email;
+var Email, SubmitBtn;
 var Passwords1, Password1L, Password2L, CaptchaImg, Captcha, NewL;
 var Passwords2, ConsentL, Consent, NonRecovery;
 var SignIn,SignUp,Recover;
@@ -29,12 +29,12 @@ var ferrylog = function (msg, interval=15000) {
    clearLogInterval = setInterval(function(){Log.innerHTML=""}, interval);
 }
 
-var Rotate=function(){
+var Rotate = function () {
    var props = 'transform WebkitTransform MozTransform OTransform msTransform'.split(' '),
        prop,
        el = document.createElement('div');
-   for(var i = 0, l = props.length; i < l; i++) {
-      if(typeof el.style[props[i]] !== "undefined") {
+   for (var i = 0, l = props.length; i < l; i++) {
+      if (typeof el.style[props[i]] !== "undefined") {
          prop = props[i];
          break;
       }
@@ -45,18 +45,22 @@ var Rotate=function(){
       Logo.style[prop] = "rotateX("+xAngle+"deg) rotateY("+yAngle+"deg)";
    }, 2000);
 };
-var addEvent = function(elem, type, fn) {
+var addEvent = function (elem, type, fn) {
    if (elem.addEventListener) elem.addEventListener(type, fn, false);
    else if (elem.attachEvent) elem.attachEvent('on' + type, fn);
 };
-var setCaretPos=function(elem, caretPos) {
+var removeEvent = function (elem, type, fn) {
+   if (elem.removeEventListener) elem.removeEventListener(type, fn, false);
+   else if (elem.dettachEvent) elem.dettachEvent('on' + type, fn);
+};
+var setCaretPos = function (elem, caretPos) {
    if(elem != null) {
-      if(elem.createTextRange) {
+      if (elem.createTextRange) {
          var range = elem.createTextRange();
          range.move('character', caretPos);
          range.select();
       } else {
-         if(elem.selectionStart) {
+         if (elem.selectionStart) {
             //elem.focus();
             elem.setSelectionRange(caretPos, caretPos);
          } else;
@@ -64,7 +68,7 @@ var setCaretPos=function(elem, caretPos) {
       }
    }
 };
-var inputOnFocus=function(){
+var inputOnFocus = function () {
    if (this.value === this.plcHldr) {
       setCaretPos(this,0);
       this.classList.remove("typing");
@@ -76,6 +80,7 @@ var inputOnFocus=function(){
       this.classList.add("typing");
    }
 };
+
 var showPlaceHolder = function () {
    this.type='text';
    this.value = this.plcHldr;
@@ -83,20 +88,20 @@ var showPlaceHolder = function () {
    this.classList.remove("typing");
    setCaretPos(this,0);
 };
-var inputOnBlur=function(){
+var inputOnBlur = function () {
    if (this.value === '') {
       this.classList.remove("typing");
       showPlaceHolder.call(this);
    }
 };
-var isPrintable=function(keycode){
+var isPrintable = function (keycode) {
    return (keycode > 47 && keycode < 58)   || // number keys
       (keycode > 64 && keycode < 91)       || // letter keys
       (keycode > 95 && keycode < 112)      || // numpad keys
       (keycode > 185 && keycode < 193)     || // ;=,-./` (in order)
       (keycode > 218 && keycode < 223);       // [\]' (in order)
 }
-var inputOnKeyDown=function(){
+var inputOnKeyDown = function () {
    //console.log("onKeyDown: "+this.value + ", " + event.keyCode);
    if ((event.keyCode == 8 || event.keyCode == 46 || event.keyCode == 229 ||
         event.inputType === 'deleteContentBackward') && this.value.length<=1) {
@@ -164,11 +169,12 @@ var viewportHandler = function() {
    Log.style.bottom=bottom;
 }
 
-var init=function(){
+var init = function () {
    Logo=document.getElementById('logo');
    SearchTool=document.getElementById('search-tool');
    Mouth=document.getElementById('mouth');
-   if(location.href.indexOf('?')==-1){
+   MouthPad=document.getElementById('mouth-pad');
+   if (location.href.indexOf('?')==-1) {
       Logo.classList.add("big");
    }
    setTimeout(function() {
@@ -182,6 +188,7 @@ var init=function(){
    },5000);
    Mouth.plcHldr=searchPlcHldr;
    Mouth.value=Mouth.plcHldr;
+   addEvent(MouthPad, 'submit', search);
    Lock=document.getElementById("lock");
    CMPD=0.8/Lock.getBoundingClientRect().width;
    Desc=document.getElementById("Desc");
@@ -200,6 +207,7 @@ var init=function(){
    SignIn=document.getElementById("SignIn");
    Recover=document.getElementById("Recover");
    SignUp=document.getElementById("SignUp");
+   SubmitBtn=document.getElementById("SubmitBtn");
    SignIn.checked=true;
    Email=document.getElementById("email");
    EmailL=document.getElementById("EmailL");
@@ -236,6 +244,8 @@ var init=function(){
    User = document.getElementById('user');
    addEvent(Username, 'keydown', usrnmEvent);
    addEvent(Password, 'keydown', authenticateUser);
+   addEvent(SearchTool, 'click', search);
+   addEvent(SubmitBtn, 'click', authenticateUser);
    Unlock = document.getElementById('unlock');
    Usermenu = document.getElementById('usermenu');
    UserThings = document.getElementById('UserThings');
@@ -308,14 +318,14 @@ var onBID=function(feed){
    }
    delete shuttle;
 }
-var onCaptcha=function(feed){
+var onCaptcha = function(feed){
    var res = JSON.parse(feed.responseText);
    if (res.cap) {
       CaptchaImg.src="/tmp/"+browserID+".jpg?"+new Date().getTime();
    }
    delete shuttle;
 }
-var login=function(feed) {
+var login = function(feed) {
    var res = JSON.parse(feed.responseText);
    if(res.password) {
       LockBlock.classList.replace("inlineVisible","inlineHidden");
@@ -402,19 +412,27 @@ var updateUser = function(res) {
       UserThings.classList.remove("hidden");
    }
 }
+
 var unlock = function(){
    LockBlock.classList.replace("inlineVisible","inlineHidden");
    Credentials.classList.remove("hidden");
    SignUp.checked=false;
    Username.focus();
 };
-var usrnmEvent = function() {
+
+var onKeyDown = function () {
+   
+}
+
+var usrnmEvent = function () {
    if (event.keyCode==13 && this.value !== this.plcHldr) { //13==enter
       Password.focus();
    }
 }
-var authenticateUser = function() {
-   if(event.keyCode==13 && this.value !== this.plcHldr) { //13==enter
+
+var authenticateUser = function () {
+   if ((event.keyCode==13 && this.value !== this.plcHldr) ||
+       this === SubmitBtn) { //13==enter
       var url = "login";
       var f={};
       f.content="{username:\""+Username.value+"\"";
@@ -423,16 +441,44 @@ var authenticateUser = function() {
       Password.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
    }
 }
-var lock = function() {
+
+var updateSearchedThings = function (feed) {
+   //var res = JSON.parse(feed.responseText);
+   ferrylog(feed.responseText);
+}
+
+var search = function () {
+   var showPosition = function (position) {
+      var location = position.coords.latitude + "," +
+         position.coords.longitude;
+      ferrylog("Located U!");
+      var url = "search";
+      var f={};
+      f.content = "{bid:\"" + browserID +"\"";
+      f.content += ",search:\""+mouth.value + "\",location:\"" +
+         location + "\"}";
+      f.postExpdtn=updateSearchedThings;
+      f.reqHeaders=[["Content-type", "text/json"]];
+      SearchTool.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
+   }
+   if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition);
+      ferrylog("Locating U! Wait for a while ...", 100000)
+   } else {
+      ferrylog("Geolocation is not supported by this browser.");
+   }
+   event.preventDefault();
+}
+var lock = function () {
    var url = "logout";
    var f={};
    f.content="";
    f.postExpdtn=logout;
    Unlock.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
 }
-var logout=function(feed){
+var logout = function (feed) {
    var res = JSON.parse(feed.responseText);
-   if(res.logout===true){
+   if (res.logout===true) {
       Usermenu.classList.add("hidden");
       LockBlock.classList.replace("inlineHidden", "inlineVisible");
       UserActions.classList.add("hidden");
@@ -442,7 +488,7 @@ var logout=function(feed){
    }
    delete Unlock.shuttle;
 }
-var togglesignup = function() {
+var togglesignup = function () {
    if (SignUp.checked || Recover.checked) {
       var url = "captcha";
       var f={};
@@ -458,15 +504,21 @@ var togglesignup = function() {
          UsernameL.classList.remove("hidden");
          NewL.classList.add("hidden");
       }
+      removeEvent(SubmitBtn, "click", authenticateUser);
+      addEvent(SubmitBtn, "click", signup);      
    } else {
       Signupdiv.classList.add("hidden");
       PasswordL.classList.remove("hidden");
       UsernameL.classList.remove("hidden");
       Password.focus();
+      removeEvent(SubmitBtn, "click", signup);
+      addEvent(SubmitBtn, "click", authenticateUser);      
    }
 }
-var signup = function() {
-   if(event.keyCode==13 && this.value !== this.plcHldr) { //13==enter
+
+var signup = function () {
+   if(event.keyCode==13 && this.value !== this.plcHldr ||
+      this === SubmitBtn) { //13==enter
       var url = "signup";
       var f={};
       if (!(validUsername(Username.value) && Passwords1.value.length<=24 &&
@@ -482,12 +534,13 @@ var signup = function() {
          f.content += "username:\""+Username.value+"\"";
       }
       f.content+= ",password:\""+
-            core.MD5(Passwords2.value)+"\",consent:" + Consent.checked + "}";
+         core.MD5(Passwords2.value)+"\",consent:" + Consent.checked + "}";
       f.postExpdtn=actMail;
       Passwords2.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
    }
 }
-var actMail = function(feed){
+
+var actMail = function (feed) {
    var res = JSON.parse(feed.responseText);
    ferrylog(res.msg);
    if (res.actEmailSent == 2) {
@@ -497,7 +550,7 @@ var actMail = function(feed){
    togglesignup();
    delete Passwords2.shuttle;
 }
-var getCookie = function(cname) {
+var getCookie = function (cname) {
    let name = cname + "=";
    let decodedCookie = decodeURIComponent(document.cookie);
    let ca = decodedCookie.split(';');
