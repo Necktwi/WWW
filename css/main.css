@@ -165,13 +165,13 @@ inptTxtBx.typing {
 }
 
 #ImgHldr {
-   width: 6cm;
-   height:8cm;
+   width: 4.5cm;
+   height: 6cm;
 }
 
 svg.fixedSize, img.fixedSize {
-   width: 6cm;
-   height: 8cm;
+   width: 4.5cm;
+   height: 6cm;
    background-color: rgb(64,64,64);
 }
 
@@ -200,6 +200,8 @@ svg.fixedSize, img.fixedSize {
 }
 #ThingImg {
    display:block;
+}
+#Things {
 }
 #SIB {
    top: -1.3cm;
@@ -262,6 +264,12 @@ svg.fixedSize, img.fixedSize {
    padding-right:0px;
    display:inline-block;
    position:relative;
+}
+.thing {
+   display: inline-block;
+   margin-right: 1mm;
+   position: relative;
+   vertical-align: top;
 }
 .plot {
    position: relative;

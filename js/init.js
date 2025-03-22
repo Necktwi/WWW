@@ -14,7 +14,7 @@ var SignIn,SignUp,Recover;
 var Usermenu;
 var User;
 var Unlock, Log;
-var UserThing, UserThings, UserActions, AddThing, ChoosePic;
+var Thing, Things, UserThings, UserActions, AddThing, ChoosePic;
 var SVGS;
 var searchPlcHldr = 'Search things near U';
 var caretPos=0;
@@ -248,11 +248,12 @@ var init = function () {
    addEvent(SubmitBtn, 'click', authenticateUser);
    Unlock = document.getElementById('unlock');
    Usermenu = document.getElementById('usermenu');
-   UserThings = document.getElementById('UserThings');
+   Things = document.getElementById('Things');
    Consent = document.getElementById('Consent');
    ConsentL = document.getElementById('ConsentL');
-   UserThing = GetElementInsideContainer(UserThings, "UserThing");
-   UserThing.remove();
+   Thing = GetElementInsideContainer(Things, "Thing");
+   UserThings = {};
+   Thing.remove();
    addEvent(Passwords2, 'keydown', signup);
    addEvent(Captcha, 'keydown', signup);
    browserID = getCookie("bid");
@@ -261,7 +262,7 @@ var init = function () {
    f.content="{bid:\""+browserID+"\"}";
    f.postExpdtn=onBID;
    shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
-   UserThings=document.getElementById("UserThings");
+   Things=document.getElementById("Things");
    UserActions=document.getElementById("UserActions");
    AddThing=document.getElementById("AddThing");
    AddThing.plcHldr="Add a thing to the fair";
@@ -303,13 +304,14 @@ var selectFiles = function(ev) {
 var about = function () {
    ferrylog("Gowtham Kudupudi");
 }
-var onBID=function(feed){
+var onBID = function (feed) {
    var res = JSON.parse(feed.responseText);
-   if (res.bid){
+   if (res.bid) {
       setCookie("bid", res.bid, 7);
       browserID=getCookie("bid");
    }
-   if (res.sid){
+   updateThings(res);
+   if (res.sid) {
    }
    if (res.name && res.email) {
       Username.value=res.name;
@@ -335,7 +337,7 @@ var login = function(feed) {
       Usermenu.classList.remove("hidden");
       Signupdiv.classList.add("hidden");
       UserActions.classList.remove("hidden");
-      updateUser(res);
+      updateThings(res);
       ferrylog("Signed in!");
    } else {
       ferrylog("No No...! Check username and password :)");
@@ -347,14 +349,26 @@ var login = function(feed) {
    }
    delete Password.shuttle;
 }
-var updateUser = function(res) {
-   userData = res;
+var deleteThings = function () {
+   Things.innerHTML="";
+   delete UserThings;
+   UserThings = {};
+}
+
+var updateThings = function (res) {
+   if (res.name)
+      userData = res;
    if (res.things) {
       for (var i=0; i<res.things.length; ++i) {
          var thing=res.things[i];
-         var newThing = UserThings.children.length<=i;
+         if (!UserThings[thing.user])
+            UserThings[thing.user]={};
+         if (!UserThings[thing.user][thing.name])
+            UserThings[thing.user][thing.name]={};
+         var newThing =
+             UserThings[thing.user][thing.name][thing.id]?false:true;
          var thingN=
-             newThing?UserThing.cloneNode(true):UserThings.children[i];
+             newThing?Thing.cloneNode(true):Things.children[i];
          thingN.thingId=thing.id;
          var imgsHldr = thingN.children[0];
          var imgs=imgsHldr.children[0];
@@ -364,14 +378,14 @@ var updateUser = function(res) {
             var SIB = imgHldr.children[1];
             SIB.thingId=thing.id;
             SIB.picId=0;
-            if (res.things[i].pics.length) {
-               img.src="/upload/"+res.name+"/"+i+"."+0+".jpg?"+new Date().getTime();
+            if (res.things[i].pics && res.things[i].pics.length) {
+               img.src="/upload/"+res.things[i].user+"/"+i+"."+0+".jpg?"+new Date().getTime();
                for (var j=1; j<res.things[i].pics.length; ++j) {
                   imgHldr = imgs.children[0].cloneNode(true);
                   imgHldr.classList.replace("inlineVisible", "inlineHidden");
                   img = imgHldr.children[0];
                   SIB = imgHldr.children[1];
-                  img.src="/upload/"+res.name+"/"+i+"."+j+".jpg?"+new Date().getTime();
+                  img.src="/upload/"+res.things[i].user+"/"+i+"."+j+".jpg?"+new Date().getTime();
                   SIB.thingId=thing.id;
                   SIB.picId=j;
                   imgs.children[j-1].insertAdjacentElement(
@@ -407,9 +421,16 @@ var updateUser = function(res) {
          var UserThingEditBtn =
              GetElementInsideContainer(thingN, "ThingEditBtn");
          UserThingEditBtn.onclick=editThing;
-         if(newThing)UserThings.append(thingN);
+         if (!User.innerHTML.length || User.innerHTML!=res.things[i].user)
+            UserThingEditBtn.classList.add("hidden");
+         else {
+            UserThingEditBtn.classList.remove("hidden");
+         }
+         UserThings[thing.user][thing.name][thing.id]=thingN;
+         thingN.user=thing.user;
+         if(newThing)Things.append(thingN);
       }
-      UserThings.classList.remove("hidden");
+      Things.classList.remove("hidden");
    }
 }
 
@@ -443,15 +464,18 @@ var authenticateUser = function () {
 }
 
 var updateSearchedThings = function (feed) {
-   //var res = JSON.parse(feed.responseText);
+   var res = JSON.parse(feed.responseText);
    ferrylog(feed.responseText);
+   res.search=true;
+   deleteThings();
+   updateThings(res);
 }
 
 var search = function () {
    var showPosition = function (position) {
-      var location = position.coords.latitude + "," +
+      var location = position.code ? "0,0" : position.coords.latitude + "," +
          position.coords.longitude;
-      ferrylog("Located U!");
+      ferrylog(position.code?"LocationOff!":"Located U!");
       var url = "search";
       var f={};
       f.content = "{bid:\"" + browserID +"\"";
@@ -462,7 +486,7 @@ var search = function () {
       SearchTool.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
    }
    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(showPosition);
+      navigator.geolocation.getCurrentPosition(showPosition,showPosition);
       ferrylog("Locating U! Wait for a while ...", 100000)
    } else {
       ferrylog("Geolocation is not supported by this browser.");
@@ -593,9 +617,9 @@ var addThing = function () {
       "location":"",
       "pics":[]
    };
-   updateUser(userData);
+   updateThings(userData);
    editThing.call(GetElementInsideContainer(
-      UserThings.children[UserThings.children.length-1], "ThingEditBtn"));
+      Things.children[Things.children.length-1], "ThingEditBtn"));
 }
 
 var editThing = function(newThing) {
@@ -642,10 +666,12 @@ var editThing = function(newThing) {
    }
    this.value="Update";
    this.onclick=updateThing;
+   this.classList.remove("hidden");
 }
+
 var updateThing = function() {
    UserActions.classList.remove("hidden");
-   var url = "updateItem";
+   var url = "updateThing";
    var f={};
    var content = {};
    content.things=[];
@@ -665,14 +691,17 @@ var updateThing = function() {
    thing.name=ThingNameB.value;
    var location = ThingLocationB.value.split(',');
    thing.location = [parseFloat(location[0]), parseFloat(location[1])];
-   content.things[thing.id]=thing;
+   content.things[
+      thing.id<0?UserThing.parentElement.childElementCount-1:thing.id]=thing;
    f.user=content;
    f.content=JSON.stringify(content);
    f.reqHeaders=[["Content-type", "text/json"]];
    f.postExpdtn = function (feed) {
       var res=JSON.parse(feed.responseText);
       if (res.password) {
-         updateUser(res);
+         updateThings(res);
+      } else {
+         ferrylog(res.error);
       }
       delete f.shuttle;
    };
