@@ -413,10 +413,22 @@ var updateThings = function (res) {
             var name=GetElementInsideContainer(thingN, "ThingName");
             name.innerText=thing.name;
          }
+         var locPin = GetElementInsideContainer(thingN, "ThingLocationPin");
          if (thing.location && thing.location.length) {
             var location=GetElementInsideContainer(thingN, "ThingLocation");
-            location.innerText=thing.location.length?thing.location.join(","):
+            var locStr=thing.location.length?thing.location.join(","):
                thing.location;
+            location.innerText=locStr;
+            if (locStr.length) {
+               locPin.title=locStr;
+               locPin.classList.remove("empty");
+               locPin.onclick=null;
+            } else {
+               locPin.classList.add("empty");
+               locPin.onclick=getLocation;
+            }
+         } else {
+            locPin.classList.add("empty");
          }
          var UserThingEditBtn =
              GetElementInsideContainer(thingN, "ThingEditBtn");
@@ -634,12 +646,12 @@ var editThing = function(newThing) {
                                                  "ThingLocation");
    var ThingLocationB = GetElementInsideContainer(thisUserThing,
                                                   "ThingLocationBox");
-   var ThingLocateBtn = GetElementInsideContainer(thisUserThing,
-                                                  "ThingLocateBtn");
+   var ThingLocPin = GetElementInsideContainer(thisUserThing,
+                                                  "ThingLocationPin");
    ThingLocationB.value=ThingLocation.innerText;
-   ThingLocation.classList.add("hidden");
    ThingLocationB.classList.remove("hidden");
-   ThingLocateBtn.classList.remove("hidden");
+   ThingLocPin.classList.add("empty");
+   ThingLocPin.onclick=getLocation;
    var imgs=GetElementInsideContainer(thisUserThing, "Imgs");
    for (var i=0;i<imgs.children.length; ++i) {
       var SIB = imgs.children[i].children[1];
@@ -682,8 +694,6 @@ var updateThing = function() {
    var ThingLocation = GetElementInsideContainer(UserThing, "ThingLocation");
    var ThingLocationB = GetElementInsideContainer(UserThing,
                                                   "ThingLocationBox");
-   var ThingLocateBtn = GetElementInsideContainer(UserThing,
-                                                  "ThingLocateBtn");
    if (!validThingName(ThingNameB.value)) {
       ferrylog("Invalid ThingName");
       return false;
@@ -708,9 +718,7 @@ var updateThing = function() {
    f.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
    ThingName.classList.remove("hidden");
    ThingNameB.classList.add("hidden");
-   ThingLocation.classList.remove("hidden");
    ThingLocationB.classList.add("hidden");
-   ThingLocateBtn.classList.add("hidden");
    this.value="Edit";
    this.onclick=editThing;
 }

@@ -203,6 +203,21 @@ svg.fixedSize, img.fixedSize {
 }
 #Things {
 }
+#ThingLocationPin {
+   display: inline-block;
+   width: 0.4cm;
+   height: 0.4cm;
+   position: relative;
+   background-image: url('/images/myIconSet.png');
+   background-position: -0.6cm -1.76cm;
+   background-size: 12cm;
+   filter: brightness(0) invert(1);
+}
+
+#ThingLocationPin.empty {
+   background-position: -3.6cm -2.38cm
+}
+
 #SIB {
    top: -1.3cm;
    position: relative;
