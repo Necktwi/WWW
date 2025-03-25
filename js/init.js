@@ -267,7 +267,7 @@ var init = function () {
    AddThing=document.getElementById("AddThing");
    AddThing.plcHldr="Add a thing to the fair";
    SVGS=document.getElementById("SVGS");
-   document.body.style.display='inline';
+   window.scrollTo(0,0);
 };
 
 var selectFiles = function(ev) {
