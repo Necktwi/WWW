@@ -87,6 +87,8 @@ header{
    position: fixed;
    bottom: 0.2cm;
    right: 0.2cm;
+   background-color: rgba(0,0,0,0.3);
+   backdrop-filter: blur(2px);
 }
 #search-bar {
    width: 100%;
@@ -204,7 +206,7 @@ svg.fixedSize, img.fixedSize {
 }
 #Things {
 }
-#ThingLocationPin {
+#ThingLocationPin, #LocationPin {
    display: inline-block;
    width: 0.4cm;
    height: 0.4cm;
@@ -215,8 +217,16 @@ svg.fixedSize, img.fixedSize {
    filter: brightness(0) invert(1);
 }
 
-#ThingLocationPin.empty {
+#ThingLocationPin.empty, #LocationPin.empty {
    background-position: -3.6cm -2.38cm
+}
+
+#LocationPin {
+   display: block;
+   position: fixed;
+   top: 8px;
+   right: 8px;
+   z-index:11;
 }
 
 #SIB {

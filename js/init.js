@@ -1,5 +1,5 @@
 var Logo;
-var SearchTool;
+var SearchTool,LocationPin;
 var SearchToolOpacity=1;
 var SearchToolBlink;
 var Mouth,MouthPad;
@@ -169,9 +169,17 @@ var viewportHandler = function() {
    Log.style.bottom=bottom;
 }
 
+var updateLocation = function () {
+   var onPosition = function (position) {
+      window.geoposition=position
+   }
+   navigator.geolocation.getCurrentPosition(onPosition);
+}
+
 var init = function () {
    Logo=document.getElementById('logo');
    SearchTool=document.getElementById('search-tool');
+   LocationPin=document.getElementById('LocationPin');
    Mouth=document.getElementById('mouth');
    MouthPad=document.getElementById('mouth-pad');
    if (location.href.indexOf('?')==-1) {
@@ -256,18 +264,36 @@ var init = function () {
    Thing.remove();
    addEvent(Passwords2, 'keydown', signup);
    addEvent(Captcha, 'keydown', signup);
-   browserID = getCookie("bid");
-   var url = "cookie";
-   var f={};
-   f.content="{bid:\""+browserID+"\"}";
-   f.postExpdtn=onBID;
-   shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
    Things=document.getElementById("Things");
    UserActions=document.getElementById("UserActions");
    AddThing=document.getElementById("AddThing");
    AddThing.plcHldr="Add a thing to the fair";
    SVGS=document.getElementById("SVGS");
-   window.scrollTo(0,0);
+   browserID = getCookie("bid");
+   var sendShuttle = function () {
+      var url = "cookie";
+      var f={};
+      var pstr = window.geoposition?
+          geoposition.coords.latitude + "," + geoposition.coords.longitude:
+          "0";
+      ferrylog("Location: " + pstr);
+      f.content="{bid:\""+browserID+"\",geoposition:["+pstr+"]}";
+      f.postExpdtn=onBID;
+      shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
+      LocationPin.classList.remove('empty');
+   }
+   var onPosition = function (position) {
+      window.geoposition=position
+      sendShuttle();
+   }
+   if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(onPosition);
+      ferrylog("Locating U! Wait for a while ...", 100000);
+   } else {
+      ferrylog("Geolocation is not supported by this browser.");
+      sendShuttle();
+   }
+   setInterval(updateLocation, 60000);
 };
 
 var selectFiles = function(ev) {
@@ -361,14 +387,16 @@ var updateThings = function (res) {
    if (res.things) {
       for (var i=0; i<res.things.length; ++i) {
          var thing=res.things[i];
-         if (!UserThings[thing.user])
+         var newThing=true;
+         if (!UserThings[thing.user]) {
             UserThings[thing.user]={};
-         if (!UserThings[thing.user][thing.name])
-            UserThings[thing.user][thing.name]={};
-         var newThing =
-             UserThings[thing.user][thing.name][thing.id]?false:true;
+         } else if (!UserThings[thing.user][thing.id]) {
+            UserThings[thing.user][thing.id]={};
+         } else {
+            newThing = false;
+         }
          var thingN=
-             newThing?Thing.cloneNode(true):Things.children[i];
+             newThing?Thing.cloneNode(true):UserThings[thing.user][thing.id];
          thingN.thingId=thing.id;
          var imgsHldr = thingN.children[0];
          var imgs=imgsHldr.children[0];
@@ -438,7 +466,7 @@ var updateThings = function (res) {
          else {
             UserThingEditBtn.classList.remove("hidden");
          }
-         UserThings[thing.user][thing.name][thing.id]=thingN;
+         UserThings[thing.user][thing.id]=thingN;
          thingN.user=thing.user;
          if(newThing)Things.append(thingN);
       }
@@ -468,8 +496,14 @@ var authenticateUser = function () {
        this === SubmitBtn) { //13==enter
       var url = "login";
       var f={};
+      var pstr = window.geoposition?
+          geoposition.coords.latitude + "," + geoposition.coords.longitude:
+          "0";
+      ferrylog("Location: " + pstr);
+      
       f.content="{username:\""+Username.value+"\"";
-      f.content+=",password:\""+core.MD5(Password.value) +"\"}";
+      f.content+=",password:\""+core.MD5(Password.value) +
+         "\",geoposition:["+pstr+"]}";
       f.postExpdtn=login;
       Password.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
    }
