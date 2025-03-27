@@ -388,15 +388,27 @@ var updateThings = function (res) {
       for (var i=0; i<res.things.length; ++i) {
          var thing=res.things[i];
          var newThing=true;
-         if (!UserThings[thing.user]) {
-            UserThings[thing.user]={};
-         } else if (!UserThings[thing.user][thing.id]) {
-            UserThings[thing.user][thing.id]={};
+         if (!thing.user && !userData["name"])
+            return;
+         var un;
+         if (!thing.user) {
+            un = userData["name"];
          } else {
-            newThing = false;
+            un = thing.user;
          }
+         if (!UserThings[un]) {
+               UserThings[un]={};
+            }
+         if (UserThings[un][thing.id]) {
+            newThing=false;
+         } else if (UserThings[un][-1]) {
+            UserThings[un][thing.id]=UserThings[un][-1];
+            UserThings[un][-1]=undefined;
+            newThing=false;
+         }
+
          var thingN=
-             newThing?Thing.cloneNode(true):UserThings[thing.user][thing.id];
+             newThing?Thing.cloneNode(true):UserThings[un][thing.id];
          thingN.thingId=thing.id;
          var imgsHldr = thingN.children[0];
          var imgs=imgsHldr.children[0];
@@ -466,8 +478,8 @@ var updateThings = function (res) {
          else {
             UserThingEditBtn.classList.remove("hidden");
          }
-         UserThings[thing.user][thing.id]=thingN;
-         thingN.user=thing.user;
+         UserThings[un][thing.id]=thingN;
+         thingN.user=un;
          if(newThing)Things.append(thingN);
       }
       Things.classList.remove("hidden");
@@ -518,25 +530,16 @@ var updateSearchedThings = function (feed) {
 }
 
 var search = function () {
-   var showPosition = function (position) {
-      var location = position.code ? "0,0" : position.coords.latitude + "," +
-         position.coords.longitude;
-      ferrylog(position.code?"LocationOff!":"Located U!");
-      var url = "search";
-      var f={};
-      f.content = "{bid:\"" + browserID +"\"";
-      f.content += ",search:\""+mouth.value + "\",location:\"" +
-         location + "\"}";
-      f.postExpdtn=updateSearchedThings;
-      f.reqHeaders=[["Content-type", "text/json"]];
-      SearchTool.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
-   }
-   if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(showPosition,showPosition);
-      ferrylog("Locating U! Wait for a while ...", 100000)
-   } else {
-      ferrylog("Geolocation is not supported by this browser.");
-   }
+   var pstr = window.geoposition?
+       geoposition.coords.latitude + "," + geoposition.coords.longitude:
+       "0";
+   var url = "search";
+   var f={};
+   f.content = "{bid:\"" + browserID +"\"";
+   f.content += ",search:\""+mouth.value + "\",geoposition:["+pstr+"]}";
+   f.postExpdtn=updateSearchedThings;
+   f.reqHeaders=[["Content-type", "text/json"]];
+   SearchTool.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
    event.preventDefault();
 }
 var lock = function () {
@@ -857,30 +860,37 @@ function GetElementInsideContainer(container, childID) {
    return false;
 }
 
-function validUsername (username) {
-   for (var i=0; i<username.length;++i) {
-      if (!((username.charCodeAt(i)>=65 && username.charCodeAt(i)<=90) ||
-            (username.charCodeAt(i)>=97 && username.charCodeAt(i)<=122) ||
-            (username.charAt(i)=='.'))) {
+function validName (name) {
+   for (var i=0; i<name.length;++i) {
+      if (!((name.charCodeAt(i)>=65 && name.charCodeAt(i)<=90) ||
+            (name.charCodeAt(i)>=97 && name.charCodeAt(i)<=122) ||
+            (name.charAt(i)=='.'))) {
          return false;
       }
    }
-   return (username.length && username.length < 24);
+   return (name.length && name.length < 24);
 }
-function validPassword (password) {
-   for (var i=0; i<password.length;++i) {
-      if (!((password.charCodeAt(i)>=65 && password.charCodeAt(i)<=90) ||
-            (password.charCodeAt(i)>=97 && password.charCodeAt(i)<=122) ||
-            (password.charCodeAt(i)>=48 && password.charCodeAt(i)<=57) ||
-            (password.charAt(i)=='.' || password.charAt(i)=='@' ||
-             password.charAt(i)=='#') ||
-            (password.charAt(i)=='$' || password.charAt(i)=='%'))) {
+function validPassword (name) {
+   for (var i=0; i<name.length;++i) {
+      if (!((name.charCodeAt(i)>=65 && name.charCodeAt(i)<=90) ||
+            (name.charCodeAt(i)>=97 && name.charCodeAt(i)<=122) ||
+            (name.charCodeAt(i)>=48 && name.charCodeAt(i)<=57) ||
+            (name.charAt(i)=='.' || name.charAt(i)=='@' ||
+             name.charAt(i)=='#') ||
+            (name.charAt(i)=='$' || name.charAt(i)=='%'))) {
          return false;
       }
    }
-   return (password.length && password.length < 24);
+   return (name.length && name.length < 24);
 }
 
-var validThingName = function (thingName) {
-   return validUsername(thingName);
+var validThingName = function (name) {
+   for (var i=0; i<name.length;++i) {
+      if (!((name.charCodeAt(i)>=65 && name.charCodeAt(i)<=90) ||
+            (name.charCodeAt(i)>=97 && name.charCodeAt(i)<=122) ||
+            (name.charAt(i)==' '))) {
+         return false;
+      }
+   }
+   return (name.length && name.length < 64);
 }
