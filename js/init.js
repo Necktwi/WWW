@@ -136,18 +136,8 @@ var getLocation = function () {
    var locateBtn = event.target;
    var locationBox = GetElementInsideContainer(locateBtn.parentElement,
                                                "ThingLocationBox");
-   var showPosition = function (position) {
-      locationBox.value = position.coords.latitude + "," +
-         position.coords.longitude;
-      ferrylog("Located U!");
-   }
-
-   if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(showPosition);
-      ferrylog("Locating U! Wait for a while ...", 100000)
-   } else {
-      ferrylog("Geolocation is not supported by this browser.");
-   }
+   locationBox.value = geoposition.coords.latitude + "," +
+      geoposition.coords.longitude;
 }
 
 var nxtImg = function (reverse) {
@@ -172,6 +162,12 @@ var viewportHandler = function() {
 var updateLocation = function () {
    var onPosition = function (position) {
       window.geoposition=position
+   }
+   var onPosErr = function (posErr) {
+      ferrylog(posErr.message);
+   }
+   var options = {
+      enableHighAccuracy:true
    }
    navigator.geolocation.getCurrentPosition(onPosition);
 }
@@ -286,8 +282,15 @@ var init = function () {
       window.geoposition=position
       sendShuttle();
    }
+   var onPositionError = function (posError) {
+      console.log(posError);
+   }
    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(onPosition);
+      var options = {
+         enableHighAccuracy:false
+      }
+      navigator.geolocation.getCurrentPosition(onPosition,onPositionError,
+                                               options);
       ferrylog("Locating U! Wait for a while ...", 100000);
    } else {
       ferrylog("Geolocation is not supported by this browser.");
@@ -594,12 +597,15 @@ var signup = function () {
       this === SubmitBtn) { //13==enter
       var url = "signup";
       var f={};
-      if (!(validUsername(Username.value) && Passwords1.value.length<=24 &&
-            Passwords1.value==Passwords2.value
-            && validPassword(Passwords2.value))) {
-         ferrylog("Passwords didn't match or username not made of [a-zA-Z.]"+
-                  " or Password not made of [a-zA-Z0-9.@#$%] and " +
-                  "they shoud b <24.");
+      Username.value=Username.value.trim();
+      if (!validUsername(Username.value)) {
+         ferrylog("Invalid Username, should be [a-zA-Z.] and length <24");
+         return;
+      } else if (Passwords1.value!=Passwords2.value) {
+         ferrylog("passwords didn't match");
+         return;
+      } else if (!validPassword(Passwords2.value)) {
+         ferrylog("Password not made of [a-zA-Z0-9.@#$%] or its length >24");
          return;
       }
       f.content="{email:\""+Email.value+"\",captcha:\""+ Captcha.value+"\","
@@ -738,8 +744,7 @@ var updateThing = function() {
    thing.name=ThingNameB.value;
    var location = ThingLocationB.value.split(',');
    thing.location = [parseFloat(location[0]), parseFloat(location[1])];
-   content.things[
-      thing.id<0?UserThing.parentElement.childElementCount-1:thing.id]=thing;
+   content.things.push(thing);
    f.user=content;
    f.content=JSON.stringify(content);
    f.reqHeaders=[["Content-type", "text/json"]];
@@ -860,7 +865,7 @@ function GetElementInsideContainer(container, childID) {
    return false;
 }
 
-function validName (name) {
+function validUsername (name) {
    for (var i=0; i<name.length;++i) {
       if (!((name.charCodeAt(i)>=65 && name.charCodeAt(i)<=90) ||
             (name.charCodeAt(i)>=97 && name.charCodeAt(i)<=122) ||
