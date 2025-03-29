@@ -311,6 +311,7 @@
          <div id='Imgs' class="">
             <div id="ImgHldr" class="center inlineVisible">
                <img id="ThingImg" class="fixedSize center"/>
+               <label id="picBrsr" for="SIB" class="hidden">Browse...</label>
                <input id="SIB" type="file" class="editBtn hidden"
                       onchange="selectFiles.call(this, event);"/>
             </div>
@@ -326,14 +327,14 @@
          <span id="ThingName"></span>
          <input id="ThingNameBox" class="hidden"/>
          <br/>
-         <label id="ThingIdL">ID: </label>
-         <span id="ThingId"></span>
-         <br/>
          <label id="ThingLocationL">Location: </label>
          <span id="ThingLocation" class="hidden"></span>
          <input id="ThingLocationBox" class="hidden"/>
          <div id="ThingLocationPin"></div>
-         <br/>
+         <div id="thingInfo" class="hidden">
+            <label id="ThingIdL">ID: </label>
+            <span id="ThingId"></span>
+         </div>
          <input id="ThingEditBtn" type="Button" value="Edit"/>
       </div>
    </div>

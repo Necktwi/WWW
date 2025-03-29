@@ -172,6 +172,10 @@ var updateLocation = function () {
    navigator.geolocation.getCurrentPosition(onPosition);
 }
 
+var openMap = function () {
+   window.open(event.target.url,'map');
+}
+
 var init = function () {
    Logo=document.getElementById('logo');
    SearchTool=document.getElementById('search-tool');
@@ -303,31 +307,47 @@ var selectFiles = function(ev) {
    if (!ev.target.files[0]) return;
    var btn = ev.target;
    var f = btn.files[0], r = new FileReader();
+   var l = btn.previousElementSibling;
    r.readAsArrayBuffer(f);
+   var thisThing =
+       this.parentElement.parentElement.parentElement.parentElement;
+   if (!l.teb) {
+      var teb = GetElementInsideContainer(thisThing, "ThingEditBtn");
+      teb.disabled=true;
+      l.teb=teb;
+   }
    r.onload = function() {
       //ev.target.value = '';
-      btn.postChunk = function() {
+      l.postChunk = function() {
          var jso=JSON.parse(this.text);
          this.thingId=jso["thingId"];
       }
-      btn.postUpload = function() {
+      l.postUpload = function() {
          var jso=JSON.parse(this.text);
          this.thingId=jso["thingId"];
-         var thissvg=this.previousElementSibling;
-         var newimg=document.createElement("img");
-         newimg.classList.add("fixedSize");
-         thissvg.classList.add("hidden");
-         newimg.src=
+         var thissvg=this.parentElement.getElementsByTagName('svg');
+         if (thissvg.length) {
+            thissvg = thissvg[0];
+            thissvg.classList.add("hidden");
+         }
+         var thisimg=this.parentElement.getElementsByTagName('img');
+         if (thisimg)
+            thisimg = thisimg[0];
+         else
+            thisimg=document.createElement("img");
+         thisimg.classList.add("fixedSize");
+         thisimg.src=
             "/upload/"+Username.value+"/"+this.thingId+"."+this.picId+".jpg?"+
             new Date().getTime();
-         this.insertAdjacentElement('beforeBegin', newimg);
-         var thisThing = this.parentElement.parentElement.parentElement;
+         this.insertAdjacentElement('beforeBegin', thisimg);
+         var thisThing = this.parentElement.parentElement.parentElement.parentElement;
          thisThing.thingId=this.thingId;
          var tid = GetElementInsideContainer(thisThing, "ThingId");
          tid.innerHTML=this.thingId.toString();
          this.parentElement.classList.remove("dummy");
+         this.teb.disabled=false;
       }
-      sendFileData(f.name, new Uint8Array(r.result), 2048, btn);
+      sendFileData(f.name, new Uint8Array(r.result), 2048, l);
    };
 }
 var about = function () {
@@ -422,13 +442,15 @@ var updateThings = function (res) {
             SIB.thingId=thing.id;
             SIB.picId=0;
             if (res.things[i].pics && res.things[i].pics.length) {
-               img.src="/upload/"+res.things[i].user+"/"+i+"."+0+".jpg?"+new Date().getTime();
+               img.src="/upload/"+res.things[i].user+"/"+res.things[i].id+
+                  "."+0+".jpg?"+new Date().getTime();
                for (var j=1; j<res.things[i].pics.length; ++j) {
                   imgHldr = imgs.children[0].cloneNode(true);
                   imgHldr.classList.replace("inlineVisible", "inlineHidden");
                   img = imgHldr.children[0];
                   SIB = imgHldr.children[1];
-                  img.src="/upload/"+res.things[i].user+"/"+i+"."+j+".jpg?"+new Date().getTime();
+                  img.src="/upload/"+res.things[i].user+"/"+res.things[i].id+
+                     "."+j+".jpg?"+new Date().getTime();
                   SIB.thingId=thing.id;
                   SIB.picId=j;
                   imgs.children[j-1].insertAdjacentElement(
@@ -442,7 +464,7 @@ var updateThings = function (res) {
          }
          for (var j=0; j<imgs.children.length; ++j) {
             var imgHldr = imgs.children[j];
-            imgHldr.children[imgHldr.children.length-1].
+            imgHldr.children[imgHldr.children.length-2].
                classList.add("hidden");
          }
          var dummies=imgs.getElementsByClassName("dummy");
@@ -465,7 +487,8 @@ var updateThings = function (res) {
             if (locStr.length) {
                locPin.title=locStr;
                locPin.classList.remove("empty");
-               locPin.onclick=null;
+               locPin.onclick=openMap;
+               locPin.url="https://maps.google.com?q="+locStr;
             } else {
                locPin.classList.add("empty");
                locPin.onclick=getLocation;
@@ -807,21 +830,22 @@ var uploadFile = function(infoBox) {
 	feed.ferry = new core.shuttle(
       "uplaod?file=" + encodeURIComponent(file.name),
       file, feed.postExpedition, feed);
-	fileName.insertAdjacentElement('beforeBegin', document.createElement('br'));
+	fileName.insertAdjacentElement('beforeBegin',
+                                  document.createElement('br'));
 	fileName.insertAdjacentElement('beforeBegin', pInd);
 	fileName.insertAdjacentElement('afterEnd', gauge);
 }
 
 // Send a large blob of data chunk by chunk
-var sendFileData = function(name, data, chunkSize, btn) {
+var sendFileData = function(name, data, chunkSize, l) {
    var sendChunk = function(offset) {
       var chunk = data.subarray(offset, offset + chunkSize) || '';
       var opts = {method: 'POST', body: chunk};
       var url = '/upload?offset=' + offset;
       url += '&chunkSize=' + chunkSize;
       url += '&totalSize=' + data.length;
-      url += "&thingId=" + btn.thingId;
-      url += "&picId=" + btn.picId;
+      url += "&thingId=" + l.thingId;
+      url += "&picId=" + l.picId;
       var ok;
       ferrylog('Uploading ' + name + ', bytes ' + offset + '..' +
                (offset + chunk.length) + ' of ' + data.length);
@@ -831,17 +855,20 @@ var sendFileData = function(name, data, chunkSize, btn) {
             return res.text();
          })
          .then(function(text) {
-            if (!ok) ferrylog('Error: ' + text);
+            if (!ok) {
+               ferrylog('Error: ' + text);
+               l.teb.disabled=false;
+            }
             else if(offset+chunk.length >= data.length){
                ferrylog(name + ' uploaded!');
-               if(btn.postUpload) {
-                  btn.text=text;
-                  btn.postUpload();
+               if(l.postUpload) {
+                  l.text=text;
+                  l.postUpload();
                }
             } else {
-               if(btn.postChunk){
-                  btn.text=text;
-                  btn.postChunk();
+               if(l.postChunk){
+                  l.text=text;
+                  l.postChunk();
                }
                if (ok && chunk.length > 0) sendChunk(offset + chunk.length);
             }

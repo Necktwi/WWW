@@ -168,14 +168,17 @@ inptTxtBx.typing {
 }
 
 #ImgHldr {
-   width: 4.5cm;
    height: 6cm;
 }
 
 svg.fixedSize, img.fixedSize {
-   width: 4.5cm;
+   max-width: 9.7cm;
    height: 6cm;
    background-color: rgb(64,64,64);
+}
+
+svg.fixedSize {
+   width: 4.5cm;   
 }
 
 #NewThingImgs svg path {
@@ -204,7 +207,12 @@ svg.fixedSize, img.fixedSize {
 #ThingImg {
    display:block;
 }
-#Things {
+#Things input {
+   font-size: 4mm;
+   padding: 0px;
+   padding-left:2px;
+   padding-right:2px;
+   margin: 1px;
 }
 #ThingLocationPin, #LocationPin {
    display: inline-block;
@@ -212,13 +220,24 @@ svg.fixedSize, img.fixedSize {
    height: 0.4cm;
    position: relative;
    background-image: url('/images/myIconSet.png');
-   background-position: -0.6cm -1.76cm;
-   background-size: 12cm;
+   background-position: -0.67cm -2cm;
+   background-size: 13cm;
    filter: brightness(0) invert(1);
+   hover:pointer
 }
 
 #ThingLocationPin.empty, #LocationPin.empty {
-   background-position: -3.6cm -2.38cm
+   background-position: -4cm -2.65cm
+}
+
+#picBrsr {
+   position: absolute;
+   top: 1mm;
+   left: 1mm;
+   z-index: 11;
+   background: rgba(0,0,0,0.5);
+   border-radius: 1mm;
+   backdrop-filter: blur(1mm);
 }
 
 #LocationPin {
@@ -227,6 +246,10 @@ svg.fixedSize, img.fixedSize {
    top: 8px;
    right: 8px;
    z-index:11;
+}
+
+#ThingLocationPin:hover, #LocationPin:hover {
+   cursor: pointer;
 }
 
 #SIB {
