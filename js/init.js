@@ -307,6 +307,10 @@ var selectFiles = function(ev) {
    if (!ev.target.files[0]) return;
    var btn = ev.target;
    var f = btn.files[0], r = new FileReader();
+   if (f.size>2000000) {
+      ferrylog("File size exceeded 2MB");
+      return;
+   }
    var l = btn.previousElementSibling;
    r.readAsArrayBuffer(f);
    var thisThing =
@@ -331,7 +335,7 @@ var selectFiles = function(ev) {
             thissvg.classList.add("hidden");
          }
          var thisimg=this.parentElement.getElementsByTagName('img');
-         if (thisimg)
+         if (thisimg.length)
             thisimg = thisimg[0];
          else
             thisimg=document.createElement("img");
@@ -404,6 +408,10 @@ var deleteThings = function () {
    UserThings = {};
 }
 
+var openfileprompt = function () {
+   this.nextElementSibling.click();
+}
+
 var updateThings = function (res) {
    if (res.name)
       userData = res;
@@ -439,6 +447,7 @@ var updateThings = function (res) {
             var imgHldr = imgs.children[0];
             var img = imgHldr.children[0];
             var SIB = imgHldr.children[1];
+            SIB.onclick=openfileprompt;
             SIB.thingId=thing.id;
             SIB.picId=0;
             if (res.things[i].pics && res.things[i].pics.length) {
@@ -579,11 +588,17 @@ var logout = function (feed) {
    var res = JSON.parse(feed.responseText);
    if (res.logout===true) {
       Usermenu.classList.add("hidden");
+      Username.value="";
+      Password.value="";
       LockBlock.classList.replace("inlineHidden", "inlineVisible");
       UserActions.classList.add("hidden");
-      UserThings.innerHTML="";
+      var edbns = document.getElementsByClassName("thngEdBtn");
+      for (var i=0; i<edbns.length; ++i) {
+         edbns[i].classList.add("hidden");
+      }
    } else {
-      Log.innerHTML="Huh! Something went wrong! Try again:)";
+      setCookie("bid","",0);
+      Log.innerHTML="Huh! Something went wrong! Try again:) or close window.";
    }
    delete Unlock.shuttle;
 }
@@ -611,7 +626,7 @@ var togglesignup = function () {
       UsernameL.classList.remove("hidden");
       Password.focus();
       removeEvent(SubmitBtn, "click", signup);
-      addEvent(SubmitBtn, "click", authenticateUser);      
+      addEvent(SubmitBtn, "click", authenticateUser);
    }
 }
 
@@ -621,7 +636,7 @@ var signup = function () {
       var url = "signup";
       var f={};
       Username.value=Username.value.trim();
-      if (!validUsername(Username.value)) {
+      if (SignUp.checked && !validUsername(Username.value)) {
          ferrylog("Invalid Username, should be [a-zA-Z.] and length <24");
          return;
       } else if (Passwords1.value!=Passwords2.value) {
@@ -630,12 +645,18 @@ var signup = function () {
       } else if (!validPassword(Passwords2.value)) {
          ferrylog("Password not made of [a-zA-Z0-9.@#$%] or its length >24");
          return;
+      } else if (!validEmail(Email.value)) {
+         ferrylog("Email not made of [a-zA-Z.@] or its length >48");
+         return;
+      } else if (!Consent.checked) {
+         ferrylog("U didn't consent to this tool usage :/");
+         return;
       }
       f.content="{email:\""+Email.value+"\",captcha:\""+ Captcha.value+"\","
       if (!Recover.checked) {
-         f.content += "username:\""+Username.value+"\"";
+         f.content += "username:\""+Username.value+"\",";
       }
-      f.content+= ",password:\""+
+      f.content+= "password:\""+
          core.MD5(Passwords2.value)+"\",consent:" + Consent.checked + "}";
       f.postExpdtn=actMail;
       Passwords2.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
@@ -733,9 +754,11 @@ var editThing = function(newThing) {
       var thisSVG = SVGS.children[i].cloneNode(true);
       imgHldr.replaceChild(thisSVG,img);
       imgHldr.classList.add("dummy");
-      imgHldr.children[1].picId=i;
-      imgHldr.children[1].thingId=thisUserThing.thingId;
-      imgHldr.children[1].classList.remove("hidden");
+      var SIBl = imgHldr.children[1];
+      SIBl.picId=i;
+      SIBl.onclick=openfileprompt;
+      SIBl.thingId=thisUserThing.thingId;
+      SIBl.classList.remove("hidden");
       if (i) {
          imgHldr.classList.replace("inlineVisible", "inlineHidden")
          imgs.children[i-1].insertAdjacentElement('afterEnd', imgHldr);
@@ -901,6 +924,16 @@ function validUsername (name) {
       }
    }
    return (name.length && name.length < 24);
+}
+function validEmail (name) {
+   for (var i=0; i<name.length;++i) {
+      if (!((name.charCodeAt(i)>=65 && name.charCodeAt(i)<=90) ||
+            (name.charCodeAt(i)>=97 && name.charCodeAt(i)<=122) ||
+            (name.charAt(i)=='.') || (name.charAt(i)=='@'))) {
+         return false;
+      }
+   }
+   return (name.length && name.length < 48);
 }
 function validPassword (name) {
    for (var i=0; i<name.length;++i) {

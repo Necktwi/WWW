@@ -20,7 +20,7 @@
    <div id="LocationPin" class="empty"></div>
    <div id="Location" hidden></div>
    <header class="">
-      <table><tr><td style="vertical-align: top;">
+      <table><tr><td style="vertical-align: top;"><div>
       <svg id="logo" class="" viewBox="0 0 288 288"
            xmlns="http://www.w3.org/2000/svg"
            xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -198,7 +198,7 @@
                   repeatCount="indefinite"/>
             </path>
          </g>
-      </svg></td>
+      </svg></div></td>
       <td style="vertical-align: top; padding-top: 0.12cm">
       <span id="LockBlock" class="inlineVisible">
       <svg id="lock" height="24" viewBox="0 0 24 24" width="24"
@@ -218,10 +218,10 @@
       <span id="Desc" class="">signin/signup<br/>
       to add ur things to the fair</span></span>
       <div id="Credentials" class="hidden">
-      <div id="UsernameL">Username: <br/>
+      <div style="display: inline-block" id="UsernameL">Username: <br/>
       <input id="username" alt="Username" class=""/></div>
-      <div id="PasswordL" class="">Password: <br/>
-      <input id="password" alt="Password" class=""/></div>
+      <div style="display: inline-block" id="PasswordL" class="">Password: <br/>
+      <input id="password" alt="Password" class=""/></div><br/>
       <div id="signupdiv" class="hidden">
          <div id="EmailL">Email: 
          <input id="email" alt="Email" class=""/></div>
@@ -231,7 +231,7 @@
          <div id="Password2L">Retype Password: 
          <input id="passwords2" alt="Password" class=""/></div>
          <div id="ConsentL">
-            <svg id="ConsentImg" viewBox="0 0 512 512"
+            <svg id="ConsentImg" class="hidden" viewBox="0 0 512 512"
                  xmlns="http://www.w3.org/2000/svg">
                <path
                   d="M85.57,446.25H426.43a32,32,0,0,0,28.17-47.17L284.18,82.58
@@ -247,8 +247,9 @@
                <path d="M256,397.25a20,20,0,1,1,20-20A20,20,0,0,1,256,397.25Z"
                      style="fill:#000000;"/>
             </svg>
-            I shall use this tool at my own risk 
-         <input id="Consent" alt="Consent" type="checkbox"></div>
+            <input id="Consent" alt="Consent" type="checkbox">
+            <a id="ConsentT"href="tnc.md">I agree to terms and condition</a>
+         </div>
          <label id="CaptchaL">Captcha: </label><br/>
          <input id="Captcha" alt="Captcha"/><br/>
          <img id="CaptchaImg" src=""><br/>
@@ -311,7 +312,7 @@
          <div id='Imgs' class="">
             <div id="ImgHldr" class="center inlineVisible">
                <img id="ThingImg" class="fixedSize center"/>
-               <label id="picBrsr" for="SIB" class="hidden">Browse...</label>
+               <label id="picBrsr" class="hidden">Browse...</label>
                <input id="SIB" type="file" class="editBtn hidden"
                       onchange="selectFiles.call(this, event);"/>
             </div>
@@ -323,19 +324,19 @@
                 onclick="nxtImg(0)"/>
          </div>
          </div>
-         <label id="ThingNameL">Name: </label>
+         <label id="ThingNameL" class="hidden">Name: </label>
+         <span id="ThingLocationPin"></span>
          <span id="ThingName"></span>
          <input id="ThingNameBox" class="hidden"/>
          <br/>
-         <label id="ThingLocationL">Location: </label>
+         <label id="ThingLocationL" class="hidden">Location: </label>
          <span id="ThingLocation" class="hidden"></span>
          <input id="ThingLocationBox" class="hidden"/>
-         <div id="ThingLocationPin"></div>
          <div id="thingInfo" class="hidden">
             <label id="ThingIdL">ID: </label>
             <span id="ThingId"></span>
          </div>
-         <input id="ThingEditBtn" type="Button" value="Edit"/>
+         <input id="ThingEditBtn" class="thngEdBtn" type="Button" value="Edit"/>
       </div>
    </div>
    <form id="UserActions" class="hidden">

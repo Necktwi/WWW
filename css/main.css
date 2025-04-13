@@ -1,6 +1,7 @@
 body{
    margin: 0px;
    /* display: inline; */
+   font-size: 5mm;
 }
 header{
    width: 100%;
@@ -10,6 +11,10 @@ header{
    background-color: rgba(0,0,0,0.3);
    backdrop-filter: blur(2px);
    -webkit-backdrop-filter: blur(2px);
+}
+header input {
+   font-size: 4mm;
+   margin: 1px;
 }
 #logo {
    height: 3.3cm;
@@ -49,8 +54,16 @@ header{
    display:block;
    width: 5cm;
 }
+#Consent {
+   position: relative;
+   bottom: 0.5mm;
+}
 #ConsentL {
-   marging-top: 3px;
+   margin-top: 2mm;
+   margin-bottom: 2mm;
+}
+#ConsentT, #ConsentT:visited {
+   color: rgb(128,128,255);
 }
 #ConsentImg {
    width: 0.6cm;
@@ -88,7 +101,9 @@ header{
    bottom: 0.2cm;
    right: 0.2cm;
    background-color: rgba(0,0,0,0.3);
-   backdrop-filter: blur(2px);
+   backdrop-filter: blur(2mm);
+   -webkit-backdrop-filter: blur(2mm);
+   border-radius: 1mm;
 }
 #search-bar {
    width: 100%;
@@ -137,6 +152,12 @@ header{
    position: absolute;
    font-size: 0.5cm;
    bottom:0cm;
+   margin:0.2cm;
+}
+#Thing {
+   margin: 1mm;
+   border-radius: 1mm;
+   max-width: 9.7cm;
 }
 #ThingNameBox {
    /* position: relative; */
@@ -175,10 +196,11 @@ svg.fixedSize, img.fixedSize {
    max-width: 9.7cm;
    height: 6cm;
    background-color: rgb(64,64,64);
+   border-radius: 2mm;
 }
 
 svg.fixedSize {
-   width: 4.5cm;   
+   width: 4.5cm;
 }
 
 #NewThingImgs svg path {
@@ -210,26 +232,48 @@ svg.fixedSize {
 #Things input {
    font-size: 4mm;
    padding: 0px;
-   padding-left:2px;
-   padding-right:2px;
-   margin: 1px;
+   padding-left:1mm;
+   padding-right:1mm;
+   padding-bottom: 0.8mm;
+   margin: 1mm;
+   border-radius: 1mm;
 }
+
 #ThingLocationPin, #LocationPin {
    display: inline-block;
-   width: 0.4cm;
-   height: 0.4cm;
+   width: 0.5cm;
+   height: 0.48cm;
    position: relative;
    background-image: url('/images/myIconSet.png');
-   background-position: -0.67cm -2cm;
-   background-size: 13cm;
+   background-position: -0.8cm -2.39cm;
+   background-size: 15.5cm;
    filter: brightness(0) invert(1);
-   hover:pointer
+   hover:pointer;
+}
+
+#ThingLocationPin {
+   left: 0.8mm;
+}
+#LocationPin {
+   display: block;
+   position: fixed;
+   top: 1mm;
+   right: 1mm;
+   z-index:11;
+}
+
+#ThingLocationPin:hover, #LocationPin:hover {
+   cursor: pointer;
 }
 
 #ThingLocationPin.empty, #LocationPin.empty {
-   background-position: -4cm -2.65cm
+   background-position: -4.75cm -3.18cm
 }
 
+#ThingName {
+   position:relative;
+   top: -0.63mm;
+}
 #picBrsr {
    position: absolute;
    top: 1mm;
@@ -238,23 +282,18 @@ svg.fixedSize {
    background: rgba(0,0,0,0.5);
    border-radius: 1mm;
    backdrop-filter: blur(1mm);
-}
-
-#LocationPin {
-   display: block;
-   position: fixed;
-   top: 8px;
-   right: 8px;
-   z-index:11;
-}
-
-#ThingLocationPin:hover, #LocationPin:hover {
-   cursor: pointer;
+   -webkit-backdrop-filter: blur(1mm);
 }
 
 #SIB {
    top: -1.3cm;
    position: relative;
+}
+footer {
+   /* position: relative; */
+   /* bottom: 2mm; */
+   /* left: 2mm; */
+   margin: 2mm;
 }
 .transform2s3d{
    -webkit-transition: width 2s, height 2s, -webkit-transform 2s linear;
