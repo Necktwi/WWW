@@ -254,14 +254,21 @@ svg.fixedSize {
 #ThingLocationPin {
    left: 0.8mm;
 }
-#LocationPin {
+#LocationDiv {
    display: block;
    position: fixed;
    top: 1mm;
    right: 1mm;
    z-index:11;
 }
-
+#LocationPin {
+   top: 1.5mm;
+}
+#LocTxt {
+   font-size: 4mm;
+   position:relative;
+   top: 0.4mm;
+}
 #ThingLocationPin:hover, #LocationPin:hover {
    cursor: pointer;
 }

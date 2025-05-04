@@ -1,5 +1,5 @@
 var Logo;
-var SearchTool,LocationPin;
+var SearchTool,LocationPin,Location,LocTxt;
 var SearchToolOpacity=1;
 var SearchToolBlink;
 var Mouth,MouthPad;
@@ -159,17 +159,46 @@ var viewportHandler = function() {
    Log.style.bottom=bottom;
 }
 
-var updateLocation = function () {
+var showBoxUpdtLoc = function() {
+   Location.dont=false;
+   updateLocation.call(this, true);
+};
+
+var updateLocation = function (show) {
+   if (show) {
+      LocTxt.classList.add("hidden");
+      Location.classList.remove("hidden");
+   }
    var onPosition = function (position) {
-      window.geoposition=position
+      if (Location.dont) {
+         return;
+      }
+      Location.value=position.coords.latitude+","+position.coords.longitude;
+      window.cookieShuttle();
    }
    var onPosErr = function (posErr) {
+      if (posErr.code == posErr.PERMISSION_DENIED) {
+         ferrylog("U denied locating you! Enter ur preferred "+
+                  "Longitude,Latitude above.");
+         Location.classList.remove("hidden");
+         LocationPin.onclick=window.cookieShuttle;
+         return;
+      }
       ferrylog(posErr.message);
    }
    var options = {
       enableHighAccuracy:true
    }
-   navigator.geolocation.getCurrentPosition(onPosition);
+   if (navigator.geolocation) {
+      var options = {
+         enableHighAccuracy:false
+      }
+      navigator.geolocation.getCurrentPosition(onPosition,onPosErr,options);
+      ferrylog("Locating U! Wait for a while ...", 100000);
+   } else {
+      ferrylog("Geolocation is not supported by this browser.");
+      cookieShuttle();
+   }
 }
 
 var openMap = function () {
@@ -180,6 +209,19 @@ var init = function () {
    Logo=document.getElementById('logo');
    SearchTool=document.getElementById('search-tool');
    LocationPin=document.getElementById('LocationPin');
+   Location=document.getElementById('LocationBox');
+   addEvent(Location, 'keydown', function () {
+      if (!this.dont) {
+         this.dont=true;
+         ferrylog("Ok, not locating you. Enter preferred location in "+
+                  "XX.XXXX,YY.YYYY format");
+         LocationPin.onclick=cookieShuttle;
+      }
+      if (event.keyCode==13) {
+         cookieShuttle();
+      }
+   });
+   LocTxt=document.getElementById('LocTxt');
    Mouth=document.getElementById('mouth');
    MouthPad=document.getElementById('mouth-pad');
    if (location.href.indexOf('?')==-1) {
@@ -270,36 +312,19 @@ var init = function () {
    AddThing.plcHldr="Add a thing to the fair";
    SVGS=document.getElementById("SVGS");
    browserID = getCookie("bid");
-   var sendShuttle = function () {
+   window.cookieShuttle = function () {
+      Location.classList.add("hidden");
       var url = "cookie";
       var f={};
-      var pstr = window.geoposition?
-          geoposition.coords.latitude + "," + geoposition.coords.longitude:
-          "0";
+      var pstr = Location.value;
       ferrylog("Location: " + pstr);
       f.content="{bid:\""+browserID+"\",geoposition:["+pstr+"]}";
       f.postExpdtn=onBID;
       shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
       LocationPin.classList.remove('empty');
    }
-   var onPosition = function (position) {
-      window.geoposition=position
-      sendShuttle();
-   }
-   var onPositionError = function (posError) {
-      console.log(posError);
-   }
-   if (navigator.geolocation) {
-      var options = {
-         enableHighAccuracy:false
-      }
-      navigator.geolocation.getCurrentPosition(onPosition,onPositionError,
-                                               options);
-      ferrylog("Locating U! Wait for a while ...", 100000);
-   } else {
-      ferrylog("Geolocation is not supported by this browser.");
-      sendShuttle();
-   }
+   LocationPin.onclick = showBoxUpdtLoc;
+   updateLocation();
    setInterval(updateLocation, 60000);
 };
 
@@ -371,6 +396,11 @@ var onBID = function (feed) {
       Email.value=res.email;
       login(feed);
    }
+   Location.classList.add("hidden");
+   Location.onclick=updateLocation;
+   LocTxt.innerHTML=Location.value;
+   LocTxt.classList.remove("hidden");
+   LocationPin.onclick = showBoxUpdtLoc;
    delete shuttle;
 }
 var onCaptcha = function(feed){
