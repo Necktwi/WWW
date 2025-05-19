@@ -17,14 +17,16 @@
 </head>
 <body onload="init()" class="dark">
    <script>0</script>
-   <div id="LocationDiv">
-      <input id="LocationBox" class="hidden"/>
-      <span id="LocTxt" class="hidden"></span>
-      <div id="LocationPin" class="empty"></div>
+   <div id="LocationDDiv" class="if">
+      <div id="LocationDiv">
+         <input id="LocationBox" class="hidden"/>
+         <span id="LocTxt" class="hidden"></span>
+         <div id="LocationPin" class="empty"></div>
+      </div>
    </div>
    <header class="">
-      <table><tr><td style="vertical-align: top;"><div>
-      <svg id="logo" class="" viewBox="0 0 288 288"
+      <table><tr><td style="vertical-align: top;"><div id="logoDiv" class="if">
+      <svg id="logo" class="small" viewBox="0 0 288 288"
            xmlns="http://www.w3.org/2000/svg"
            xmlns:xlink="http://www.w3.org/1999/xlink">
          <g id="Ferry" transform="matrix(1 0 0 1 16 16)"
@@ -327,19 +329,27 @@
                 onclick="nxtImg(0)"/>
          </div>
          </div>
-         <label id="ThingNameL" class="hidden">Name: </label>
-         <span id="ThingLocationPin"></span>
-         <span id="ThingName"></span>
-         <input id="ThingNameBox" class="hidden"/>
-         <br/>
          <label id="ThingLocationL" class="hidden">Location: </label>
+         <span id="ThingLocationPin"></span>
          <span id="ThingLocation" class="hidden"></span>
          <input id="ThingLocationBox" class="hidden"/>
+         <label id="ThingNameL" class="hidden"><br/>Name: </label>
+         <input id="ThingNameBox" class="hidden"/>
+         <span id="ThingName"></span>
+         <br/>
          <div id="thingInfo" class="hidden">
             <label id="ThingIdL">ID: </label>
             <span id="ThingId"></span>
          </div>
-         <input id="ThingEditBtn" class="thngEdBtn" type="Button" value="Edit"/>
+         <div id="ThingDetailsDiv" class="hidden">
+            <label id="ThingDetailsL">Details: </label><br/>
+            <textarea id="ThingDetailsTA" rows="8" cols="32"></textarea>
+         </div>
+         <div id="ThingDetails" class="hidden"></div>
+         <div id="messages" class="hidden">
+            <input id="msgBtn" type="Button" value="message"/>
+         </div>
+         <input id="ThingEditBtn" class="thngEdBtn" type="Button" value="edit"/>
       </div>
    </div>
    <form id="UserActions" class="hidden">

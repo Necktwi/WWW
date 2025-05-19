@@ -1,9 +1,9 @@
-body{
+body {
    margin: 0px;
    /* display: inline; */
    font-size: 5mm;
 }
-header{
+header {
    width: 100%;
    z-index: 10;
    position: sticky;
@@ -20,7 +20,7 @@ header input {
    height: 3.3cm;
    width: 3.3cm;
    padding-right: 0.1cm;
-   position: relative;
+   /* position: relative; */
 }
 #logo.big {
    height: 5cm;
@@ -29,6 +29,30 @@ header input {
 #logo.small {
    height: 1cm;
    width: 1cm;
+}
+#logoDiv {
+   /* position: relative; */
+}
+#logoDiv.if {
+   position:fixed;
+   z-index:10;
+   width: 100vw;
+   height: 100vh;
+   top:0px;
+   left:0px;
+   background-color: black;
+   /* display: flex; */
+   /* justify-content: center; */
+   /* align-items: center; */
+}
+#logoDiv.if #logo {
+   position: relative;
+   width: 5cm;
+   height: 5cm;
+   top: 45vh;
+   left: 50vw;
+   padding: 0mm;
+   transform: translate(-50%,-50%);
 }
 #lock {
    height: 0.8cm;
@@ -104,6 +128,18 @@ header input {
    backdrop-filter: blur(2mm);
    -webkit-backdrop-filter: blur(2mm);
    border-radius: 1mm;
+   z-index:11;
+   text-align:right;
+}
+#Log.visible div.hidden {
+   visibility: revert;
+   display: revert;
+   position: revert;
+   width: revert;
+   height: revert;
+   padding: revert;
+   border: revert;
+   margin: revert;
 }
 #search-bar {
    width: 100%;
@@ -260,6 +296,10 @@ svg.fixedSize {
    top: 1mm;
    right: 1mm;
    z-index:11;
+   background-color: rgba(0,0,0,0.3);
+   backdrop-filter: blur(2mm);
+   -webkit-backdrop-filter: blur(2mm);
+   border-radius: 1mm;
 }
 #LocationPin {
    top: 1.5mm;
@@ -275,6 +315,20 @@ svg.fixedSize {
 
 #ThingLocationPin.empty, #LocationPin.empty {
    background-position: -4.75cm -3.18cm
+}
+
+#LocationDDiv.if {
+   position: fixed;
+   top: 45vh;
+   left: 50vw;
+   transform: translate(-50%,0);
+   z-index: 11;
+}
+
+#LocationDDiv.if #LocationDiv {
+   position: relative;
+   top: 3cm;
+   left: 0cm;
 }
 
 #ThingName {

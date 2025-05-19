@@ -1,5 +1,5 @@
-var Logo;
-var SearchTool,LocationPin,Location,LocTxt;
+var Logo, LogoDiv;
+var SearchTool,LocationPin,LocationDDiv,Location,LocTxt;
 var SearchToolOpacity=1;
 var SearchToolBlink;
 var Mouth,MouthPad;
@@ -24,11 +24,24 @@ var userData;
 var clearLogInterval;
 
 var ferrylog = function (msg, interval=15000) {
-   Log.innerHTML=msg;
+   if (Log.children.length)
+      Log.lastChild.classList.add("hidden");
+   var nl=document.createElement("div");
+   nl.innerHTML=msg;
+   Log.insertAdjacentElement("beforeEnd", nl);
    clearInterval(clearLogInterval);
-   clearLogInterval = setInterval(function(){Log.innerHTML=""}, interval);
+   clearLogInterval = setInterval(
+      function(){Log.lastChild.classList.add("hiddenLog")}, interval
+   );
 }
 
+var toggleLog = function () {
+   if (Log.classList.contains("visible")) {
+      Log.classList.remove("visible");
+   } else {
+      Log.classList.add("visible");
+   }
+}
 var Rotate = function () {
    var props = 'transform WebkitTransform MozTransform OTransform msTransform'.split(' '),
        prop,
@@ -136,8 +149,7 @@ var getLocation = function () {
    var locateBtn = event.target;
    var locationBox = GetElementInsideContainer(locateBtn.parentElement,
                                                "ThingLocationBox");
-   locationBox.value = geoposition.coords.latitude + "," +
-      geoposition.coords.longitude;
+   locationBox.value = Location.value;
 }
 
 var nxtImg = function (reverse) {
@@ -173,18 +185,24 @@ var updateLocation = function (show) {
       if (Location.dont) {
          return;
       }
-      Location.value=position.coords.latitude+","+position.coords.longitude;
-      window.cookieShuttle();
+      Location.value=position.coords.latitude.toPrecision(9);
+      Location.value+=","+position.coords.longitude.toPrecision(9);
+      if (!browserID) {
+         window.cookieShuttle();
+      }
+      setTimeout(updateLocation, 60000);
    }
    var onPosErr = function (posErr) {
       if (posErr.code == posErr.PERMISSION_DENIED) {
          ferrylog("U denied locating you! Enter ur preferred "+
                   "Longitude,Latitude above.");
+         LocTxt.classList.add("hidden");
          Location.classList.remove("hidden");
          LocationPin.onclick=window.cookieShuttle;
          return;
       }
       ferrylog(posErr.message);
+      setTimeout(updateLocation, 60000);
    }
    var options = {
       enableHighAccuracy:true
@@ -194,7 +212,7 @@ var updateLocation = function (show) {
          enableHighAccuracy:false
       }
       navigator.geolocation.getCurrentPosition(onPosition,onPosErr,options);
-      ferrylog("Locating U! Wait for a while ...", 100000);
+      ferrylog("LocatingU!", 100000);
    } else {
       ferrylog("Geolocation is not supported by this browser.");
       cookieShuttle();
@@ -207,9 +225,12 @@ var openMap = function () {
 
 var init = function () {
    Logo=document.getElementById('logo');
+   LogoDiv=document.getElementById('logoDiv');
+   LogoDiv.parentElement.style.display="block";
    SearchTool=document.getElementById('search-tool');
    LocationPin=document.getElementById('LocationPin');
    Location=document.getElementById('LocationBox');
+   LocationDDiv=document.getElementById('LocationDDiv');
    addEvent(Location, 'keydown', function () {
       if (!this.dont) {
          this.dont=true;
@@ -227,15 +248,14 @@ var init = function () {
    if (location.href.indexOf('?')==-1) {
       Logo.classList.add("big");
    }
+   /*
    setTimeout(function() {
       Logo.classList.add("transform2s3d");
       Logo.classList.remove("big");
       CMPD=0.8/Lock.getBoundingClientRect().width;
       window.visualViewport.addEventListener("resize", viewportHandler);
-   },2000);
-   setTimeout(function() {
-      Logo.classList.add("small");
-   },5000);
+      },2000);
+   */
    Mouth.plcHldr=searchPlcHldr;
    Mouth.value=Mouth.plcHldr;
    addEvent(MouthPad, 'submit', search);
@@ -277,6 +297,7 @@ var init = function () {
    CaptchaImg=document.getElementById("CaptchaImg");
    Captcha=document.getElementById("Captcha");
    Log=document.getElementById("Log");
+   Log.onclick=toggleLog;
    NonRecovery=document.getElementById("NonRecovery");
    var inputs=document.getElementsByClassName("labeled");
    for (var i=0; i<inputs.length; ++i) {
@@ -311,7 +332,6 @@ var init = function () {
    AddThing=document.getElementById("AddThing");
    AddThing.plcHldr="Add a thing to the fair";
    SVGS=document.getElementById("SVGS");
-   browserID = getCookie("bid");
    window.cookieShuttle = function () {
       Location.classList.add("hidden");
       var url = "cookie";
@@ -325,7 +345,6 @@ var init = function () {
    }
    LocationPin.onclick = showBoxUpdtLoc;
    updateLocation();
-   setInterval(updateLocation, 60000);
 };
 
 var selectFiles = function(ev) {
@@ -366,7 +385,7 @@ var selectFiles = function(ev) {
             thisimg=document.createElement("img");
          thisimg.classList.add("fixedSize");
          thisimg.src=
-            "/upload/"+Username.value+"/"+this.thingId+"."+this.picId+".jpg?"+
+            "/upload/"+User.innerHTML+"/"+this.thingId+"."+this.picId+".jpg?"+
             new Date().getTime();
          this.insertAdjacentElement('beforeBegin', thisimg);
          var thisThing = this.parentElement.parentElement.parentElement.parentElement;
@@ -387,6 +406,9 @@ var onBID = function (feed) {
    if (res.bid) {
       setCookie("bid", res.bid, 7);
       browserID=getCookie("bid");
+      LogoDiv.classList.remove("if");
+      LogoDiv.parentElement.style.display="table-cell";
+      LocationDDiv.classList.remove("if");
    }
    updateThings(res);
    if (res.sid) {
@@ -415,13 +437,13 @@ var login = function(feed) {
    if(res.password) {
       LockBlock.classList.replace("inlineVisible","inlineHidden");
       Credentials.classList.add("hidden");
-      User.innerHTML=Username.value;
+      User.innerHTML=res.name;
       User.obj=res;
       Usermenu.classList.remove("hidden");
       Signupdiv.classList.add("hidden");
       UserActions.classList.remove("hidden");
       updateThings(res);
-      ferrylog("Signed in!");
+      ferrylog("SignedIn!");
    } else {
       ferrylog("No No...! Check username and password :)");
       // LockBlock.classList.replace("inlineVisible","inlineHidden");
@@ -441,7 +463,19 @@ var deleteThings = function () {
 var openfileprompt = function () {
    this.nextElementSibling.click();
 }
-
+var showThingDetails = function () {
+   var ThingDetails = GetElementInsideContainer(
+      this.parentElement, "ThingDetails");
+   var messages = GetElementInsideContainer(
+      this.parentElement, "messages");
+   if (ThingDetails.classList.contains("hidden")) {
+      ThingDetails.classList.remove("hidden");
+      messages.classList.remove("hidden");
+   } else {
+      ThingDetails.classList.add("hidden");
+      messages.classList.add("hidden");
+   }
+}
 var updateThings = function (res) {
    if (res.name)
       userData = res;
@@ -516,6 +550,7 @@ var updateThings = function (res) {
          if (thing.name && thing.name.length) {
             var name=GetElementInsideContainer(thingN, "ThingName");
             name.innerText=thing.name;
+            name.onclick=showThingDetails;
          }
          var locPin = GetElementInsideContainer(thingN, "ThingLocationPin");
          if (thing.location && thing.location.length) {
@@ -534,6 +569,19 @@ var updateThings = function (res) {
             }
          } else {
             locPin.classList.add("empty");
+         }
+         var dtls=GetElementInsideContainer(thingN, "ThingDetails");
+         var dtlsta;
+         if (thing.details) {
+            dtls.innerHTML=thing.details;
+            dtlsta=GetElementInsideContainer(thingN, "ThingDetailsTA");
+            dtlsta.value=thing.details;
+            
+         }
+         dtlsta=GetElementInsideContainer(thingN, "ThingDetailsDiv");
+         if (!dtlsta.classList.contains("hidden")) {
+            dtlsta.classList.add("hidden");
+            dtls.classList.remove("hidden");
          }
          var UserThingEditBtn =
              GetElementInsideContainer(thingN, "ThingEditBtn");
@@ -573,9 +621,7 @@ var authenticateUser = function () {
        this === SubmitBtn) { //13==enter
       var url = "login";
       var f={};
-      var pstr = window.geoposition?
-          geoposition.coords.latitude + "," + geoposition.coords.longitude:
-          "0";
+      var pstr = Location.value;
       ferrylog("Location: " + pstr);
       
       f.content="{username:\""+Username.value+"\"";
@@ -588,20 +634,20 @@ var authenticateUser = function () {
 
 var updateSearchedThings = function (feed) {
    var res = JSON.parse(feed.responseText);
-   ferrylog(feed.responseText);
+   ferrylog(res.things.length+" thing"+(res.things.length==1?"":"s")+" found");
    res.search=true;
    deleteThings();
    updateThings(res);
 }
 
 var search = function () {
-   var pstr = window.geoposition?
-       geoposition.coords.latitude + "," + geoposition.coords.longitude:
-       "0";
+   var pstr = Location.value;
    var url = "search";
    var f={};
    f.content = "{bid:\"" + browserID +"\"";
-   f.content += ",search:\""+mouth.value + "\",geoposition:["+pstr+"]}";
+   f.content += ",search:\"";
+   f.content+= mouth.value==mouth.plcHldr?"":mouth.value;
+   f.content+="\",geoposition:["+pstr+"]}";
    f.postExpdtn=updateSearchedThings;
    f.reqHeaders=[["Content-type", "text/json"]];
    SearchTool.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
@@ -626,9 +672,10 @@ var logout = function (feed) {
       for (var i=0; i<edbns.length; ++i) {
          edbns[i].classList.add("hidden");
       }
+      ferrylog("Bye!");
    } else {
       setCookie("bid","",0);
-      Log.innerHTML="Huh! Something went wrong! Try again:) or close window.";
+      ferrylog("Huh! Something went wrong! Try again:) or close window.");
    }
    delete Unlock.shuttle;
 }
@@ -755,18 +802,29 @@ var editThing = function(newThing) {
    UserActions.classList.add("hidden");
    var thisUserThing = this.parentElement;
    var ThingName = GetElementInsideContainer(thisUserThing, "ThingName");
+   var ThingNameL = GetElementInsideContainer(thisUserThing, "ThingNameL");
    var ThingNameB = GetElementInsideContainer(thisUserThing, "ThingNameBox");
    ThingNameB.value=ThingName.innerText;
    ThingName.classList.add("hidden");
    ThingNameB.classList.remove("hidden");
-   var ThingLocation = GetElementInsideContainer(thisUserThing,
-                                                 "ThingLocation");
-   var ThingLocationB = GetElementInsideContainer(thisUserThing,
-                                                  "ThingLocationBox");
-   var ThingLocPin = GetElementInsideContainer(thisUserThing,
-                                                  "ThingLocationPin");
+   ThingNameL.classList.remove("hidden");
+   var ThingLocation = GetElementInsideContainer(
+      thisUserThing, "ThingLocation");
+   var ThingLocationL = GetElementInsideContainer(
+      thisUserThing, "ThingLocationL");
+   var ThingLocationB = GetElementInsideContainer(
+      thisUserThing, "ThingLocationBox");
+   var ThingLocPin = GetElementInsideContainer(
+      thisUserThing, "ThingLocationPin");
+   var ThingDetails = GetElementInsideContainer(
+      thisUserThing, "ThingDetails");
+   var ThingDetailsDiv = GetElementInsideContainer(
+      thisUserThing, "ThingDetailsDiv");
    ThingLocationB.value=ThingLocation.innerText;
    ThingLocationB.classList.remove("hidden");
+   ThingLocationL.classList.remove("hidden");
+   ThingDetails.classList.add("hidden");
+   ThingDetailsDiv.classList.remove("hidden");
    ThingLocPin.classList.add("empty");
    ThingLocPin.onclick=getLocation;
    var imgs=GetElementInsideContainer(thisUserThing, "Imgs");
@@ -809,17 +867,26 @@ var updateThing = function() {
    var UserThing = this.parentElement;
    var thing={};thing.id=UserThing.thingId;
    var ThingName = GetElementInsideContainer(UserThing, "ThingName");
+   var ThingNameL = GetElementInsideContainer(UserThing, "ThingNameL");
    var ThingNameB = GetElementInsideContainer(UserThing, "ThingNameBox");
    var ThingLocation = GetElementInsideContainer(UserThing, "ThingLocation");
-   var ThingLocationB = GetElementInsideContainer(UserThing,
-                                                  "ThingLocationBox");
+   var ThingLocationL = GetElementInsideContainer(UserThing, "ThingLocationL");
+   var ThingLocationB = GetElementInsideContainer(
+      UserThing, "ThingLocationBox");
+   var ThingDetailsTA = GetElementInsideContainer(
+      UserThing, "ThingDetailsTA");
+   
    if (!validThingName(ThingNameB.value)) {
-      ferrylog("Invalid ThingName");
+      ferrylog("InvalidThingName-NoNumberOnlyWords");
       return false;
    }
    thing.name=ThingNameB.value;
    var location = ThingLocationB.value.split(',');
    thing.location = [parseFloat(location[0]), parseFloat(location[1])];
+   if (!validThingDetails(ThingDetailsTA.value)) {
+      ferrylog("Invalid thing details.");
+   }
+   thing.details = ThingDetailsTA.value;
    content.things.push(thing);
    f.user=content;
    f.content=JSON.stringify(content);
@@ -836,8 +903,10 @@ var updateThing = function() {
    f.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
    ThingName.classList.remove("hidden");
    ThingNameB.classList.add("hidden");
+   ThingNameL.classList.add("hidden");
    ThingLocationB.classList.add("hidden");
-   this.value="Edit";
+   ThingLocationL.classList.add("hidden");
+   this.value="edit";
    this.onclick=editThing;
 }
 
@@ -900,8 +969,7 @@ var sendFileData = function(name, data, chunkSize, l) {
       url += "&thingId=" + l.thingId;
       url += "&picId=" + l.picId;
       var ok;
-      ferrylog('Uploading ' + name + ', bytes ' + offset + '..' +
-               (offset + chunk.length) + ' of ' + data.length);
+      ferrylog('Uploading '+name+(offset+chunk.length)+'/'+data.length+'B');
       fetch(url, opts)
          .then(function(res) {
             ok = res.ok;
@@ -955,6 +1023,7 @@ function validUsername (name) {
    }
    return (name.length && name.length < 24);
 }
+
 function validEmail (name) {
    for (var i=0; i<name.length;++i) {
       if (!((name.charCodeAt(i)>=65 && name.charCodeAt(i)<=90) ||
@@ -980,12 +1049,45 @@ function validPassword (name) {
 }
 
 var validThingName = function (name) {
+   var numstart = false;
    for (var i=0; i<name.length;++i) {
       if (!((name.charCodeAt(i)>=65 && name.charCodeAt(i)<=90) ||
             (name.charCodeAt(i)>=97 && name.charCodeAt(i)<=122) ||
             (name.charAt(i)==' '))) {
+         if (name.charAt(i)>='0' && name.charAt(i)<='9') {
+            if (!numstart && name.charAt(i-1)==' ') {
+               numstart=true;
+            }
+            continue;
+         }
+         if (numstart) {
+            if (name.charAt(i)==' ') {
+               return false;
+            } else {
+               numstart=false;
+               --i;
+            }
+            continue;
+         }
          return false;
       }
    }
-   return (name.length && name.length < 64);
+   if (numstart) {
+      return false;
+   }
+   return (name.length && name.length <= 64);
+}
+
+var validThingDetails = function (name) {
+   for (var i=0; i<name.length;++i) {
+      if (!((name.charAt(i)>=" ".charAt(0) &&
+             name.charAt(i)<="~".charAt(0)) ||
+            name.charAt(i)=="\n".charAt(0))) {
+         return false;
+      }
+   }
+   if (name.includes("<script")) {
+      return false;
+   }
+   return (name.length <= 256);
 }
