@@ -346,6 +346,30 @@ var init = function () {
    LocationPin.onclick = showBoxUpdtLoc;
    updateLocation();
 };
+var sendMsg = function () {
+   var thing=this.parentElement.parentElement;
+   var url = "msg";
+   var f={};
+   var pstr = Location.value;
+   ferrylog("SendingMsg...");
+   var mdiv = GetElementInsideContainer(thing, "messages");
+   var msg = GetElementInsideContainer(thing, "msginpt");
+   var tid=GetElementInsideContainer(thing, "ThingId");
+   var tusr=GetElementInsideContainer(thingN, "ThingUsr");
+   f.content="{user:\""+tusr.innerHTML+"\",id:\""+tid.innerHTML+
+      "\",msg:\""+msg.value+"\",geoposition:["+pstr+"]}";
+   f.postExpdtn = function (feed) {
+      var res = JSON.parse(feed.responseText);
+      if (res.bid) {
+         var msgd = document.createElement("div");
+         msgd.innerHTML= res.msg;
+         msg.insertAdjacentElement('beforeBegin', msgd);
+      }
+   };
+   shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
+}
+
+
 
 var selectFiles = function(ev) {
    if (!ev.target.files[0]) return;
@@ -467,7 +491,7 @@ var showThingDetails = function () {
    var ThingDetails = GetElementInsideContainer(
       this.parentElement, "ThingDetails");
    var messages = GetElementInsideContainer(
-      this.parentElement, "messages");
+      this.parentElement, "msgdiv");
    if (ThingDetails.classList.contains("hidden")) {
       ThingDetails.classList.remove("hidden");
       messages.classList.remove("hidden");
@@ -507,6 +531,10 @@ var updateThings = function (res) {
          thingN.thingId=thing.id;
          var imgsHldr = thingN.children[0];
          var imgs=imgsHldr.children[0];
+         var msgDiv = GetElementInsideContainer(thingN, "messages");
+         var msgBtn = GetElementInsideContainer(msgDiv, "msgBtn");
+         var UserThingEditBtn =
+             GetElementInsideContainer(thingN, "ThingEditBtn");
          if (newThing) {
             var imgHldr = imgs.children[0];
             var img = imgHldr.children[0];
@@ -534,6 +562,12 @@ var updateThings = function (res) {
                imgHldr.replaceChild(SVG, img);
                imgHldr.classList.add("dummy");
             }
+            msgBtn.onclick=sendMsg;
+            UserThingEditBtn.onclick=editThing;
+            var tid=GetElementInsideContainer(thingN, "ThingId");
+            tid.innerText=thing.id;
+            var tusr=GetElementInsideContainer(thingN, "ThingUsr");
+            tusr.innerText=un;
          }
          for (var j=0; j<imgs.children.length; ++j) {
             var imgHldr = imgs.children[j];
@@ -545,8 +579,6 @@ var updateThings = function (res) {
             for (var j=0; j<dummies.length; ++j) {
                dummies[j].classList.replace("inlineVisible","inlineHidden");
             }
-         var id=GetElementInsideContainer(thingN, "ThingId");
-         id.innerText=thing.id;
          if (thing.name && thing.name.length) {
             var name=GetElementInsideContainer(thingN, "ThingName");
             name.innerText=thing.name;
@@ -576,20 +608,25 @@ var updateThings = function (res) {
             dtls.innerHTML=thing.details;
             dtlsta=GetElementInsideContainer(thingN, "ThingDetailsTA");
             dtlsta.value=thing.details;
-            
          }
          dtlsta=GetElementInsideContainer(thingN, "ThingDetailsDiv");
          if (!dtlsta.classList.contains("hidden")) {
             dtlsta.classList.add("hidden");
             dtls.classList.remove("hidden");
          }
-         var UserThingEditBtn =
-             GetElementInsideContainer(thingN, "ThingEditBtn");
-         UserThingEditBtn.onclick=editThing;
-         if (!User.innerHTML.length || User.innerHTML!=res.things[i].user)
+         if (!User.innerHTML.length || User.innerHTML!=thing.user) {
             UserThingEditBtn.classList.add("hidden");
-         else {
+         } else {
             UserThingEditBtn.classList.remove("hidden");
+         }
+         if (!User.innerHTML.length) {
+               msgDiv.classList.add("hidden");
+         } else {
+            if (User.innerHTML!=thing.user) {
+               msgDiv.classList.remove("hidden");
+            } else {
+               msgDiv.classList.add("hidden");
+            }
          }
          UserThings[un][thing.id]=thingN;
          thingN.user=un;
@@ -1015,9 +1052,10 @@ function GetElementInsideContainer(container, childID) {
 
 function validUsername (name) {
    for (var i=0; i<name.length;++i) {
-      if (!((name.charCodeAt(i)>=65 && name.charCodeAt(i)<=90) ||
-            (name.charCodeAt(i)>=97 && name.charCodeAt(i)<=122) ||
-            (name.charAt(i)=='.'))) {
+      if (!((name.charAt(i)>='A' && name.charAt(i)<='Z') ||
+            (name.charAt(i)>='a' && name.charAt(i)<='z') ||
+            (name.charAt(i)>='0' && name.charAt(i)<='9') ||
+            (name.charAt(i)=='.') || (name.charAt(i)=='_'))) {
          return false;
       }
    }
@@ -1026,9 +1064,10 @@ function validUsername (name) {
 
 function validEmail (name) {
    for (var i=0; i<name.length;++i) {
-      if (!((name.charCodeAt(i)>=65 && name.charCodeAt(i)<=90) ||
-            (name.charCodeAt(i)>=97 && name.charCodeAt(i)<=122) ||
-            (name.charAt(i)=='.') || (name.charAt(i)=='@'))) {
+      if (!((name.charAt(i)>='@' && name.charAt(i)<='Z') ||
+            (name.charAt(i)>='a' && name.charAt(i)<='z') ||
+            (name.charAt(i)>='0' && name.charAt(i)<='9') ||
+            (name.charAt(i)=='.') || (name.charAt(i)=='_'))) {
          return false;
       }
    }

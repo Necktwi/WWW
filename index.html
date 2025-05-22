@@ -10,7 +10,7 @@
          content="user-scalable=no" />
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
    <script type="text/javascript" src="js/core.js"></script>
-   <script type="text/javascript" src="js/init.js"></script>
+   <script type="text/javascript" src="js/init.js?3"></script>
    <link type="text/css" href="css/main.css" rel="stylesheet"/>
    <link type="text/css" href="css/main-dark.css" rel="stylesheet"/>
    <link type="text/css" href="css/svg.css" rel="stylesheet"/>
@@ -338,6 +338,8 @@
          <span id="ThingName"></span>
          <br/>
          <div id="thingInfo" class="hidden">
+            <label id="ThingUsrL">Usr:</label>
+            <span id="ThingUsr"></span>
             <label id="ThingIdL">ID: </label>
             <span id="ThingId"></span>
          </div>
@@ -346,9 +348,10 @@
             <textarea id="ThingDetailsTA" rows="8" cols="32"></textarea>
          </div>
          <div id="ThingDetails" class="hidden"></div>
-         <div id="messages" class="hidden">
+         <div id="msgdiv" class="hidden"><div id="messages" class="hidden">
+            <textarea id="msginpt" rows="2" cols="22"></textarea><br/>
             <input id="msgBtn" type="Button" value="message"/>
-         </div>
+         </div></div>
          <input id="ThingEditBtn" class="thngEdBtn" type="Button" value="edit"/>
       </div>
    </div>
