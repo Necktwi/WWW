@@ -22,6 +22,7 @@ const MaxImgsPerThing=3;
 var browserID;
 var userData;
 var clearLogInterval;
+var lstThnDtls, lstThnMsgs;
 
 var ferrylog = function (msg, interval=15000) {
    if (Log.children.length)
@@ -323,6 +324,8 @@ var init = function () {
    Consent = document.getElementById('Consent');
    ConsentL = document.getElementById('ConsentL');
    Thing = GetElementInsideContainer(Things, "Thing");
+   lstThnDtls = GetElementInsideContainer(Thing, "ThingDetails");
+   lstThnMsgs = GetElementInsideContainer(Thing, "messages");
    UserThings = {};
    Thing.remove();
    addEvent(Passwords2, 'keydown', signup);
@@ -355,7 +358,7 @@ var sendMsg = function () {
    var mdiv = GetElementInsideContainer(thing, "messages");
    var msg = GetElementInsideContainer(thing, "msginpt");
    var tid=GetElementInsideContainer(thing, "ThingId");
-   var tusr=GetElementInsideContainer(thingN, "ThingUsr");
+   var tusr=GetElementInsideContainer(thing, "ThingUsr");
    f.content="{user:\""+tusr.innerHTML+"\",id:\""+tid.innerHTML+
       "\",msg:\""+msg.value+"\",geoposition:["+pstr+"]}";
    f.postExpdtn = function (feed) {
@@ -433,6 +436,7 @@ var onBID = function (feed) {
       LogoDiv.classList.remove("if");
       LogoDiv.parentElement.style.display="table-cell";
       LocationDDiv.classList.remove("if");
+      document.getElementsByTagName("footer")[0].classList.remove("if");
    }
    updateThings(res);
    if (res.sid) {
@@ -488,16 +492,18 @@ var openfileprompt = function () {
    this.nextElementSibling.click();
 }
 var showThingDetails = function () {
-   var ThingDetails = GetElementInsideContainer(
+   lstThnDtls.classList.add("hidden");
+   if (lstThnMsgs)lstThnMsgs.classList.add("hidden");
+   lstThnDtls = GetElementInsideContainer(
       this.parentElement, "ThingDetails");
-   var messages = GetElementInsideContainer(
+   lstThnMsgs = GetElementInsideContainer(
       this.parentElement, "msgdiv");
-   if (ThingDetails.classList.contains("hidden")) {
-      ThingDetails.classList.remove("hidden");
-      messages.classList.remove("hidden");
+   if (lstThnDtls.classList.contains("hidden")) {
+      lstThnDtls.classList.remove("hidden");
+      if (lstThnMsgs)lstThnMsgs.classList.remove("hidden");
    } else {
-      ThingDetails.classList.add("hidden");
-      messages.classList.add("hidden");
+      lstThnDtls.classList.add("hidden");
+      if (lstThnMsgs)lstThnMsgs.classList.add("hidden");
    }
 }
 var updateThings = function (res) {
@@ -516,8 +522,8 @@ var updateThings = function (res) {
             un = thing.user;
          }
          if (!UserThings[un]) {
-               UserThings[un]={};
-            }
+            UserThings[un]={};
+         }
          if (UserThings[un][thing.id]) {
             newThing=false;
          } else if (UserThings[un][-1]) {

@@ -1,3 +1,6 @@
+#jackmail {
+   color: rgb(96,96,256);
+}
 body {
    margin: 0px;
    /* display: inline; */
@@ -53,6 +56,13 @@ header input {
    left: 50vw;
    padding: 0mm;
    transform: translate(-50%,-50%);
+}
+footer.if {
+   position: fixed;
+   bottom: 2mm;
+   left: 2mm;
+   margin: 0mm;
+   z-index: 11; 
 }
 #lock {
    height: 0.8cm;
@@ -194,6 +204,9 @@ header input {
    margin: 1mm;
    border-radius: 1mm;
    max-width: 9.7cm;
+}
+#Thing #msgdiv {
+   
 }
 #ThingNameBox {
    /* position: relative; */
@@ -356,7 +369,7 @@ footer {
    /* left: 2mm; */
    margin: 2mm;
 }
-.transform2s3d{
+.transform2s3d {
    -webkit-transition: width 2s, height 2s, -webkit-transform 2s linear;
    -webkit-transform-style: preserve-3d;
    -moz-transition: width 2s, height 2s, -moz-transform 2s linear;
@@ -376,19 +389,19 @@ footer {
    display: block;
    margin: auto;
 }
-@font-face{
+@font-face {
    font-family:Quicksand;
    src:url("/fnt/Quicksand.woff");
 }
-@font-face{
+@font-face {
    font-family:SourceCodePro;
    src:url("/fnt/SourceCodePro.woff");
 }
-@font-face{
+@font-face {
    font-family:SourceCodeBold;
    src:url("/fnt/SourceCodeBold.woff");
 }
-.invisible{
+.invisible {
    opacity: 0;
    filter: alpha(opacity=0);
 }
@@ -443,23 +456,23 @@ footer {
    width:  4cm;
    height: 8cm;
 }
-.jumbo.plot{
+.jumbo.plot {
    width: 8cm;
    height: 8cm;
 }
 .plot .facade,
-.plot .name{
+.plot .name {
    display:block;
    position:relative;
 }
-.plot .facade{
+.plot .facade {
    height:75%;/*192px;*/
    border:0px;
    border-bottom-width:1px;
    border-color:black;
    border-style:solid;
 }
-.plot .name{
+.plot .name {
    height:25%;
 }
 /*.tall.plot .facade,

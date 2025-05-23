@@ -11,7 +11,7 @@
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
    <script type="text/javascript" src="js/core.js"></script>
    <script type="text/javascript" src="js/init.js?3"></script>
-   <link type="text/css" href="css/main.css" rel="stylesheet"/>
+   <link type="text/css" href="css/main.css?1" rel="stylesheet"/>
    <link type="text/css" href="css/main-dark.css" rel="stylesheet"/>
    <link type="text/css" href="css/svg.css" rel="stylesheet"/>
 </head>
@@ -382,7 +382,13 @@
       </div></div>
    </div-->
    <br/><br/>
-<footer onclick="about()">© FerryFair</footer>
+   <footer onclick="about()" class="if">
+      <div id="cr">© FerryFair</div>
+      <address>
+         <a id="jackmail"
+            href="mailto:jack@ferryfair.com">jack@ferryfair.com</a>
+      </address>
+   </footer>
 <div id="SVGS" hidden>
    <svg id="SpiralSVG" class="fixedSize" viewBox="0 0 288 288"
         xmlns="http://www.w3.org/2000/svg"
