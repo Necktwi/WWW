@@ -128,8 +128,11 @@ var inputOnKeyDown = function () {
          this.classList.add("typing");
          // if(this.ctype==='password')
          //    this.type='password';
+      } else {
+         search.call(this);
       }
-      event.preventDefault();
+      event.preventDefault(event);
+      return false;
    }
 };
 var onBeforeInput = function () {
@@ -347,6 +350,10 @@ var init = function () {
       LocationPin.classList.remove('empty');
    }
    LocationPin.onclick = showBoxUpdtLoc;
+   Logo.onclick = function () {
+      LocationPin.classList.remove("hidden");
+      showBoxUpdtLoc.call(LocationPin);
+   }
    updateLocation();
 };
 var sendMsg = function () {
@@ -357,22 +364,20 @@ var sendMsg = function () {
    ferrylog("SendingMsg...");
    var mdiv = GetElementInsideContainer(thing, "messages");
    var msg = GetElementInsideContainer(thing, "msginpt");
-   var tid=GetElementInsideContainer(thing, "ThingId");
-   var tusr=GetElementInsideContainer(thing, "ThingUsr");
-   f.content="{user:\""+tusr.innerHTML+"\",id:\""+tid.innerHTML+
+   var tid = GetElementInsideContainer(thing, "ThingId");
+   var tusr = GetElementInsideContainer(thing, "ThingUsr");
+   f.content = "{user:\""+tusr.innerHTML+"\",id:\""+tid.innerHTML+
       "\",msg:\""+msg.value+"\",geoposition:["+pstr+"]}";
    f.postExpdtn = function (feed) {
       var res = JSON.parse(feed.responseText);
       if (res.bid) {
          var msgd = document.createElement("div");
-         msgd.innerHTML= res.msg;
+         msgd.innerHTML = res.msg;
          msg.insertAdjacentElement('beforeBegin', msgd);
       }
    };
    shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
 }
-
-
 
 var selectFiles = function(ev) {
    if (!ev.target.files[0]) return;
@@ -437,6 +442,7 @@ var onBID = function (feed) {
       LogoDiv.parentElement.style.display="table-cell";
       LocationDDiv.classList.remove("if");
       document.getElementsByTagName("footer")[0].classList.remove("if");
+      Logo.onclick=null;
    }
    updateThings(res);
    if (res.sid) {
@@ -538,6 +544,7 @@ var updateThings = function (res) {
          var imgsHldr = thingN.children[0];
          var imgs=imgsHldr.children[0];
          var msgDiv = GetElementInsideContainer(thingN, "messages");
+         var msgsD = GetElementInsideContainer(thingN, "msgs");
          var msgBtn = GetElementInsideContainer(msgDiv, "msgBtn");
          var UserThingEditBtn =
              GetElementInsideContainer(thingN, "ThingEditBtn");
@@ -632,6 +639,30 @@ var updateThings = function (res) {
                msgDiv.classList.remove("hidden");
             } else {
                msgDiv.classList.add("hidden");
+            }
+         }
+         var rmsgs=res.things[i].rmsgs;
+         if (rmsgs) {
+            for (var l=0,m=0; l<rmsgs.length; ++l,++m) {
+               var rmsg=rmsgs[l];
+               if (l<msgd.children.length) {
+                  var md = msgd.children[m];
+                  var ld = md.children[0];
+                  var id = parseInt(ld.innerHTML);
+                  if (id<rmsg[l]["id"]) {
+                     --l;
+                  } else {
+                     md.children[0].innerHTML=rmsg["id"];
+                     md.children[1].innerHTML=rmsg["user"];
+                     md.children[2].innerHTML=rmsg["msg"];
+                  }
+               } else {
+                  var md = msgd.children[0].cloneNode();
+                  md.children[0].innerHTML=rmsg["id"];
+                  md.children[1].innerHTML=rmsg["user"];
+                  md.children[2].innerHTML=rmsg["msg"];
+                  msgd.insertAdjacentElement("beforeEnd", md);
+               }
             }
          }
          UserThings[un][thing.id]=thingN;
