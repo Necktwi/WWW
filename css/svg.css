@@ -83,3 +83,11 @@ svg path#unlock {
     stroke-width: 2.0;
     fill: rgb(0, 0, 0);
 }
+
+#owlOnPerch.nonews #envelop {
+   display: none;
+}
+
+.owlSent .owl {
+   display: none;
+}

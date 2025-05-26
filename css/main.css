@@ -73,6 +73,11 @@ footer.if {
    width: 0.8cm;
    /* vertical-align: middle; */
 }
+#owlOnPerch {
+   width: 1cm;
+   position: relative;
+   top:1mm;
+}
 #username {
    width: 5cm;
 }
@@ -368,6 +373,16 @@ footer {
    /* bottom: 2mm; */
    /* left: 2mm; */
    margin: 2mm;
+}
+#beta {
+   background-color: yellow;
+   border-radius: 1mm;
+   color: black;
+   font-size: 3mm;
+   padding-left: 1mm;
+   padding-right: 1mm;
+   position: relative;
+   left: 1mm;
 }
 .transform2s3d {
    -webkit-transition: width 2s, height 2s, -webkit-transform 2s linear;

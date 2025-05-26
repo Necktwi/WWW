@@ -1,4 +1,4 @@
-var Logo, LogoDiv;
+var Logo, LogoDiv,Inbox,OwlOnPerch;
 var SearchTool,LocationPin,LocationDDiv,Location,LocTxt;
 var SearchToolOpacity=1;
 var SearchToolBlink;
@@ -226,10 +226,19 @@ var updateLocation = function (show) {
 var openMap = function () {
    window.open(event.target.url,'map');
 }
-
+var toggleInbox = function () {
+   if (Inbox.classList.contains("hidden")) {
+      Inbox.classList.remove("hidden");
+   } else {
+      Inbox.classList.add("hidden");      
+   }
+}
 var init = function () {
    Logo=document.getElementById('logo');
    LogoDiv=document.getElementById('logoDiv');
+   Inbox=document.getElementById('inbox');
+   OwlOnPerch=document.getElementById('owlOnPerch');
+   OwlOnPerch.onclick=toggleInbox;
    LogoDiv.parentElement.style.display="block";
    SearchTool=document.getElementById('search-tool');
    LocationPin=document.getElementById('LocationPin');
@@ -495,6 +504,7 @@ var login = function(feed) {
       Usermenu.classList.remove("hidden");
       Signupdiv.classList.add("hidden");
       UserActions.classList.remove("hidden");
+      OwlOnPerch.classList.remove("hidden");
       updateThings(res);
       ferrylog("SignedIn!");
    } else {
@@ -559,12 +569,12 @@ var updateThings = function (res) {
             UserThings[un][-1]=undefined;
             newThing=false;
          }
-
+         var thisThingUser = User.innerHTML==thing.user;
          var thingN=
              newThing?Thing.cloneNode(true):UserThings[un][thing.id];
          thingN.thingId=thing.id;
          var imgsHldr = thingN.children[0];
-         var imgs=imgsHldr.children[0];
+         var imgs = imgsHldr.children[0];
          var msgDiv = GetElementInsideContainer(thingN, "messages");
          var msgd = GetElementInsideContainer(msgDiv, "msgs");
          var msgBtn = GetElementInsideContainer(msgDiv, "msgBtn");
@@ -577,16 +587,17 @@ var updateThings = function (res) {
             SIB.onclick=openfileprompt;
             SIB.thingId=thing.id;
             SIB.picId=0;
-            if (res.things[i].pics && res.things[i].pics.length) {
+            var pics = res.things[i].pics;
+            if (pics && pics.length) {
                img.src="/upload/"+res.things[i].user+"/"+res.things[i].id+
-                  "."+0+".jpg?"+new Date().getTime();
-               for (var j=1; j<res.things[i].pics.length; ++j) {
+                  "."+0+".jpg?"+pics[0].ts;
+               for (var j=1; j<pics.length; ++j) {
                   imgHldr = imgs.children[0].cloneNode(true);
                   imgHldr.classList.replace("inlineVisible", "inlineHidden");
                   img = imgHldr.children[0];
                   SIB = imgHldr.children[1];
                   img.src="/upload/"+res.things[i].user+"/"+res.things[i].id+
-                     "."+j+".jpg?"+new Date().getTime();
+                     "."+j+".jpg?"+pics[j].ts;
                   SIB.thingId=thing.id;
                   SIB.picId=j;
                   imgs.children[j-1].insertAdjacentElement(
@@ -649,7 +660,7 @@ var updateThings = function (res) {
             dtlsta.classList.add("hidden");
             dtls.classList.remove("hidden");
          }
-         if (!User.innerHTML.length || User.innerHTML!=thing.user) {
+         if (thisThingUser) {
             UserThingEditBtn.classList.add("hidden");
          } else {
             UserThingEditBtn.classList.remove("hidden");
@@ -657,18 +668,21 @@ var updateThings = function (res) {
          if (!User.innerHTML.length) {
                msgDiv.classList.add("hidden");
          } else {
-            if (User.innerHTML!=thing.user) {
+            if (!thisThingUser) {
                msgDiv.classList.remove("hidden");
             } else {
                msgDiv.classList.add("hidden");
             }
          }
          var rmsgs=res.things[i].rmsgs;
+         var lastMsgId = Inbox.lastChild?
+             parseInt(Inbox.lastChild.firstChild.innerHTML):0;
          if (rmsgs) {
             for (var l=0,m=0; l<rmsgs.length; ++l,++m) {
                var rmsg=rmsgs[l];
+               var md;
                if (l<msgd.children.length) {
-                  var md = msgd.children[m];
+                  md = msgd.children[m];
                   var ld = md.children[0];
                   var id = parseInt(ld.innerHTML);
                   if (id<rmsg["id"]) {
@@ -679,11 +693,15 @@ var updateThings = function (res) {
                      md.children[2].innerHTML=rmsg["msg"];
                   }
                } else {
-                  var md = msgd.children[0].cloneNode(true);
+                  md = msgd.children[0].cloneNode(true);
                   md.children[0].innerHTML=rmsg["id"];
                   md.children[1].innerHTML=rmsg["user"]+": ";
                   md.children[2].innerHTML=rmsg["msg"];
                   msgd.insertAdjacentElement("beforeEnd", md);
+               }
+               if (thisThingUser && rmsg["id"]>lastMsgId) {
+                  Inbox.insertAdjacentElement(
+                     "beforeEnd", md.cloneNode(true));
                }
             }
          }
@@ -692,6 +710,11 @@ var updateThings = function (res) {
          if(newThing)Things.append(thingN);
       }
       Things.classList.remove("hidden");
+   }
+   if (Inbox.getElementsByClassName("new").length) {
+      OwlOnPerch.classList.remove("nonews");
+   } else {
+      OwlOnPerch.classList.add("nonews");
    }
 }
 
@@ -768,6 +791,7 @@ var logout = function (feed) {
       for (var i=0; i<edbns.length; ++i) {
          edbns[i].classList.add("hidden");
       }
+      OwlOnPerch.classList.add("hidden");
       ferrylog("Bye!");
    } else {
       setCookie("bid","",0);
