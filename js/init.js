@@ -26,13 +26,13 @@ var lstThnDtls, lstThnMsgs;
 
 var ferrylog = function (msg, interval=15000) {
    if (Log.children.length)
-      Log.lastChild.classList.add("hidden");
+      Log.lastElementChild.classList.add("hidden");
    var nl=document.createElement("div");
    nl.innerHTML=msg;
    Log.insertAdjacentElement("beforeEnd", nl);
    clearInterval(clearLogInterval);
    clearLogInterval = setInterval(
-      function(){Log.lastChild.classList.add("hiddenLog")}, interval
+      function(){Log.lastElementChild.classList.add("hiddenLog")}, interval
    );
 }
 
@@ -234,6 +234,20 @@ var toggleInbox = function () {
    }
 }
 var sendOwl = function () {
+   var showOwl=false;
+   OwlOnPerch.classList.add("owlSent");
+   setTimeout(function () {
+      if (!showOwl) {
+         showOwl=true;
+      } else {
+         OwlOnPerch.classList.remove("owlSent");
+         if (Inbox.news>0) {
+            OwlOnPerch.classList.remove("nonews");
+         } else {
+            OwlOnPerch.classList.add("nonews");
+         }
+      }
+   }, 1000);      
    var url = "owl";
    var f={};
    var cnt={};
@@ -247,19 +261,17 @@ var sendOwl = function () {
    for (var i=0; i<mds.length; ++i) {
       md = mds[i];
       var thing = md.parentElement.parentElement.parentElement;
-      var msg = md.children;
-      var tid = GetElementInsideContainer(thing, "ThingId").innerHTML;
-      var tusr = md.children[1].innerHTML;
+      var tusr = GetElementInsideContainer(thing, "ThingUsr").innerHTML;
       if (!cnt.Qs)
          cnt["Qs"]={};
       if (!cnt.Qs[tusr])
          cnt.Qs[tusr]={};
-      cnt.Qs[tusr][tid]=md.children[2].innerHTML;
+      cnt.Qs[tusr][thing.thingId]=md.children[2].innerHTML;
    }
    for (var i=0; i<rmds.length; ++i) {
       md = rmds[i];
       thing=md.parentElement.parentElement.parentElement;
-      tid=GetElementInsideContainer(thing, "ThingId").innerHTML;
+      tid=thing.thingId;
       mid=parseInt(md.children[0].innerHTML);
       if (!cnt.Rs)
          cnt.Rs={};
@@ -276,10 +288,49 @@ var sendOwl = function () {
          }
          for (var md of rmds) {
             md.classList.remove("inQ");
+            --Inbox.news;
          }
          for (var md of irmds) {
             md.classList.remove("inQ");
          }
+         for (const stid in res["news"]) {
+            var tid = parseInt(stid);
+            var things = UserThings[Username.value];
+            var thing = things[tid];
+            var msgd = GetElementInsideContainer(thing, "msgs");
+            md = msgd.firstElementChild;
+            var itms=Inbox.things[tid];
+            for (const smid in res["news"][stid]) {
+               if (!isNaN(parseInt(md.firstElementChild.innerHTML))) {
+                  md = md.cloneNode(true);
+               }
+               var msg = res["news"][stid][smid];
+               md.children[0].innerHTML=msg["id"];
+               md.children[1].innerHTML=msg["user"]+": ";
+               md.children[2].innerHTML=msg["msg"];
+               msgd.insertAdjacentElement("beforeEnd", md);
+               md.onclick=markAsRead;
+               var imd = md.cloneNode(true);
+               Inbox.insertAdjacentElement("beforeEnd", imd);
+               imd.classList.add("new");
+               imd.md=md;
+               md.imd=imd;
+               imd.onclick=showThing;
+               md.classList.add("new");
+               itms.add(msg["id"]);
+               ++Inbox.news;
+            }
+         }
+      }
+      if (showOwl) {
+         OwlOnPerch.classList.remove("owlSent");
+         if (Inbox.news>0) {
+            OwlOnPerch.classList.remove("nonews");
+         } else {
+            OwlOnPerch.classList.add("nonews");
+         }
+      } else {
+         showOwl=true;
       }
    };
    f.reqHeaders=[["content-type", "text/json"]];
@@ -292,6 +343,8 @@ var init = function () {
    Inbox.things={};
    Inbox.mds=[];
    Inbox.rmds=[];
+   Inbox.news=0;
+   Inbox.irmds=[];
    OwlOnPerch=document.getElementById('owlOnPerch');
    OwlOnPerch.onclick=toggleInbox;
    LogoDiv.parentElement.style.display="block";
@@ -392,7 +445,7 @@ var init = function () {
    ConsentL = document.getElementById('ConsentL');
    Thing = GetElementInsideContainer(Things, "Thing");
    lstThnDtls = GetElementInsideContainer(Thing, "ThingDetails");
-   lstThnMsgs = GetElementInsideContainer(Thing, "messages");
+   lstThnMsgs = GetElementInsideContainer(Thing, "msgdiv");
    UserThings = {};
    Thing.remove();
    addEvent(Passwords2, 'keydown', signup);
@@ -429,27 +482,25 @@ var init = function () {
 };
 var sendMsg = function () {
    var thing=this.parentElement.parentElement.parentElement;
-   var url = "msg";
-   var f={};
-   var pstr = Location.value;
-   ferrylog("SendingMsg...");
-   var mdiv = GetElementInsideContainer(thing, "messages");
+   var mdiv = GetElementInsideContainer(thing, "msgdiv");
    var msgd = GetElementInsideContainer(mdiv, "msgs");
-   var md = msgd.children[0];
-   var ld = md.children[0];
+   var msginpt = GetElementInsideContainer(mdiv, "msginpt");
+   var md = msgd.firstElementChild;
+   var ld = md.firstElementChild;
    var id = parseInt(ld.innerHTML);
    var mid=1;
-   if (id != NaN) {
-      mid= parseInt(msgd.lastChild.firstChild.innerHTML);
-      md = msgd.children[0].cloneNode();
+   if (!isNaN(id)) {
+      mid= parseInt(msgd.lastElementChild.firstElementChild.innerHTML);
+      md = msgd.children[0].cloneNode(true);
    }
    md.children[0].innerHTML=mid;
-   md.children[1].innerHTML=Username.innerHTML;
-   md.children[2].innerHTML=msg.value;
+   md.children[1].innerHTML=User.innerHTML+": ";
+   md.children[2].innerHTML=msginpt.value;
+   msginpt.value="";
    msgd.insertAdjacentElement("beforeEnd", md);
    md.classList.add('inQ');
    Inbox.mds.push(md);
-   ferrylog("Ur question will b sent by next owl!");
+   ferrylog("Ur query will b sent by next owl!");
 }
 
 var selectFiles = function(ev) {
@@ -554,7 +605,7 @@ var login = function(feed) {
       UserActions.classList.remove("hidden");
       OwlOnPerch.classList.remove("hidden");
       updateThings(res);
-      owlMail=setInterval(30000,sendOwl);
+      owlMail=setInterval(sendOwl, 30000);
       ferrylog("SignedIn!");
    } else {
       ferrylog("No No...! Check username and password :)");
@@ -597,14 +648,26 @@ var markAsRead = function () {
    this.classList.remove("new");
    this.classList.add("inQ");
    if (this.md) {
+      this.md.classList.remove("new");
+      this.md.classList.add("inQ");
+      this.md.onclick=null;
       Inbox.irmds.push(this);
       Inbox.rmds.push(this.md);
    } else {
+      this.imd.classList.remove("new");
+      this.imd.classList.add("inQ");
+      this.onclick=null;
+      Inbox.irmds.push(this.imd);
       Inbox.rmds.push(this);
    }
 }
 var showThing = function () {
+   Inbox.classList.add("hidden");
    thing=this.md.parentElement.parentElement.parentElement;
+   var md = GetElementInsideContainer(thing, "msgdiv");
+   if (md.classList.contains("hidden")) {
+      showThingDetails.call(GetElementInsideContainer(thing, "ThingName"));
+   }
    thing.scrollIntoView();
    if (this.classList.contains("new")) {
       markAsRead.call(this);
@@ -613,7 +676,6 @@ var showThing = function () {
 var updateThings = function (res) {
    if (res.name)
       userData = res;
-   var news=0;
    if (res.things) {
       for (var i=0; i<res.things.length; ++i) {
          var thing=res.things[i];
@@ -642,7 +704,8 @@ var updateThings = function (res) {
          thingN.thingId=thing.id;
          var imgsHldr = thingN.children[0];
          var imgs = imgsHldr.children[0];
-         var msgDiv = GetElementInsideContainer(thingN, "messages");
+         var msgDiv = GetElementInsideContainer(thingN, "msgdiv");
+         var QSendDiv = GetElementInsideContainer(msgDiv, "qSendDiv");
          var msgd = GetElementInsideContainer(msgDiv, "msgs");
          var msgBtn = GetElementInsideContainer(msgDiv, "msgBtn");
          var UserThingEditBtn =
@@ -728,17 +791,17 @@ var updateThings = function (res) {
             dtls.classList.remove("hidden");
          }
          if (thisThingUser) {
-            UserThingEditBtn.classList.add("hidden");
-         } else {
             UserThingEditBtn.classList.remove("hidden");
+         } else {
+            UserThingEditBtn.classList.add("hidden");
          }
          if (!User.innerHTML.length) {
                msgDiv.classList.add("hidden");
          } else {
-            if (!thisThingUser) {
-               msgDiv.classList.remove("hidden");
+            if (thisThingUser) {
+               QSendDiv.classList.add("hidden");
             } else {
-               msgDiv.classList.add("hidden");
+               QSendDiv.classList.remove("hidden");
             }
          }
          var rmsgs=res.things[i].rmsgs;
@@ -769,7 +832,6 @@ var updateThings = function (res) {
                   md.children[1].innerHTML=rmsg["user"]+": ";
                   md.children[2].innerHTML=rmsg["msg"];
                   msgd.insertAdjacentElement("beforeEnd", md);
-                  md.onclick=markAsRead;
                }
                if (thisThingUser && !itms.has(rmsg["id"])) {
                   var imd = md.cloneNode(true);
@@ -777,22 +839,30 @@ var updateThings = function (res) {
                      "beforeEnd", imd);
                   if (rmsg["new"]) {
                      imd.classList.add("new");
-                     imd.md=md;
-                     imd.onclick=showThing;
+                     md.onclick=markAsRead;
                      md.classList.add("new");
-                     ++news;
+                     ++Inbox.news;
                   }
+                  imd.md=md;
+                  md.imd=imd;
+                  imd.onclick=showThing;
                   itms.add(rmsg["id"]);
                }
             }
          }
          UserThings[un][thing.id]=thingN;
          thingN.user=un;
-         if(newThing)Things.append(thingN);
+         if(newThing) {
+            if (thing.id!="-1") {
+               Things.append(thingN);
+            } else {
+               Things.insertAdjacentElement('afterBegin', thingN);
+            }
+         }
       }
       Things.classList.remove("hidden");
    }
-   if (news) {
+   if (Inbox.news) {
       OwlOnPerch.classList.remove("nonews");
    } else {
       OwlOnPerch.classList.add("nonews");
@@ -989,6 +1059,11 @@ var addThing = function () {
    if (!userData["things"]) {
       userData["things"]=[];
    }
+   if (userData["things"][userData["things"].length-1].id==-1) {
+      UserActions.classList.add("hidden");
+      UserThings[User.innerHTML][-1].classList.remove("hidden");
+      return;
+   }
    userData["things"][userData["things"].length] = {
       "id":-1,
       "name":"",
@@ -997,7 +1072,7 @@ var addThing = function () {
    };
    updateThings(userData);
    editThing.call(GetElementInsideContainer(
-      Things.children[Things.children.length-1], "ThingEditBtn"));
+      Things.children[0], "ThingEditBtn"));
 }
 
 var editThing = function(newThing) {
@@ -1006,10 +1081,12 @@ var editThing = function(newThing) {
    var ThingName = GetElementInsideContainer(thisUserThing, "ThingName");
    var ThingNameL = GetElementInsideContainer(thisUserThing, "ThingNameL");
    var ThingNameB = GetElementInsideContainer(thisUserThing, "ThingNameBox");
+   var CnclEdtBtn = GetElementInsideContainer(thisUserThing, "cnclEdtBtn");
    ThingNameB.value=ThingName.innerText;
    ThingName.classList.add("hidden");
    ThingNameB.classList.remove("hidden");
    ThingNameL.classList.remove("hidden");
+   CnclEdtBtn.classList.remove("hidden");
    var ThingLocation = GetElementInsideContainer(
       thisUserThing, "ThingLocation");
    var ThingLocationL = GetElementInsideContainer(
@@ -1057,17 +1134,18 @@ var editThing = function(newThing) {
    }
    this.value="Update";
    this.onclick=updateThing;
+   CnclEdtBtn.onclick=updateThing;
    this.classList.remove("hidden");
 }
 
 var updateThing = function() {
    UserActions.classList.remove("hidden");
+   var cncl = this.value=="Cancel";
    var url = "updateThing";
    var f={};
    var content = {};
    content.things=[];
    var UserThing = this.parentElement;
-   var thing={};thing.id=UserThing.thingId;
    var ThingName = GetElementInsideContainer(UserThing, "ThingName");
    var ThingNameL = GetElementInsideContainer(UserThing, "ThingNameL");
    var ThingNameB = GetElementInsideContainer(UserThing, "ThingNameBox");
@@ -1077,11 +1155,28 @@ var updateThing = function() {
       UserThing, "ThingLocationBox");
    var ThingDetailsTA = GetElementInsideContainer(
       UserThing, "ThingDetailsTA");
-   
+   var updtBtn = cncl?this.previousElementSibling:this;
+   if (!(cncl && UserThing.thingId==-1)) {
+      ThingName.classList.remove("hidden");
+      ThingNameB.classList.add("hidden");
+      ThingNameL.classList.add("hidden");
+      ThingLocationB.classList.add("hidden");
+      ThingLocationL.classList.add("hidden");
+      updtBtn.value="edit";
+      updtBtn.onclick=editThing;
+   } else {
+      UserThing.classList.add("hidden");
+      return;
+   }
+   if (cncl) {
+      this.classList.add("hidden");
+      return;
+   }
    if (!validThingName(ThingNameB.value)) {
       ferrylog("InvalidThingName-NoNumberOnlyWords");
       return false;
    }
+   var thing={};thing.id=UserThing.thingId;
    thing.name=ThingNameB.value;
    var location = ThingLocationB.value.split(',');
    thing.location = [parseFloat(location[0]), parseFloat(location[1])];
@@ -1103,13 +1198,6 @@ var updateThing = function() {
       delete f.shuttle;
    };
    f.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
-   ThingName.classList.remove("hidden");
-   ThingNameB.classList.add("hidden");
-   ThingNameL.classList.add("hidden");
-   ThingLocationB.classList.add("hidden");
-   ThingLocationL.classList.add("hidden");
-   this.value="edit";
-   this.onclick=editThing;
 }
 
 var uploadFile = function(infoBox) {

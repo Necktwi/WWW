@@ -10,10 +10,10 @@
          content="user-scalable=no" />
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
    <script type="text/javascript" src="js/core.js"></script>
-   <script type="text/javascript" src="js/init.js?5"></script>
-   <link type="text/css" href="css/main.css?1" rel="stylesheet"/>
+   <script type="text/javascript" src="js/init.js?6"></script>
+   <link type="text/css" href="css/main.css?2" rel="stylesheet"/>
    <link type="text/css" href="css/main-dark.css" rel="stylesheet"/>
-   <link type="text/css" href="css/svg.css" rel="stylesheet"/>
+   <link type="text/css" href="css/svg.css?1" rel="stylesheet"/>
 </head>
 <body onload="init()" class="dark">
    <script>0</script>
@@ -575,6 +575,11 @@
          </form></div>
       </div>
    </header>
+   <form id="UserActions" class="hidden">
+      <input
+         id="AddThing" type="button" value="Add a thing to the fair"
+         onclick="addThing()" class=""/>
+   </form>
    <div id="Things" class="hidden">
       <div id="Thing" class="thing">
          <div id="ImgsHldr">
@@ -612,21 +617,19 @@
             <textarea id="ThingDetailsTA" rows="8" cols="32"></textarea>
          </div>
          <div id="ThingDetails" class="hidden"></div>
-         <div id="msgdiv" class="hidden"><div id="messages" class="hidden">
+         <div id="msgdiv" class="hidden">
             <div id="msgs">
                <div><span class="hidden"></span><span></span><span></span></div>
             </div>
-            <textarea id="msginpt" rows="2" cols="22"></textarea><br/>
-            <input id="msgBtn" type="Button" value="message"/>
-         </div></div>
+            <div id="qSendDiv">
+               <textarea id="msginpt" rows="2" cols="22"></textarea><br/>
+               <input id="msgBtn" type="Button" value="message"/>
+            </div>
+         </div>
          <input id="ThingEditBtn" class="thngEdBtn" type="Button" value="edit"/>
+         <input id="cnclEdtBtn" class="hidden" type="Button" value="Cancel"/>
       </div>
    </div>
-   <form id="UserActions" class="hidden">
-      <input
-         id="AddThing" type="button" value="Add a thing to the fair"
-         onclick="addThing()" class=""/>
-   </form>
    <!--div id="land">
       <div class=""><div id="compound-wall">
          <div class="plot">

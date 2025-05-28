@@ -438,6 +438,12 @@ footer {
    position: absolute;
    visibility: hidden;
 }
+.inQ {
+   background-color: gray;
+}
+.new {
+   background-color: blue;
+}
 #land {
    width: 100%;
 }
