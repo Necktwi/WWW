@@ -1,6 +1,6 @@
 var Logo, LogoDiv,Inbox,OwlOnPerch, owlMail;
-var SearchTool,LocationPin,LocationDDiv,Location,LocTxt;
-var SearchToolOpacity=1;
+var LocationPin,LocationDDiv,LocationDiv,Location,LocTxt,LocTTimeout,LocTHide;
+var SearchTool,SearchToolOpacity=1;
 var SearchToolBlink;
 var Mouth,MouthPad;
 var Lock,Desc,LockBlock,CMPD;
@@ -14,8 +14,8 @@ var SignIn,SignUp,Recover;
 var Usermenu;
 var User;
 var Unlock, Log;
-var Thing, Things, UserThings, UserActions, AddThing, ChoosePic;
-var SVGS;
+var Thing, Things, UserThings, UserActions, AddThing, ChoosePic, ReplyBtn;
+var SVGS, ReplyBox, ReplyDiv;
 var searchPlcHldr = 'Search things near U';
 var caretPos=0;
 const MaxImgsPerThing=3;
@@ -23,6 +23,7 @@ var browserID;
 var userData;
 var clearLogInterval;
 var lstThnDtls, lstThnMsgs;
+var Header;
 
 var ferrylog = function (msg, interval=15000) {
    if (Log.children.length)
@@ -180,10 +181,29 @@ var showBoxUpdtLoc = function() {
    updateLocation.call(this, true);
 };
 
+var LocDShow = function () {
+   clearTimeout(LocTTimeout);
+   LocTxt.classList.remove("hidden");
+}
+
+var LocDHide = function () {
+   setTimeout(LocTHide,7000);
+}
+
 var updateLocation = function (show) {
    if (show) {
+      if (!Location.classList.contains("hidden")) {
+         Location.classList.add("hidden");
+         LocTxt.classList.remove("hidden");
+         LocTTimeout = setTimeout(LocTHide,7000);
+         LocationDiv.onmouseenter = LocDShow;
+         LocationDiv.onmouseleave = LocDHide;
+         return;
+      }
       LocTxt.classList.add("hidden");
       Location.classList.remove("hidden");
+      LocationDiv.onmouseenter = null;
+      LocationDiv.onmouseleave = null;
    }
    var onPosition = function (position) {
       if (Location.dont) {
@@ -193,6 +213,11 @@ var updateLocation = function (show) {
       Location.value+=","+position.coords.longitude.toPrecision(9);
       if (!browserID) {
          window.cookieShuttle();
+      }
+      if (Location.classList.contains("hidden")) {
+         LocTxt.classList.remove("hidden");
+         clearTimeout(LocTTimeout);
+         LocTTimeout = setTimeout(LocTHide, 7000);         
       }
       setTimeout(updateLocation, 60000);
    }
@@ -251,13 +276,15 @@ var sendOwl = function () {
    var url = "owl";
    var f={};
    var cnt={};
-   var md;
+   var md,reply;
    var rmds=Inbox.rmds;
    Inbox.rmds=[];
    var irmds=Inbox.irmds;
    Inbox.irmds=[];
    var mds=Inbox.mds;
    Inbox.mds=[];
+   var replies=Inbox.replies;
+   Inbox.replies=[];
    for (var i=0; i<mds.length; ++i) {
       md = mds[i];
       var thing = md.parentElement.parentElement.parentElement;
@@ -279,10 +306,20 @@ var sendOwl = function () {
          cnt.Rs[tid]=[];
       cnt.Rs[tid].push(mid);
    }
+   for (var i=0; i<replies.length; ++i) {
+      reply = reply[i];
+      var thing =
+          reply.parentElement.parentElement.parentElement.parentElement;
+      var mid = reply.parentElement.firstElementChild.innerHTML
+      if (!cnt.Reps)
+         cnt["Reps"]={};
+      cnt.Reps[mid]=reply.lastElementChild.innerHTML;
+   }
    f.content=JSON.stringify(cnt);
    f.postExpdtn = function (feed) {
       var res = JSON.parse(feed.responseText);
       if (res.status==1) {
+         var things = UserThings[Username.value];
          for (var md of mds) {
             md.classList.remove("inQ");
          }
@@ -293,18 +330,52 @@ var sendOwl = function () {
          for (var md of irmds) {
             md.classList.remove("inQ");
          }
+         for (var rep of replies) {
+            rep.classList.remove("inQ");
+         }
          for (const stid in res["news"]) {
+            var tthing = res["news"][stid]
             var tid = parseInt(stid);
-            var things = UserThings[Username.value];
             var thing = things[tid];
             var msgd = GetElementInsideContainer(thing, "msgs");
             md = msgd.firstElementChild;
             var itms=Inbox.things[tid];
-            for (const smid in res["news"][stid]) {
+            for (const smid in tthing) {
                if (!isNaN(parseInt(md.firstElementChild.innerHTML))) {
                   md = md.cloneNode(true);
                }
-               var msg = res["news"][stid][smid];
+               var msg = tthing[smid];
+               md.children[0].innerHTML=msg["id"];
+               md.children[1].innerHTML=msg["user"]+": ";
+               md.children[2].innerHTML=msg["msg"];
+               msgd.insertAdjacentElement("beforeEnd", md);
+               md.onclick=markAsRead;
+               var imd = md.cloneNode(true);
+               Inbox.insertAdjacentElement("beforeEnd", imd);
+               imd.classList.add("new");
+               imd.md=md;
+               md.imd=imd;
+               imd.onclick=showThing;
+               md.classList.add("new");
+               itms.add(msg["id"]);
+               ++Inbox.news;
+            }
+         }
+         for (const usr in res["rnews"]) {
+            var tthing = res["news"][usr];
+            var tid = parseInt(stid);
+            var thing = things[tid];
+            var msgd = GetElementInsideContainer(thing, "msgs");
+            md = msgd.firstElementChild;
+            var itms=Inbox.things[tid];
+            for (const stid in tthing) {
+               for (const mid in tthing[stid]) {
+                  var reply = tthing[stid][mid];
+               }
+               if (!isNaN(parseInt(md.firstElementChild.innerHTML))) {
+                  md = md.cloneNode(true);
+               }
+               var msg = tthing[smid];
                md.children[0].innerHTML=msg["id"];
                md.children[1].innerHTML=msg["user"]+": ";
                md.children[2].innerHTML=msg["msg"];
@@ -337,6 +408,7 @@ var sendOwl = function () {
    shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
 }
 var init = function () {
+   Header=document.getElementsByTagName("header")[0];
    Logo=document.getElementById('logo');
    LogoDiv=document.getElementById('logoDiv');
    Inbox=document.getElementById('inbox');
@@ -345,13 +417,20 @@ var init = function () {
    Inbox.rmds=[];
    Inbox.news=0;
    Inbox.irmds=[];
+   Inbox.replies=[]
    OwlOnPerch=document.getElementById('owlOnPerch');
    OwlOnPerch.onclick=toggleInbox;
    LogoDiv.parentElement.style.display="block";
    SearchTool=document.getElementById('search-tool');
    LocationPin=document.getElementById('LocationPin');
    Location=document.getElementById('LocationBox');
+   LocationDiv=document.getElementById('LocationDiv');
    LocationDDiv=document.getElementById('LocationDDiv');
+   ReplyDiv=document.getElementById('replyDiv');
+   ReplyBtn=document.getElementById('replyBtn');
+   ReplyBox=document.getElementById('replyBox');
+   ReplyDiv.parentElement.removeChild(ReplyDiv);
+   ReplyDiv.classList.remove("hidden");
    addEvent(Location, 'keydown', function () {
       if (!this.dont) {
          this.dont=true;
@@ -557,6 +636,7 @@ var selectFiles = function(ev) {
 var about = function () {
    ferrylog("Gowtham Kudupudi");
 }
+
 var onBID = function (feed) {
    var res = JSON.parse(feed.responseText);
    if (res.bid) {
@@ -568,6 +648,15 @@ var onBID = function (feed) {
       document.getElementsByTagName("footer")[0].classList.remove("if");
       Logo.onclick=null;
       LocationPin.classList.remove("hidden");
+      LocTHide = function () {
+         LocTxt.classList.add("hidden");
+      };
+      LocTTimeout = setTimeout(LocTHide,7000);
+      LocationDiv.onmouseenter = LocDShow;
+      LocationDiv.onmouseleave = LocDHide;
+      addEvent(OwlOnPerch, 'mouseenter', function () {
+         LocTxt.classList.add("hidden");
+      });
    }
    if (res.sid) {
    }
@@ -644,19 +733,40 @@ var showThingDetails = function () {
       if (lstThnMsgs)lstThnMsgs.classList.add("hidden");
    }
 }
+var replyQuery = function () {
+   if (!replyBox.value.length) {
+      return;
+   }
+   var reply=replyDiv.firstElementChild.cloneNode(true);
+   reply.lastElementChild.innerHTML=replyBox.value;
+   replyDiv.insertAdjacentElement("beforeBegin", reply);
+   reply.classList.remove("hidden");
+   Inbox.replies.push_back(reply);
+   replyDiv.parentElement.removeChild(replyDiv);
+}
+var popReplyBtn = function () {
+   this.onclick=null;
+   if (ReplyDiv.parentElement) {
+      var p = ReplyDiv.parentElement;
+      p.onclick=popReplyBtn;
+      p.removeChild(ReplyDiv);
+   }
+   this.insertAdjacentElement("beforeEnd", ReplyDiv);
+   ReplyBtn.onclick=replyQuery;
+}
 var markAsRead = function () {
    this.classList.remove("new");
    this.classList.add("inQ");
    if (this.md) {
       this.md.classList.remove("new");
       this.md.classList.add("inQ");
-      this.md.onclick=null;
+      this.md.onclick=popReplyBtn;
       Inbox.irmds.push(this);
       Inbox.rmds.push(this.md);
    } else {
       this.imd.classList.remove("new");
       this.imd.classList.add("inQ");
-      this.onclick=null;
+      this.onclick=popReplyBtn;
       Inbox.irmds.push(this.imd);
       Inbox.rmds.push(this);
    }
@@ -668,11 +778,22 @@ var showThing = function () {
    if (md.classList.contains("hidden")) {
       showThingDetails.call(GetElementInsideContainer(thing, "ThingName"));
    }
-   thing.scrollIntoView();
+   thing.scrollIntoView({behavior: "smooth", block: "end"});
+   md = this.md;
+   md.classList.add("highlight");
+   setTimeout(function(){md.classList.remove("highlight")}, 3000);
    if (this.classList.contains("new")) {
       markAsRead.call(this);
    }
 }
+const resizeObserver = new ResizeObserver(entries => {
+   for (let entry of entries) {
+      // Access the new size of the element using entry.contentRect
+      //console.log('Element size changed:', entry.contentRect.width, entry.contentRect.height);
+      var thing = entry.target.parentElement.parentElement;
+      thing.style.width=entry.target.offsetWidth+"px";
+   }
+});
 var updateThings = function (res) {
    if (res.name)
       userData = res;
@@ -704,6 +825,7 @@ var updateThings = function (res) {
          thingN.thingId=thing.id;
          var imgsHldr = thingN.children[0];
          var imgs = imgsHldr.children[0];
+         resizeObserver.observe(imgs);
          var msgDiv = GetElementInsideContainer(thingN, "msgdiv");
          var QSendDiv = GetElementInsideContainer(msgDiv, "qSendDiv");
          var msgd = GetElementInsideContainer(msgDiv, "msgs");
@@ -842,6 +964,8 @@ var updateThings = function (res) {
                      md.onclick=markAsRead;
                      md.classList.add("new");
                      ++Inbox.news;
+                  } else {
+                     md.onclick=popReplyBtn;
                   }
                   imd.md=md;
                   md.imd=imd;
@@ -861,6 +985,9 @@ var updateThings = function (res) {
          }
       }
       Things.classList.remove("hidden");
+   }
+   if (res.smsgs) {
+      
    }
    if (Inbox.news) {
       OwlOnPerch.classList.remove("nonews");

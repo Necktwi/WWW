@@ -195,6 +195,10 @@ footer.if {
 .inptTxtBx.typing:blur {
    color: black;
 }
+#UserActions {
+   margin-top:2px;
+   margin-bottom:2px;
+}
 #ImgsHldr {
    position: relative;
    margin-bottom: 0.1cm;
@@ -206,9 +210,9 @@ footer.if {
    margin:0.2cm;
 }
 #Thing {
-   margin: 1mm;
+   margin-top: 1mm;
+   margin-right: 2mm;
    border-radius: 1mm;
-   max-width: 9.7cm;
 }
 #Thing #msgdiv {
    
@@ -245,9 +249,12 @@ inptTxtBx.typing {
 #ImgHldr {
    height: 6cm;
 }
-
+#Imgs {
+   width: fit-content;
+}
 svg.fixedSize, img.fixedSize {
    max-width: 9.7cm;
+   min-width: 3cm;
    height: 6cm;
    background-color: rgb(64,64,64);
    border-radius: 2mm;
@@ -363,7 +370,10 @@ svg.fixedSize {
    backdrop-filter: blur(1mm);
    -webkit-backdrop-filter: blur(1mm);
 }
-
+.query {
+   margin:1px;
+   border-radius:1mm;
+}
 #SIB {
    top: -1.3cm;
    position: relative;
@@ -453,11 +463,20 @@ footer {
    display:inline-block;
    position:relative;
 }
+.highlight{
+   background-color: yellow;
+   color: black;
+}
 .thing {
    display: inline-block;
    margin-right: 1mm;
    position: relative;
    vertical-align: top;
+}
+.thngEdBtn {
+   position: absolute;
+   top: 1mm;
+   right: 1mm;
 }
 .plot {
    position: relative;

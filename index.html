@@ -619,15 +619,22 @@
          <div id="ThingDetails" class="hidden"></div>
          <div id="msgdiv" class="hidden">
             <div id="msgs">
-               <div><span class="hidden"></span><span></span><span></span></div>
+               <div class="query">
+                  <span class="hidden"></span><span></span><span></span>
+               </div>
             </div>
             <div id="qSendDiv">
                <textarea id="msginpt" rows="2" cols="22"></textarea><br/>
-               <input id="msgBtn" type="Button" value="message"/>
+               <input id="msgBtn" type="Button" value="Query"/>
             </div>
          </div>
          <input id="ThingEditBtn" class="thngEdBtn" type="Button" value="edit"/>
          <input id="cnclEdtBtn" class="hidden" type="Button" value="Cancel"/>
+      </div>
+      <div id="replyDiv" class="hidden">
+         <div id="reply" class="hidden inQ"><span>-></span><span></span></div>
+         <textarea id="replyBox" rows="2" cols="22"></textarea>
+         <input id="replyBtn" type="Button" value="Reply"/>
       </div>
    </div>
    <!--div id="land">
