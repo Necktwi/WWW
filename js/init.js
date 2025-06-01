@@ -1,4 +1,4 @@
-var Logo, LogoDiv,Inbox,OwlOnPerch, owlMail;
+var Logo, LogoDiv,Mbox,Inbox,Outbox,OwlOnPerch, owlMail;
 var LocationPin,LocationDDiv,LocationDiv,Location,LocTxt,LocTTimeout,LocTHide;
 var SearchTool,SearchToolOpacity=1;
 var SearchToolBlink;
@@ -251,11 +251,11 @@ var updateLocation = function (show) {
 var openMap = function () {
    window.open(event.target.url,'map');
 }
-var toggleInbox = function () {
-   if (Inbox.classList.contains("hidden")) {
-      Inbox.classList.remove("hidden");
+var toggleMbox = function () {
+   if (Mbox.classList.contains("hidden")) {
+      Mbox.classList.remove("hidden");
    } else {
-      Inbox.classList.add("hidden");      
+      Mbox.classList.add("hidden");      
    }
 }
 var sendOwl = function () {
@@ -307,13 +307,15 @@ var sendOwl = function () {
       cnt.Rs[tid].push(mid);
    }
    for (var i=0; i<replies.length; ++i) {
-      reply = reply[i];
+      reply = replies[i];
       var thing =
           reply.parentElement.parentElement.parentElement.parentElement;
       var mid = reply.parentElement.firstElementChild.innerHTML
       if (!cnt.Reps)
          cnt["Reps"]={};
-      cnt.Reps[mid]=reply.lastElementChild.innerHTML;
+      if (!cnt.Reps[thing.thingId])
+         cnt.Reps[thing.thingId]={};
+      cnt.Reps[thing.thingId][mid]=reply.lastElementChild.innerHTML;
    }
    f.content=JSON.stringify(cnt);
    f.postExpdtn = function (feed) {
@@ -322,6 +324,7 @@ var sendOwl = function () {
          var things = UserThings[Username.value];
          for (var md of mds) {
             md.classList.remove("inQ");
+            md.smd.classList.remove("inQ");
          }
          for (var md of rmds) {
             md.classList.remove("inQ");
@@ -332,6 +335,7 @@ var sendOwl = function () {
          }
          for (var rep of replies) {
             rep.classList.remove("inQ");
+            rep.smd.classList.remove("inQ");
          }
          for (const stid in res["news"]) {
             var tthing = res["news"][stid]
@@ -412,6 +416,8 @@ var init = function () {
    Logo=document.getElementById('logo');
    LogoDiv=document.getElementById('logoDiv');
    Inbox=document.getElementById('inbox');
+   Mbox=document.getElementById('mbox');
+   Outbox=document.getElementById('outbox');
    Inbox.things={};
    Inbox.mds=[];
    Inbox.rmds=[];
@@ -419,7 +425,7 @@ var init = function () {
    Inbox.irmds=[];
    Inbox.replies=[]
    OwlOnPerch=document.getElementById('owlOnPerch');
-   OwlOnPerch.onclick=toggleInbox;
+   OwlOnPerch.onclick=toggleMbox;
    LogoDiv.parentElement.style.display="block";
    SearchTool=document.getElementById('search-tool');
    LocationPin=document.getElementById('LocationPin');
@@ -578,6 +584,15 @@ var sendMsg = function () {
    msginpt.value="";
    msgd.insertAdjacentElement("beforeEnd", md);
    md.classList.add('inQ');
+   var smd = md.cloneNode(true);
+   var to = smd.removeChild(smd.children[1]);
+   to.innerHTML=" :"+smsg[0];
+   smd.insertAdjacentElement("beforeEnd",to);
+   smd.md=md;
+   Outbox.insertAdjacentElement("beforeEnd",smd);
+   smd.onclick=showThing;
+   smd.classList.add('inQ');
+   md.smd=smd;
    Inbox.mds.push(md);
    ferrylog("Ur query will b sent by next owl!");
 }
@@ -734,15 +749,21 @@ var showThingDetails = function () {
    }
 }
 var replyQuery = function () {
-   if (!replyBox.value.length) {
+   if (!ReplyBox.value.length) {
       return;
    }
-   var reply=replyDiv.firstElementChild.cloneNode(true);
+   var reply=ReplyDiv.firstElementChild.cloneNode(true);
    reply.lastElementChild.innerHTML=replyBox.value;
-   replyDiv.insertAdjacentElement("beforeBegin", reply);
+   ReplyDiv.insertAdjacentElement("beforeBegin", reply);
    reply.classList.remove("hidden");
-   Inbox.replies.push_back(reply);
-   replyDiv.parentElement.removeChild(replyDiv);
+   var oreply=reply.cloneNode(true);
+   Outbox.insertAdjacentElement("beforeEnd",oreply);
+   reply.smd=oreply;
+   oreply.md=reply;
+   oreply.onclick=showThing;
+   Inbox.replies.push(reply);
+   ReplyDiv.parentElement.removeChild(ReplyDiv);
+   ferrylog("Ur reply will b sent by next owl!");
 }
 var popReplyBtn = function () {
    this.onclick=null;
@@ -772,7 +793,7 @@ var markAsRead = function () {
    }
 }
 var showThing = function () {
-   Inbox.classList.add("hidden");
+   Mbox.classList.add("hidden");
    thing=this.md.parentElement.parentElement.parentElement;
    var md = GetElementInsideContainer(thing, "msgdiv");
    if (md.classList.contains("hidden")) {
@@ -950,6 +971,7 @@ var updateThings = function (res) {
                   }
                } else {
                   md = msgd.children[0].cloneNode(true);
+                  md.classList.remove("new");
                   md.children[0].innerHTML=rmsg["id"];
                   md.children[1].innerHTML=rmsg["user"]+": ";
                   md.children[2].innerHTML=rmsg["msg"];
@@ -971,12 +993,18 @@ var updateThings = function (res) {
                   md.imd=imd;
                   imd.onclick=showThing;
                   itms.add(rmsg["id"]);
+                  if (rmsg["rep"]) {
+                     var reply=ReplyDiv.firstElementChild.cloneNode(true);
+                     reply.lastElementChild.innerHTML=rmsg["rep"];
+                     md.insertAdjacentElement("beforeEnd", reply);
+                     reply.classList.remove("hidden");
+                  }
                }
             }
          }
          UserThings[un][thing.id]=thingN;
          thingN.user=un;
-         if(newThing) {
+         if (newThing) {
             if (thing.id!="-1") {
                Things.append(thingN);
             } else {
@@ -987,7 +1015,37 @@ var updateThings = function (res) {
       Things.classList.remove("hidden");
    }
    if (res.smsgs) {
-      
+      for (var smsg of res.smsgs) {
+         var to = smsg[0];
+         var isR = 0;
+         if (!to.length) {
+            to = User.innerHTML;
+            isR=1;
+         }
+         var thn = UserThings[to][smsg[1]];
+         var msgDiv = GetElementInsideContainer(thn, "msgdiv");
+         var msgd = GetElementInsideContainer(msgDiv, "msgs");
+         for (var i=0; i<msgd.children.length; ++i) {
+            var md = msgd.children[i];
+            var mid = parseInt(md.children[0].innerHTML);
+            if (mid==smsg[2]) {
+               if (isR) {
+                  md=md.lastElementChild;
+               }
+               var smd = md.cloneNode(true);
+               if (!isR) {
+                  var to = smd.removeChild(smd.children[1]);
+                  to.innerHTML=" :"+to;
+                  smd.insertAdjacentElement("beforeEnd",to);
+               }
+               md.smd=smd;
+               smd.md=md;
+               Outbox.insertAdjacentElement("beforeEnd",smd);
+               smd.onclick=showThing;
+               break;
+            }
+         }
+      }
    }
    if (Inbox.news) {
       OwlOnPerch.classList.remove("nonews");
