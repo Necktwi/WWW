@@ -279,8 +279,6 @@ var sendOwl = function () {
    var md,reply;
    var rmds=Inbox.rmds;
    Inbox.rmds=[];
-   var irmds=Inbox.irmds;
-   Inbox.irmds=[];
    var mds=Inbox.mds;
    Inbox.mds=[];
    var replies=Inbox.replies;
@@ -297,14 +295,26 @@ var sendOwl = function () {
    }
    for (var i=0; i<rmds.length; ++i) {
       md = rmds[i];
-      thing=md.parentElement.parentElement.parentElement;
-      tid=thing.thingId;
-      mid=parseInt(md.children[0].innerHTML);
-      if (!cnt.Rs)
-         cnt.Rs={};
-      if (!cnt.Rs[tid])
-         cnt.Rs[tid]=[];
-      cnt.Rs[tid].push(mid);
+      var imd=md.imd?md.imd:md;
+      if (imd.rmd) {
+         md=imd.rmd;
+      } else {
+         md=imd.md;
+      }
+      if (imd.rmd) {
+         if (!cnt.rrs)
+            cnt.rrs=[];
+         cnt.rrs.push(imd.ind);
+      } else {
+         thing=md.parentElement.parentElement.parentElement;
+         tid=thing.thingId;
+         mid=parseInt(md.children[0].innerHTML);
+         if (!cnt.Rs)
+            cnt.Rs={};
+         if (!cnt.Rs[tid])
+            cnt.Rs[tid]=[];
+         cnt.Rs[tid].push(mid);
+      }
    }
    for (var i=0; i<replies.length; ++i) {
       reply = replies[i];
@@ -321,25 +331,32 @@ var sendOwl = function () {
    f.postExpdtn = function (feed) {
       var res = JSON.parse(feed.responseText);
       if (res.status==1) {
-         var things = UserThings[Username.value];
          for (var md of mds) {
+            var thing = md.parentElement.parentElement.parentElement;
+            var tusr = GetElementInsideContainer(thing, "ThingUsr").innerHTML;
+            var mid=res.Qs[tusr][thing.thingId];
+            md.children[0].innerHTML=mid;
             md.classList.remove("inQ");
-            md.smd.classList.remove("inQ");
+            md.imd.classList.remove("inQ");
          }
          for (var md of rmds) {
+            md=md.imd?md.imd:md;
             md.classList.remove("inQ");
+            if (md.rmd) {
+               md.rmd.classList.remove("inQ");
+            } else {
+               md.md.classList.remove("inQ");
+            }
             --Inbox.news;
-         }
-         for (var md of irmds) {
-            md.classList.remove("inQ");
          }
          for (var rep of replies) {
             rep.classList.remove("inQ");
-            rep.smd.classList.remove("inQ");
+            rep.imd.classList.remove("inQ");
          }
          for (const stid in res["news"]) {
             var tthing = res["news"][stid]
             var tid = parseInt(stid);
+            var things = UserThings[User.innerHTML];
             var thing = things[tid];
             var msgd = GetElementInsideContainer(thing, "msgs");
             md = msgd.firstElementChild;
@@ -352,6 +369,9 @@ var sendOwl = function () {
                md.children[0].innerHTML=msg["id"];
                md.children[1].innerHTML=msg["user"]+": ";
                md.children[2].innerHTML=msg["msg"];
+               if (md.children.length==4) {
+                  md.removeChild(md.children[3]);
+               }
                msgd.insertAdjacentElement("beforeEnd", md);
                md.onclick=markAsRead;
                var imd = md.cloneNode(true);
@@ -365,34 +385,31 @@ var sendOwl = function () {
                ++Inbox.news;
             }
          }
-         for (const usr in res["rnews"]) {
-            var tthing = res["news"][usr];
-            var tid = parseInt(stid);
+         var rnews = res.rnews;
+         if (!rnews) rnews=[];
+         for (var smsg of rnews) {
+            var tusr = smsg[0];
+            var things=UserThings[tusr];
+            var tid = smsg[1];
             var thing = things[tid];
             var msgd = GetElementInsideContainer(thing, "msgs");
-            md = msgd.firstElementChild;
-            var itms=Inbox.things[tid];
-            for (const stid in tthing) {
-               for (const mid in tthing[stid]) {
-                  var reply = tthing[stid][mid];
+            for (var i=0; i<msgd.children.length; ++i) {
+               var md = msgd.children[i];
+               var mid = parseInt(md.children[0].innerHTML);
+               if (mid!=smsg[2]) {
+                  continue;
                }
-               if (!isNaN(parseInt(md.firstElementChild.innerHTML))) {
-                  md = md.cloneNode(true);
-               }
-               var msg = tthing[smid];
-               md.children[0].innerHTML=msg["id"];
-               md.children[1].innerHTML=msg["user"]+": ";
-               md.children[2].innerHTML=msg["msg"];
-               msgd.insertAdjacentElement("beforeEnd", md);
-               md.onclick=markAsRead;
-               var imd = md.cloneNode(true);
-               Inbox.insertAdjacentElement("beforeEnd", imd);
-               imd.classList.add("new");
-               imd.md=md;
-               md.imd=imd;
-               imd.onclick=showThing;
-               md.classList.add("new");
-               itms.add(msg["id"]);
+               var reply=ReplyDiv.firstElementChild.cloneNode(true);
+               reply.lastElementChild.innerHTML=smsg[3];
+               md.insertAdjacentElement("beforeEnd", reply);
+               reply.classList.remove("hidden");
+               reply.classList.add("new");
+               var oreply=reply.cloneNode(true);
+               Outbox.insertAdjacentElement("beforeEnd",oreply);
+               reply.imd=oreply;
+               reply.onclick=markAsRead;
+               oreply.rmd=reply;
+               oreply.onclick=showThing;
                ++Inbox.news;
             }
          }
@@ -422,7 +439,6 @@ var init = function () {
    Inbox.mds=[];
    Inbox.rmds=[];
    Inbox.news=0;
-   Inbox.irmds=[];
    Inbox.replies=[]
    OwlOnPerch=document.getElementById('owlOnPerch');
    OwlOnPerch.onclick=toggleMbox;
@@ -567,6 +583,7 @@ var init = function () {
 };
 var sendMsg = function () {
    var thing=this.parentElement.parentElement.parentElement;
+   var tusr= GetElementInsideContainer(thing, "ThingUsr");
    var mdiv = GetElementInsideContainer(thing, "msgdiv");
    var msgd = GetElementInsideContainer(mdiv, "msgs");
    var msginpt = GetElementInsideContainer(mdiv, "msginpt");
@@ -577,6 +594,9 @@ var sendMsg = function () {
    if (!isNaN(id)) {
       mid= parseInt(msgd.lastElementChild.firstElementChild.innerHTML);
       md = msgd.children[0].cloneNode(true);
+      if (md.children.length==4) {
+         md.removeChild(md.lastElementChild);
+      }
    }
    md.children[0].innerHTML=mid;
    md.children[1].innerHTML=User.innerHTML+": ";
@@ -584,15 +604,15 @@ var sendMsg = function () {
    msginpt.value="";
    msgd.insertAdjacentElement("beforeEnd", md);
    md.classList.add('inQ');
-   var smd = md.cloneNode(true);
-   var to = smd.removeChild(smd.children[1]);
-   to.innerHTML=" :"+smsg[0];
-   smd.insertAdjacentElement("beforeEnd",to);
-   smd.md=md;
-   Outbox.insertAdjacentElement("beforeEnd",smd);
-   smd.onclick=showThing;
-   smd.classList.add('inQ');
-   md.smd=smd;
+   var imd = md.cloneNode(true);
+   var to = imd.removeChild(imd.children[1]);
+   to.innerHTML=" :"+tusr.innerHTML;
+   imd.insertAdjacentElement("beforeEnd",to);
+   imd.md=md;
+   Outbox.insertAdjacentElement("beforeEnd",imd);
+   imd.onclick=showThing;
+   imd.classList.add('inQ');
+   md.imd=imd;
    Inbox.mds.push(md);
    ferrylog("Ur query will b sent by next owl!");
 }
@@ -758,8 +778,8 @@ var replyQuery = function () {
    reply.classList.remove("hidden");
    var oreply=reply.cloneNode(true);
    Outbox.insertAdjacentElement("beforeEnd",oreply);
-   reply.smd=oreply;
-   oreply.md=reply;
+   reply.imd=oreply;
+   oreply.rmd=reply;
    oreply.onclick=showThing;
    Inbox.replies.push(reply);
    ReplyDiv.parentElement.removeChild(ReplyDiv);
@@ -767,6 +787,7 @@ var replyQuery = function () {
 }
 var popReplyBtn = function () {
    this.onclick=null;
+   ReplyBox.value="";
    if (ReplyDiv.parentElement) {
       var p = ReplyDiv.parentElement;
       p.onclick=popReplyBtn;
@@ -778,33 +799,25 @@ var popReplyBtn = function () {
 var markAsRead = function () {
    this.classList.remove("new");
    this.classList.add("inQ");
-   if (this.md) {
-      this.md.classList.remove("new");
-      this.md.classList.add("inQ");
-      this.md.onclick=popReplyBtn;
-      Inbox.irmds.push(this);
-      Inbox.rmds.push(this.md);
-   } else {
-      this.imd.classList.remove("new");
-      this.imd.classList.add("inQ");
-      this.onclick=popReplyBtn;
-      Inbox.irmds.push(this.imd);
-      Inbox.rmds.push(this);
-   }
+   this.imd.classList.remove("new");
+   this.imd.classList.add("inQ");
+   this.onclick=popReplyBtn;
+   Inbox.rmds.push(this.imd);
 }
 var showThing = function () {
    Mbox.classList.add("hidden");
-   thing=this.md.parentElement.parentElement.parentElement;
+   thing=this.md?this.md.parentElement.parentElement.parentElement:
+      this.rmd.parentElement.parentElement.parentElement.parentElement;
    var md = GetElementInsideContainer(thing, "msgdiv");
    if (md.classList.contains("hidden")) {
       showThingDetails.call(GetElementInsideContainer(thing, "ThingName"));
    }
    thing.scrollIntoView({behavior: "smooth", block: "end"});
-   md = this.md;
+   md = this.md?this.md:this.rmd;
    md.classList.add("highlight");
    setTimeout(function(){md.classList.remove("highlight")}, 3000);
    if (this.classList.contains("new")) {
-      markAsRead.call(this);
+      markAsRead.call(this.md?this.md:this.rmd);
    }
 }
 const resizeObserver = new ResizeObserver(entries => {
@@ -975,6 +988,9 @@ var updateThings = function (res) {
                   md.children[0].innerHTML=rmsg["id"];
                   md.children[1].innerHTML=rmsg["user"]+": ";
                   md.children[2].innerHTML=rmsg["msg"];
+                  if (md.children.length==4) {
+                     md.removeChild(md.children[3]);
+                  }
                   msgd.insertAdjacentElement("beforeEnd", md);
                }
                if (thisThingUser && !itms.has(rmsg["id"])) {
@@ -986,18 +1002,21 @@ var updateThings = function (res) {
                      md.onclick=markAsRead;
                      md.classList.add("new");
                      ++Inbox.news;
-                  } else {
-                     md.onclick=popReplyBtn;
                   }
                   imd.md=md;
                   md.imd=imd;
                   imd.onclick=showThing;
-                  itms.add(rmsg["id"]);
-                  if (rmsg["rep"]) {
-                     var reply=ReplyDiv.firstElementChild.cloneNode(true);
-                     reply.lastElementChild.innerHTML=rmsg["rep"];
-                     md.insertAdjacentElement("beforeEnd", reply);
-                     reply.classList.remove("hidden");
+                  itms.add(rmsg["id"]);  
+               }
+               if (rmsg["rep"]) {
+                  var reply=ReplyDiv.firstElementChild.cloneNode(true);
+                  reply.lastElementChild.innerHTML=rmsg["rep"];
+                  md.insertAdjacentElement("beforeEnd", reply);
+                  reply.classList.remove("inQ");
+                  reply.classList.remove("hidden");
+               } else {
+                  if (!md.onclick && thisThingUser) {
+                     md.onclick=popReplyBtn;
                   }
                }
             }
@@ -1015,7 +1034,8 @@ var updateThings = function (res) {
       Things.classList.remove("hidden");
    }
    if (res.smsgs) {
-      for (var smsg of res.smsgs) {
+      for (var j=0; j<res.smsgs.length; ++j) {
+         var smsg=res.smsgs[j];
          var to = smsg[0];
          var isR = 0;
          if (!to.length) {
@@ -1028,21 +1048,39 @@ var updateThings = function (res) {
          for (var i=0; i<msgd.children.length; ++i) {
             var md = msgd.children[i];
             var mid = parseInt(md.children[0].innerHTML);
-            if (mid==smsg[2]) {
-               if (isR) {
-                  md=md.lastElementChild;
-               }
-               var smd = md.cloneNode(true);
-               if (!isR) {
-                  var to = smd.removeChild(smd.children[1]);
-                  to.innerHTML=" :"+to;
-                  smd.insertAdjacentElement("beforeEnd",to);
-               }
-               md.smd=smd;
+            if (mid!=smsg[2]) {
+               continue;
+            }
+            if (isR) {
+               md=md.lastElementChild;
+            }
+            var smd = md.cloneNode(true);
+            if (!isR) {
+               var toelm = smd.removeChild(smd.children[1]);
+               toelm.innerHTML=" :"+to;
+               smd.insertAdjacentElement("beforeEnd",toelm);
+               md.imd=smd;
                smd.md=md;
-               Outbox.insertAdjacentElement("beforeEnd",smd);
-               smd.onclick=showThing;
-               break;
+            } else {
+               md.imd=smd;
+               smd.rmd=md;
+            }
+            Outbox.insertAdjacentElement("beforeEnd",smd);
+            smd.onclick=showThing;
+            if (!isR && md.children.length==4) {
+               var reply = smd.removeChild(smd.children[2]);
+               reply.rmd=md.lastElementChild;
+               md.lastElementChild.imd=reply;
+               for (var i=0; i<res.reps.length; i+=2) {
+                  var k = res.reps[i];
+                  if (j==k) {
+                     reply.classList.add("new");
+                     reply.ind=i;
+                     ++Inbox.news;
+                  }
+               }
+               Inbox.insertAdjacentElement("beforeEnd", reply);
+               reply.onclick=showThing;
             }
          }
       }
