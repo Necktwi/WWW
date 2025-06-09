@@ -964,6 +964,7 @@ var updateThings = function (res) {
             var name=GetElementInsideContainer(thingN, "ThingName");
             name.innerText=thing.name;
             name.onclick=showThingDetails;
+            name.classList.remove("hidden");
          }
          var locPin = GetElementInsideContainer(thingN, "ThingLocationPin");
          if (thing.location && thing.location.length) {
@@ -993,7 +994,6 @@ var updateThings = function (res) {
          }
          dtlsta=GetElementInsideContainer(thingN, "ThingDetailsDiv");
          if (!dtlsta.classList.contains("hidden")) {
-            dtlsta.classList.add("hidden");
             dtls.classList.remove("hidden");
          }
          if (thisThingUser) {
@@ -1357,6 +1357,7 @@ var addThing = function () {
 
 var editThing = function(newThing) {
    UserActions.classList.add("hidden");
+   this.classList.remove("thngEdBtn");
    var thisUserThing = this.parentElement;
    var ThingName = GetElementInsideContainer(thisUserThing, "ThingName");
    var ThingNameL = GetElementInsideContainer(thisUserThing, "ThingNameL");
@@ -1379,11 +1380,14 @@ var editThing = function(newThing) {
       thisUserThing, "ThingDetails");
    var ThingDetailsDiv = GetElementInsideContainer(
       thisUserThing, "ThingDetailsDiv");
+   var ThingDetailsTA = GetElementInsideContainer(
+      ThingDetailsDiv, "ThingDetailsTA");
    ThingLocationB.value=ThingLocation.innerText;
    ThingLocationB.classList.remove("hidden");
    ThingLocationL.classList.remove("hidden");
    ThingDetails.classList.add("hidden");
    ThingDetailsDiv.classList.remove("hidden");
+   ThingDetailsTA.classList.remove("hidden");
    ThingLocPin.classList.add("empty");
    ThingLocPin.onclick=getLocation;
    var imgs=GetElementInsideContainer(thisUserThing, "Imgs");
@@ -1420,6 +1424,7 @@ var editThing = function(newThing) {
 
 var updateThing = function() {
    UserActions.classList.remove("hidden");
+   this.classList.add("thngEdBtn");
    var cncl = this.value=="Cancel";
    var url = "updateThing";
    var f={};
@@ -1433,15 +1438,16 @@ var updateThing = function() {
    var ThingLocationL = GetElementInsideContainer(UserThing, "ThingLocationL");
    var ThingLocationB = GetElementInsideContainer(
       UserThing, "ThingLocationBox");
-   var ThingDetailsTA = GetElementInsideContainer(
-      UserThing, "ThingDetailsTA");
+   var ThingDetailsDiv = GetElementInsideContainer(
+      UserThing, "ThingDetailsDiv");
    var updtBtn = cncl?this.previousElementSibling:this;
    if (!(cncl && UserThing.thingId==-1)) {
       ThingName.classList.remove("hidden");
       ThingNameB.classList.add("hidden");
       ThingNameL.classList.add("hidden");
-      ThingLocationB.classList.add("hidden");
       ThingLocationL.classList.add("hidden");
+      ThingLocationB.classList.add("hidden");
+      ThingDetailsDiv.classList.add("hidden");
       updtBtn.value="edit";
       updtBtn.onclick=editThing;
    } else {
