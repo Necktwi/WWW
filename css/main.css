@@ -430,16 +430,6 @@ footer {
    opacity: 0;
    filter: alpha(opacity=0);
 }
-.hidden {
-   visibility: hidden;
-   position: absolute;
-   width: 0px;
-   height: 0px;
-   display: none;
-   padding: 0px;
-   border: 0px;
-   margin: 0px;
-}
 .inlineVisible {
    display: inline-block;
 }
@@ -477,6 +467,15 @@ footer {
    position: absolute;
    top: 1mm;
    right: 1mm;
+}
+.hidden {
+   position: absolute;
+   width: 0px;
+   height: 0px;
+   display: none;
+   padding: 0px;
+   border: 0px;
+   margin: 0px;
 }
 .plot {
    position: relative;

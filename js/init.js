@@ -560,10 +560,11 @@ var init = function () {
       Location.classList.add("hidden");
       var url = "cookie";
       var f={};
-      var pstr = Location.value;
-      ferrylog("Location: " + pstr);
-      f.content="{bid:\""+browserID+"\",geoposition:["+pstr+"]}";
+      f.pstr = Location.value;
+      ferrylog("Location: " + f.pstr);
+      f.content="{bid:\""+browserID+"\",geoposition:["+f.pstr+"]}";
       f.postExpdtn=onBID;
+      f.reqHeaders=[["content-type", "text/json"]];
       shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
       LocationPin.classList.remove('empty');
    }
@@ -676,6 +677,7 @@ var onBID = function (feed) {
    var res = JSON.parse(feed.responseText);
    if (res.bid) {
       setCookie("bid", res.bid, 7);
+      window.bidLoc=feed.pstr.split(',');
       browserID=getCookie("bid");
       LogoDiv.classList.remove("if");
       LogoDiv.parentElement.style.display="table-cell";
@@ -745,6 +747,12 @@ var deleteThings = function () {
    Things.innerHTML="";
    delete UserThings;
    UserThings = {};
+}
+
+var hideThings = function () {
+   for (var thing of Things.children) {
+      thing.classList.add("hidden");
+   }
 }
 
 var openfileprompt = function () {
@@ -828,6 +836,44 @@ const resizeObserver = new ResizeObserver(entries => {
       thing.style.width=entry.target.offsetWidth+"px";
    }
 });
+var thingDist = function (thingN) {
+   if (thingN.loc) {
+      var xd = window.bidLoc[0]-thingN.loc[0];
+      var yd = window.bidLoc[1]-thingN.loc[1];
+      return Math.pow(Math.pow(xd,2)+Math.pow(yd,2),0.5);
+   }
+   return 1000000.000;
+}
+var insertThing = function (thingN) {
+   thingN.d = thingDist(thingN);
+   
+   if (!Things.children.length) {
+      Things.appendChild(thingN);
+      return;
+   }
+   
+   let start = 0;
+   let end = Things.children.length - 1;
+   let insertIndex = Things.children.length; // Default to append at end
+   
+   while (start <= end) {
+      let mid = Math.floor((start + end) / 2);
+      let midThing = Things.children[mid];
+      
+      if (midThing.d > thingN.d) {
+         insertIndex = mid;
+         end = mid - 1;
+      } else {
+         start = mid + 1;
+      }
+   }
+   
+   if (insertIndex >= Things.children.length) {
+      Things.appendChild(thingN);
+   } else {
+      Things.insertBefore(thingN, Things.children[insertIndex]);
+   }
+}
 var updateThings = function (res) {
    if (res.name)
       userData = res;
@@ -919,6 +965,7 @@ var updateThings = function (res) {
          var locPin = GetElementInsideContainer(thingN, "ThingLocationPin");
          if (thing.location && thing.location.length) {
             var location=GetElementInsideContainer(thingN, "ThingLocation");
+            thingN.loc=thing.location;
             var locStr=thing.location.length?thing.location.join(","):
                thing.location;
             location.innerText=locStr;
@@ -967,7 +1014,7 @@ var updateThings = function (res) {
          } else {
             itms=Inbox.things[thing.id];
          }
-         if (rmsgs) {
+         if (rmsgs && newThing) {
             for (var l=0,m=0; l<rmsgs.length; ++l,++m) {
                var rmsg=rmsgs[l];
                var md;
@@ -1025,10 +1072,12 @@ var updateThings = function (res) {
          thingN.user=un;
          if (newThing) {
             if (thing.id!="-1") {
-               Things.append(thingN);
+               insertThing(thingN);
             } else {
                Things.insertAdjacentElement('afterBegin', thingN);
             }
+         } else {
+            thingN.classList.remove("hidden");
          }
       }
       Things.classList.remove("hidden");
@@ -1071,11 +1120,11 @@ var updateThings = function (res) {
                var reply = smd.removeChild(smd.children[2]);
                reply.rmd=md.lastElementChild;
                md.lastElementChild.imd=reply;
-               for (var i=0; i<res.reps.length; i+=2) {
-                  var k = res.reps[i];
+               for (var m=0; m<res.reps.length; m+=2) {
+                  var k = res.reps[m];
                   if (j==k) {
                      reply.classList.add("new");
-                     reply.ind=i;
+                     reply.ind=m;
                      ++Inbox.news;
                   }
                }
@@ -1121,6 +1170,7 @@ var authenticateUser = function () {
       f.content+=",password:\""+core.MD5(Password.value) +
          "\",geoposition:["+pstr+"]}";
       f.postExpdtn=login;
+      f.reqHeaders=[["content-type", "text/json"]];
       Password.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
    }
 }
@@ -1129,7 +1179,8 @@ var updateSearchedThings = function (feed) {
    var res = JSON.parse(feed.responseText);
    ferrylog(res.things.length+" thing"+(res.things.length==1?"":"s")+" found");
    res.search=true;
-   deleteThings();
+   //deleteThings();
+   hideThings();
    updateThings(res);
 }
 
@@ -1151,6 +1202,7 @@ var lock = function () {
    var f={};
    f.content="";
    f.postExpdtn=logout;
+   f.reqHeaders=[["content-type", "text/json"]];
    Unlock.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
 }
 var logout = function (feed) {
@@ -1180,6 +1232,7 @@ var togglesignup = function () {
       var f={};
       f.content="";
       f.postExpdtn=onCaptcha;
+      f.reqHeaders=[["content-type", "text/json"]];
       shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
       PasswordL.classList.add("hidden");
       Signupdiv.classList.remove("hidden");
@@ -1231,6 +1284,7 @@ var signup = function () {
       f.content+= "password:\""+
          core.MD5(Passwords2.value)+"\",consent:" + Consent.checked + "}";
       f.postExpdtn=actMail;
+      f.reqHeaders=[["content-type", "text/json"]];
       Passwords2.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
    }
 }
