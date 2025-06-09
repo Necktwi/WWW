@@ -809,7 +809,9 @@ var markAsRead = function () {
    this.classList.add("inQ");
    this.imd.classList.remove("new");
    this.imd.classList.add("inQ");
-   this.onclick=popReplyBtn;
+   if (this.id!="reply") {
+      this.onclick=popReplyBtn;
+   }
    Inbox.rmds.push(this.imd);
 }
 var showThing = function () {
@@ -913,6 +915,7 @@ var updateThings = function (res) {
          var UserThingEditBtn =
              GetElementInsideContainer(thingN, "ThingEditBtn");
          if (newThing) {
+            imgsHldr.onclick=showThingDetails;
             var imgHldr = imgs.children[0];
             var img = imgHldr.children[0];
             var SIB = imgHldr.children[1];
