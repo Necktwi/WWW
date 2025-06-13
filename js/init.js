@@ -158,15 +158,20 @@ var getLocation = function () {
 }
 
 var nxtImg = function (reverse) {
+   event.cancelBubble=true;
    var nxtBtn = event.target;
    var imgs = nxtBtn.parentElement.parentElement.firstElementChild;
-   var img = imgs.getElementsByClassName("inlineVisible")[0];
-   var nxtImg = reverse?
+   var img;
+   if (!imgs.cimg) {
+      imgs.cimg=imgs.firstElementChild;
+   }
+   var img = imgs.cimg;
+   imgs.cimg = reverse?
        (img.previousElementSibling?img.previousElementSibling:
         imgs.lastElementChild):
        (img.nextElementSibling?img.nextElementSibling:imgs.firstElementChild);
-   img.classList.replace("inlineVisible", "inlineHidden");
-   nxtImg.classList.replace("inlineHidden", "inlineVisible");
+   img.classList.add("hidden");
+   imgs.cimg.classList.remove("hidden");
 }
 
 var viewportHandler = function() {
@@ -330,6 +335,9 @@ var sendOwl = function () {
    f.content=JSON.stringify(cnt);
    f.postExpdtn = function (feed) {
       var res = JSON.parse(feed.responseText);
+      if (!signOk(res)) {
+         return;
+      }
       if (res.status==1) {
          for (var md of mds) {
             var thing = md.parentElement.parentElement.parentElement;
@@ -722,7 +730,7 @@ var onCaptcha = function(feed){
 var login = function(feed) {
    var res = JSON.parse(feed.responseText);
    if(res.password) {
-      LockBlock.classList.replace("inlineVisible","inlineHidden");
+      LockBlock.classList.add("hidden");
       Credentials.classList.add("hidden");
       User.innerHTML=res.name;
       User.obj=res;
@@ -827,7 +835,7 @@ var showThing = function () {
    md.classList.add("highlight");
    setTimeout(function(){md.classList.remove("highlight")}, 3000);
    if (this.classList.contains("new")) {
-      markAsRead.call(this.md?this.md:this.rmd);
+      markAsRead.call(md);
    }
 }
 const resizeObserver = new ResizeObserver(entries => {
@@ -928,7 +936,7 @@ var updateThings = function (res) {
                   "."+0+".jpg?"+pics[0].ts;
                for (var j=1; j<pics.length; ++j) {
                   imgHldr = imgs.children[0].cloneNode(true);
-                  imgHldr.classList.replace("inlineVisible", "inlineHidden");
+                  imgHldr.classList.add("hidden");
                   img = imgHldr.children[0];
                   SIB = imgHldr.children[1];
                   img.src="/upload/"+res.things[i].user+"/"+res.things[i].id+
@@ -958,7 +966,7 @@ var updateThings = function (res) {
          var dummies=imgs.getElementsByClassName("dummy");
          if (imgs.children.length>1 && imgs.children.length>dummies.length)
             for (var j=0; j<dummies.length; ++j) {
-               dummies[j].classList.replace("inlineVisible","inlineHidden");
+               dummies[j].classList.add("hidden");
             }
          if (thing.name && thing.name.length) {
             var name=GetElementInsideContainer(thingN, "ThingName");
@@ -989,11 +997,12 @@ var updateThings = function (res) {
          var dtlsta;
          if (thing.details) {
             dtls.innerHTML=thing.details;
-            dtlsta=GetElementInsideContainer(thingN, "ThingDetailsTA");
+            dtlsta = GetElementInsideContainer(thingN, "ThingDetailsTA")
             dtlsta.value=thing.details;
          }
-         dtlsta=GetElementInsideContainer(thingN, "ThingDetailsDiv");
+         dtlsta  = GetElementInsideContainer(thingN, "ThingDetailsDiv");
          if (!dtlsta.classList.contains("hidden")) {
+            dtlsta.classList.add("hidden");
             dtls.classList.remove("hidden");
          }
          if (thisThingUser) {
@@ -1127,7 +1136,9 @@ var updateThings = function (res) {
                   var k = res.reps[m];
                   if (j==k) {
                      reply.classList.add("new");
-                     reply.ind=m;
+                     md.children[3].classList.add("new");
+                     md.children[3].onclick=markAsRead;
+                     reply.ind=k;
                      ++Inbox.news;
                   }
                }
@@ -1145,7 +1156,7 @@ var updateThings = function (res) {
 }
 
 var unlock = function(){
-   LockBlock.classList.replace("inlineVisible","inlineHidden");
+   LockBlock.classList.add("hidden");
    Credentials.classList.remove("hidden");
    SignUp.checked=false;
    Username.focus();
@@ -1208,27 +1219,41 @@ var lock = function () {
    f.reqHeaders=[["content-type", "text/json"]];
    Unlock.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
 }
+var logoutui = function () {
+   clearInterval(owlMail);
+   Usermenu.classList.add("hidden");
+   Username.value="";
+   Password.value="";
+   LockBlock.classList.remove("hidden");
+   UserActions.classList.add("hidden");
+   var edbns = document.getElementsByClassName("thngEdBtn");
+   for (var i=0; i<edbns.length; ++i) {
+      edbns[i].classList.add("hidden");
+   }
+   OwlOnPerch.classList.add("hidden");
+   ferrylog("Bye!");
+}
+
 var logout = function (feed) {
    var res = JSON.parse(feed.responseText);
    if (res.logout===true) {
-      clearInterval(owlMail);
-      Usermenu.classList.add("hidden");
-      Username.value="";
-      Password.value="";
-      LockBlock.classList.replace("inlineHidden", "inlineVisible");
-      UserActions.classList.add("hidden");
-      var edbns = document.getElementsByClassName("thngEdBtn");
-      for (var i=0; i<edbns.length; ++i) {
-         edbns[i].classList.add("hidden");
-      }
-      OwlOnPerch.classList.add("hidden");
-      ferrylog("Bye!");
+      logoutui();
    } else {
       setCookie("bid","",0);
       ferrylog("Huh! Something went wrong! Try again:) or close window.");
    }
    delete Unlock.shuttle;
 }
+
+var signOk = function (res) {
+   if (res.logout==true) {
+      logoutui();
+      ferrylog("Ur account is signed in from another device. Signing out!");
+      return false;
+   }
+   return true;
+}
+
 var togglesignup = function () {
    if (SignUp.checked || Recover.checked) {
       var url = "captcha";
@@ -1237,8 +1262,8 @@ var togglesignup = function () {
       f.postExpdtn=onCaptcha;
       f.reqHeaders=[["content-type", "text/json"]];
       shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
-      PasswordL.classList.add("hidden");
       Signupdiv.classList.remove("hidden");
+      PasswordL.classList.add("hidden");
       if (Recover.checked){
          UsernameL.classList.add("hidden");
          NewL.classList.remove("hidden");
@@ -1354,8 +1379,11 @@ var addThing = function () {
    editThing.call(GetElementInsideContainer(
       Things.children[0], "ThingEditBtn"));
 }
-
+var lastCnclEdtBtn;
 var editThing = function(newThing) {
+   if (lastCnclEdtBtn) {
+      updateThing.call(lastCnclEdtBtn);
+   }
    UserActions.classList.add("hidden");
    this.classList.remove("thngEdBtn");
    var thisUserThing = this.parentElement;
@@ -1411,7 +1439,7 @@ var editThing = function(newThing) {
       SIBl.thingId=thisUserThing.thingId;
       SIBl.classList.remove("hidden");
       if (i) {
-         imgHldr.classList.replace("inlineVisible", "inlineHidden")
+         imgHldr.classList.add("hidden")
          imgs.children[i-1].insertAdjacentElement('afterEnd', imgHldr);
       } else
          imgs.insertAdjacentElement('afterBegin', imgHldr);
@@ -1419,12 +1447,13 @@ var editThing = function(newThing) {
    this.value="Update";
    this.onclick=updateThing;
    CnclEdtBtn.onclick=updateThing;
+   lastCnclEdtBtn=CnclEdtBtn;
    this.classList.remove("hidden");
 }
 
 var updateThing = function() {
+   lastCnclEdtBtn=null;
    UserActions.classList.remove("hidden");
-   this.classList.add("thngEdBtn");
    var cncl = this.value=="Cancel";
    var url = "updateThing";
    var f={};
@@ -1438,18 +1467,31 @@ var updateThing = function() {
    var ThingLocationL = GetElementInsideContainer(UserThing, "ThingLocationL");
    var ThingLocationB = GetElementInsideContainer(
       UserThing, "ThingLocationBox");
+   var ThingDetails = GetElementInsideContainer(
+      UserThing, "ThingDetails");
+   var ThingDetailsTA = GetElementInsideContainer(
+      UserThing, "ThingDetailsTA");
    var ThingDetailsDiv = GetElementInsideContainer(
       UserThing, "ThingDetailsDiv");
    var updtBtn = cncl?this.previousElementSibling:this;
+   var cnclBtn = cncl?this:this.nextElementSibling;
    if (!(cncl && UserThing.thingId==-1)) {
       ThingName.classList.remove("hidden");
       ThingNameB.classList.add("hidden");
       ThingNameL.classList.add("hidden");
       ThingLocationL.classList.add("hidden");
       ThingLocationB.classList.add("hidden");
+      ThingDetails.classList.remove("hidden");
       ThingDetailsDiv.classList.add("hidden");
       updtBtn.value="edit";
+      updtBtn.classList.add("thngEdBtn");
       updtBtn.onclick=editThing;
+      cnclBtn.classList.add("hidden");
+      var imgs=GetElementInsideContainer(UserThing, "Imgs");
+      for (var i=0;i<imgs.children.length; ++i) {
+         var SIB = imgs.children[i].children[1];
+         SIB.classList.add("hidden");
+      }
    } else {
       UserThing.classList.add("hidden");
       return;
@@ -1476,7 +1518,10 @@ var updateThing = function() {
    f.reqHeaders=[["Content-type", "text/json"]];
    f.postExpdtn = function (feed) {
       var res=JSON.parse(feed.responseText);
-      if (res.password) {
+      if (!signOk(res)) {
+         return;
+      }
+      if (res.things) {
          updateThings(res);
       } else {
          ferrylog(res.error);
@@ -1512,7 +1557,10 @@ var uploadFile = function(infoBox) {
 	   } catch (err) {
 		   feed.response = {};
 	   }
-	   if (feed.response.success) {
+	   if (!signOk(feed.response)) {
+         return;
+      }
+      if (feed.response.success) {
 		   feed.pInd.parentElement.removeChild(feed.pInd);
 		   feed.elm.postUpload(feed);
 	   } else if (feed.response.error) {
@@ -1553,10 +1601,12 @@ var sendFileData = function(name, data, chunkSize, l) {
          })
          .then(function(text) {
             if (!ok) {
+               if (!signOk(res)) {
+                  return;
+               }
                ferrylog('Error: ' + text);
                l.teb.disabled=false;
-            }
-            else if(offset+chunk.length >= data.length){
+            } else if(offset+chunk.length >= data.length){
                ferrylog(name + ' uploaded!');
                if(l.postUpload) {
                   l.text=text;
@@ -1571,7 +1621,7 @@ var sendFileData = function(name, data, chunkSize, l) {
             }
          });
    };
-  sendChunk(0);
+   sendChunk(0);
 };
 
 function GetElementInsideContainer(container, childID) {

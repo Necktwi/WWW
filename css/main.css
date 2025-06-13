@@ -1,10 +1,46 @@
+@font-face {
+   font-family:CascadiaMono.ttf;
+   src:url("/fnt/CascadiaMono.ttf");
+}
+@font-face {
+   font-family:Quicksand;
+   src:url("/fnt/Quicksand.woff");
+}
+@font-face {
+   font-family:SourceCodePro;
+   src:url("/fnt/SourceCodePro.woff");
+}
+@font-face {
+   font-family:SourceCodeBold;
+   src:url("/fnt/SourceCodeBold.woff");
+}
+@font-face {
+   font-family: AB;
+   src:url("/fnt/AB.ttf");
+}
+@font-face {
+   font-family: NSR;
+   src:url("/fnt/NSR.ttf");
+}
+#user {
+   font-family: AB;
+   position: relative;
+   top: -0.06cm;
+   font-size: 6mm;
+}
+* {
+   font-family: NSR;
+   font-size: 4mm;
+}
+.inlBlk {
+   display: inline-block;
+}
 #jackmail {
    color: rgb(96,96,256);
 }
 body {
-   margin: 0px;
+   margin: 1px;
    /* display: inline; */
-   font-size: 5mm;
 }
 header {
    width: 100%;
@@ -93,6 +129,12 @@ footer.if {
    display:block;
    width: 5cm;
 }
+#Password1L {
+   display:inline-block;
+}
+#Password2L {
+   display:inline-block;
+}
 #Consent {
    position: relative;
    bottom: 0.5mm;
@@ -104,7 +146,7 @@ footer.if {
 #ConsentT, #ConsentT:visited {
    color: rgb(128,128,255);
 }
-#ConsentImg {
+#ConsentImg{
    width: 0.6cm;
    position: relative;
    top: 0.14cm;
@@ -130,10 +172,6 @@ footer.if {
 #Desc {
    position: relative;
    top: -0.06cm;   
-}
-#user {
-   position: relative;
-   top: -0.06cm;
 }
 #Log {
    position: fixed;
@@ -196,8 +234,15 @@ footer.if {
    color: black;
 }
 #UserActions {
-   margin-top:2px;
-   margin-bottom:2px;
+   margin-top:2mm;
+   margin-bottom:2mm;
+}
+#AddThing {
+   text-align: center;
+   vertical-align: middle;
+   border-radius: 1mm;
+}
+#Things {
 }
 #ImgsHldr {
    position: relative;
@@ -206,12 +251,24 @@ footer.if {
 #NxtBtnHldr {
    position: absolute;
    font-size: 0.5cm;
-   bottom:0cm;
+   bottom:1mm;
+   left: 1mm;
    margin:0.2cm;
+}
+#Thing input[type=button] {
+   border: 0px;
+   vertical-align: middle;
+   text-align: center;
+   background-color: rgba(255,255,255,0.3);
+   backdrop-filter: blur(1mm);
+   color: rgb(0,0,128);
+}
+.imgNxtBtns {
+   width: 7mm;
 }
 #Thing {
    margin-top: 1mm;
-   margin-right: 2mm;
+   margin-right: 3mm;
    border-radius: 1mm;
 }
 #Thing #msgdiv {
@@ -253,8 +310,8 @@ inptTxtBx.typing {
    width: fit-content;
 }
 svg.fixedSize, img.fixedSize {
-   max-width: 9.7cm;
-   min-width: 3cm;
+   max-width: 9.5cm;
+   min-width: 4cm;
    height: 6cm;
    background-color: rgb(64,64,64);
    border-radius: 2mm;
@@ -290,14 +347,18 @@ svg.fixedSize {
 #ThingImg {
    display:block;
 }
-#Things input {
+#Thing input {
    font-size: 4mm;
-   padding: 0px;
-   padding-left:1mm;
-   padding-right:1mm;
-   padding-bottom: 0.8mm;
-   margin: 1mm;
    border-radius: 1mm;
+}
+#Thing input[type=text]:focus {
+   outline-width: 0mm;
+}
+#Thing input[type=text] {
+   width: 38mm;
+}
+#Thing textarea {
+   width: 38mm;
 }
 
 #ThingLocationPin, #LocationPin {
@@ -310,6 +371,15 @@ svg.fixedSize {
    background-size: 15.5cm;
    filter: brightness(0) invert(1);
    hover:pointer;
+}
+#LocationPin.hidden {
+   position: absolute;
+   width: 0px;
+   height: 0px;
+   display: none;
+   padding: 0px;
+   border: 0px;
+   margin: 0px;
 }
 
 #ThingLocationPin {
@@ -359,6 +429,13 @@ svg.fixedSize {
 #ThingName {
    position:relative;
    top: -0.63mm;
+   font-size: 4mm;
+}
+#ThingDetails {
+   font-family: CascadiaMono.ttf;
+   font-size: 3.6mm;
+   background-color: rgb(40,40,40);
+   border-radius: 1mm;
 }
 #picBrsr {
    position: absolute;
@@ -370,9 +447,16 @@ svg.fixedSize {
    backdrop-filter: blur(1mm);
    -webkit-backdrop-filter: blur(1mm);
 }
+.reply {
+   background-color: rgb(120,120,234);
+   margin: 1mm;
+   border-radius:1mm;
+}
 .query {
    margin:1px;
    border-radius:1mm;
+   font-size: 3.7mm;
+   background-color: rgb(96,96,234);
 }
 #SIB {
    top: -1.3cm;
@@ -414,29 +498,9 @@ footer {
    display: block;
    margin: auto;
 }
-@font-face {
-   font-family:Quicksand;
-   src:url("/fnt/Quicksand.woff");
-}
-@font-face {
-   font-family:SourceCodePro;
-   src:url("/fnt/SourceCodePro.woff");
-}
-@font-face {
-   font-family:SourceCodeBold;
-   src:url("/fnt/SourceCodeBold.woff");
-}
 .invisible {
    opacity: 0;
    filter: alpha(opacity=0);
-}
-.inlineVisible {
-   display: inline-block;
-}
-.inlineHidden {
-   display: block;
-   position: absolute;
-   visibility: hidden;
 }
 .inQ {
    background-color: gray;
