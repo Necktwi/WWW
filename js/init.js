@@ -22,7 +22,7 @@ const MaxImgsPerThing=3;
 var browserID;
 var userData;
 var clearLogInterval;
-var lstThnDtls, lstThnMsgs;
+var lstThn, lstThnDtls, lstThnMsgs;
 var Header;
 
 var ferrylog = function (msg, interval=15000) {
@@ -553,6 +553,7 @@ var init = function () {
    Consent = document.getElementById('Consent');
    ConsentL = document.getElementById('ConsentL');
    Thing = GetElementInsideContainer(Things, "Thing");
+   lstThn = Thing;
    lstThnDtls = GetElementInsideContainer(Thing, "ThingDetails");
    lstThnMsgs = GetElementInsideContainer(Thing, "msgdiv");
    UserThings = {};
@@ -773,9 +774,12 @@ var showThingDetails = function () {
       lstThnDtls.classList.add("hidden");
       if (lstThnMsgs)lstThnMsgs.classList.add("hidden");
    }
+   lstThn.classList.remove("active");
+   lstThn = this.parentElement;
    lstThnDtls = thnDtls;
    lstThnMsgs = GetElementInsideContainer(
       this.parentElement, "msgdiv");
+   lstThn.classList.add("active");
    if (lstThnDtls.classList.contains("hidden")) {
       lstThnDtls.classList.remove("hidden");
       if (lstThnMsgs)lstThnMsgs.classList.remove("hidden");
@@ -1420,7 +1424,8 @@ var editThing = function(newThing) {
    ThingLocPin.onclick=getLocation;
    var imgs=GetElementInsideContainer(thisUserThing, "Imgs");
    for (var i=0;i<imgs.children.length; ++i) {
-      var SIB = imgs.children[i].children[1];
+      var imgH = imgs.children[i];
+      var SIB = imgH.children[imgH.children.length-2];
       SIB.classList.remove("hidden");
    }
    var dummies=imgs.getElementsByClassName("dummy");
@@ -1489,7 +1494,8 @@ var updateThing = function() {
       cnclBtn.classList.add("hidden");
       var imgs=GetElementInsideContainer(UserThing, "Imgs");
       for (var i=0;i<imgs.children.length; ++i) {
-         var SIB = imgs.children[i].children[1];
+         var imgH = imgs.children[i];
+         var SIB = imgH.children[imgH.children.length-2];
          SIB.classList.add("hidden");
       }
    } else {
@@ -1584,6 +1590,7 @@ var uploadFile = function(infoBox) {
 
 // Send a large blob of data chunk by chunk
 var sendFileData = function(name, data, chunkSize, l) {
+   var totalKB=Math.ceil(data.length/1000);
    var sendChunk = function(offset) {
       var chunk = data.subarray(offset, offset + chunkSize) || '';
       var opts = {method: 'POST', body: chunk};
@@ -1593,7 +1600,9 @@ var sendFileData = function(name, data, chunkSize, l) {
       url += "&thingId=" + l.thingId;
       url += "&picId=" + l.picId;
       var ok;
-      ferrylog('Uploading '+name+(offset+chunk.length)+'/'+data.length+'B');
+      var sentKB=Math.ceil((offset+chunk.length)/1000);
+      var percent=Math.floor(sentKB*100/totalKB);
+      ferrylog('Uploading '+name+sentKB+'/'+totalKB+'KB'+'|'+percent+'%');
       fetch(url, opts)
          .then(function(res) {
             ok = res.ok;

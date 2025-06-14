@@ -1,4 +1,6 @@
 {
-	defaultMaxThings: 5,
-	defaultMaxThingPics: 3
+	maxThings: 5,
+	maxThingPics: 3,
+	maxMsgs: 25,
+	secret: file:///home/gowtham/workspace/WWW-development/secret.ffjson
 }

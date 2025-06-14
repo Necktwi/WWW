@@ -185,7 +185,6 @@ footer.if {
    text-align:right;
 }
 #Log.visible div.hidden {
-   visibility: revert;
    display: revert;
    position: revert;
    width: revert;
@@ -244,6 +243,13 @@ footer.if {
 }
 #Things {
 }
+#Thing.active {
+   /* scale: 1.2; */
+}
+#Thing.active #ImgHldr {
+   height: revert;
+}
+
 #ImgsHldr {
    position: relative;
    margin-bottom: 0.1cm;
