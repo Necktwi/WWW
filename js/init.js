@@ -15,14 +15,14 @@ var Usermenu;
 var User;
 var Unlock, Log;
 var Thing, Things, UserThings, UserActions, AddThing, ChoosePic, ReplyBtn;
-var SVGS, ReplyBox, ReplyDiv;
+var SVGS, ReplyBox, ReplyDiv, Msginpt, QSendDiv, MsgBtn;
 var searchPlcHldr = 'Search things near U';
 var caretPos=0;
 const MaxImgsPerThing=3;
 var browserID;
 var userData;
 var clearLogInterval;
-var lstThn, lstThnDtls, lstThnMsgs;
+var lstThn, lstThnDtls;
 var Header;
 
 var ferrylog = function (msg, interval=15000) {
@@ -459,8 +459,13 @@ var init = function () {
    ReplyDiv=document.getElementById('replyDiv');
    ReplyBtn=document.getElementById('replyBtn');
    ReplyBox=document.getElementById('replyBox');
-   ReplyDiv.parentElement.removeChild(ReplyDiv);
+   QSendDiv=document.getElementById('qSendDiv');
+   MsgBtn=document.getElementById('msgBtn');
+   Msginpt=document.getElementById('msginpt');
+   ReplyDiv.remove();
    ReplyDiv.classList.remove("hidden");
+   QSendDiv.remove();
+   QSendDiv.classList.remove("hidden");
    addEvent(Location, 'keydown', function () {
       if (!this.dont) {
          this.dont=true;
@@ -554,13 +559,10 @@ var init = function () {
    ConsentL = document.getElementById('ConsentL');
    Thing = GetElementInsideContainer(Things, "Thing");
    lstThn = Thing;
-   lstThnDtls = GetElementInsideContainer(Thing, "ThingDetails");
-   lstThnMsgs = GetElementInsideContainer(Thing, "msgdiv");
    UserThings = {};
    Thing.remove();
    addEvent(Passwords2, 'keydown', signup);
    addEvent(Captcha, 'keydown', signup);
-   Things=document.getElementById("Things");
    UserActions=document.getElementById("UserActions");
    AddThing=document.getElementById("AddThing");
    AddThing.plcHldr="Add a thing to the fair";
@@ -731,14 +733,9 @@ var onCaptcha = function(feed){
 var login = function(feed) {
    var res = JSON.parse(feed.responseText);
    if(res.password) {
-      LockBlock.classList.add("hidden");
-      Credentials.classList.add("hidden");
+      document.body.classList.add("signed");
       User.innerHTML=res.name;
       User.obj=res;
-      Usermenu.classList.remove("hidden");
-      Signupdiv.classList.add("hidden");
-      UserActions.classList.remove("hidden");
-      OwlOnPerch.classList.remove("hidden");
       updateThings(res);
       owlMail=setInterval(sendOwl, 30000);
       ferrylog("SignedIn!");
@@ -768,26 +765,19 @@ var openfileprompt = function () {
    this.nextElementSibling.click();
 }
 var showThingDetails = function () {
-   var thnDtls = GetElementInsideContainer(
-      this.parentElement, "ThingDetails");
-   if (thnDtls!=lstThnDtls) {
-      lstThnDtls.classList.add("hidden");
-      if (lstThnMsgs)lstThnMsgs.classList.add("hidden");
+   if (this.parentElement.classList.contains("active")) {
+      this.parentElement.classList.remove("active");
+      return;
    }
    lstThn.classList.remove("active");
    lstThn = this.parentElement;
-   lstThnDtls = thnDtls;
-   lstThnMsgs = GetElementInsideContainer(
-      this.parentElement, "msgdiv");
    lstThn.classList.add("active");
-   if (lstThnDtls.classList.contains("hidden")) {
-      lstThnDtls.classList.remove("hidden");
-      if (lstThnMsgs)lstThnMsgs.classList.remove("hidden");
-   } else {
-      lstThnDtls.classList.add("hidden");
-      if (lstThnMsgs)lstThnMsgs.classList.add("hidden");
+   if (document.body.classList.contains("signed") &&
+       !lstThn.classList.contains("mine")) {
+      popQueryBtn.call(lstThn);
    }
 }
+
 var replyQuery = function () {
    if (!ReplyBox.value.length) {
       return;
@@ -802,16 +792,26 @@ var replyQuery = function () {
    oreply.rmd=reply;
    oreply.onclick=showThing;
    Inbox.replies.push(reply);
-   ReplyDiv.parentElement.removeChild(ReplyDiv);
+   ReplyDiv.remove();
    ferrylog("Ur reply will b sent by next owl!");
+}
+var popQueryBtn = function () {
+   MsgBtn.onclick=null;
+   var p = QSendDiv.parentElement;
+   if (p) {
+      QSendDiv.remove();
+   }
+   var md = GetElementInsideContainer(this, "msgdiv");
+   md.insertAdjacentElement("beforeEnd", QSendDiv);
+   MsgBtn.onclick=sendMsg;
 }
 var popReplyBtn = function () {
    this.onclick=null;
    ReplyBox.value="";
-   if (ReplyDiv.parentElement) {
-      var p = ReplyDiv.parentElement;
+   var p = ReplyDiv.parentElement;
+   if (p) {
       p.onclick=popReplyBtn;
-      p.removeChild(ReplyDiv);
+      ReplyDiv.remove();
    }
    this.insertAdjacentElement("beforeEnd", ReplyDiv);
    ReplyBtn.onclick=replyQuery;
@@ -889,215 +889,210 @@ var insertThing = function (thingN) {
    }
 }
 var updateThings = function (res) {
-   if (res.name)
+   if (res.name) {
       userData = res;
-   if (res.things) {
-      for (var i=0; i<res.things.length; ++i) {
-         var thing=res.things[i];
-         var newThing=true;
-         if (!thing.user && !userData["name"])
-            return;
-         var un;
-         if (!thing.user) {
-            un = userData["name"];
-         } else {
-            un = thing.user;
-         }
-         if (!UserThings[un]) {
-            UserThings[un]={};
-         }
-         if (UserThings[un][thing.id]) {
-            newThing=false;
-         } else if (UserThings[un][-1]) {
-            UserThings[un][thing.id]=UserThings[un][-1];
-            UserThings[un][-1]=undefined;
-            newThing=false;
-         }
-         var thisThingUser = User.innerHTML==thing.user;
-         var thingN=
-             newThing?Thing.cloneNode(true):UserThings[un][thing.id];
-         thingN.thingId=thing.id;
-         var imgsHldr = thingN.children[0];
-         var imgs = imgsHldr.children[0];
-         resizeObserver.observe(imgs);
-         var msgDiv = GetElementInsideContainer(thingN, "msgdiv");
-         var QSendDiv = GetElementInsideContainer(msgDiv, "qSendDiv");
-         var msgd = GetElementInsideContainer(msgDiv, "msgs");
-         var msgBtn = GetElementInsideContainer(msgDiv, "msgBtn");
-         var UserThingEditBtn =
-             GetElementInsideContainer(thingN, "ThingEditBtn");
-         if (newThing) {
-            imgsHldr.onclick=showThingDetails;
-            var imgHldr = imgs.children[0];
-            var img = imgHldr.children[0];
-            var SIB = imgHldr.children[1];
-            SIB.onclick=openfileprompt;
-            SIB.thingId=thing.id;
-            SIB.picId=0;
-            var pics = res.things[i].pics;
-            if (pics && pics.length) {
+   }
+   var thingCount = res.things?res.things.length:0;
+   for (var i=0; i<thingCount; ++i) {
+      var thing=res.things[i];
+      var newThing=true;
+      if (!thing.user && !userData["name"])
+         return;
+      var un;
+      if (!thing.user) {
+         un = userData["name"];
+      } else {
+         un = thing.user;
+      }
+      if (!UserThings[un]) {
+         UserThings[un]={};
+      }
+      if (UserThings[un][thing.id]) {
+         newThing=false;
+      } else if (UserThings[un][-1]) {
+         UserThings[un][thing.id]=UserThings[un][-1];
+         UserThings[un][-1]=undefined;
+         newThing=false;
+      }
+      var thisThingUser = User.innerHTML==thing.user;
+      var thingN=
+          newThing?Thing.cloneNode(true):UserThings[un][thing.id];
+      thingN.thingId=thing.id;
+      var imgsHldr = thingN.children[0];
+      var imgs = imgsHldr.children[0];
+      resizeObserver.observe(imgs);
+      var msgDiv = GetElementInsideContainer(thingN, "msgdiv");
+      var msgd = GetElementInsideContainer(msgDiv, "msgs");
+      var UserThingEditBtn =
+          GetElementInsideContainer(thingN, "ThingEditBtn");
+      if (newThing) {
+         imgsHldr.onclick=showThingDetails;
+         var imgHldr = imgs.children[0];
+         var img = imgHldr.children[0];
+         var SIB = imgHldr.children[1];
+         SIB.onclick=openfileprompt;
+         SIB.thingId=thing.id;
+         SIB.picId=0;
+         var pics = res.things[i].pics;
+         if (pics && pics.length) {
+            img.src="/upload/"+res.things[i].user+"/"+res.things[i].id+
+               "."+0+".jpg?"+pics[0].ts;
+            for (var j=1; j<pics.length; ++j) {
+               imgHldr = imgs.children[0].cloneNode(true);
+               imgHldr.classList.add("hidden");
+               img = imgHldr.children[0];
+               SIB = imgHldr.children[1];
                img.src="/upload/"+res.things[i].user+"/"+res.things[i].id+
-                  "."+0+".jpg?"+pics[0].ts;
-               for (var j=1; j<pics.length; ++j) {
-                  imgHldr = imgs.children[0].cloneNode(true);
-                  imgHldr.classList.add("hidden");
-                  img = imgHldr.children[0];
-                  SIB = imgHldr.children[1];
-                  img.src="/upload/"+res.things[i].user+"/"+res.things[i].id+
-                     "."+j+".jpg?"+pics[j].ts;
-                  SIB.thingId=thing.id;
-                  SIB.picId=j;
-                  imgs.children[j-1].insertAdjacentElement(
-                     'afterEnd', imgHldr);
-               }
-            } else {
-               var SVG = SVGS.children[0].cloneNode(true);
-               imgHldr.replaceChild(SVG, img);
-               imgHldr.classList.add("dummy");
+                  "."+j+".jpg?"+pics[j].ts;
+               SIB.thingId=thing.id;
+               SIB.picId=j;
+               imgs.children[j-1].insertAdjacentElement(
+                  'afterEnd', imgHldr);
             }
-            msgBtn.onclick=sendMsg;
-            UserThingEditBtn.onclick=editThing;
-            var tid=GetElementInsideContainer(thingN, "ThingId");
-            tid.innerText=thing.id;
-            var tusr=GetElementInsideContainer(thingN, "ThingUsr");
-            tusr.innerText=un;
+         } else {
+            var SVG = SVGS.children[0].cloneNode(true);
+            imgHldr.replaceChild(SVG, img);
+            imgHldr.classList.add("dummy");
          }
-         for (var j=0; j<imgs.children.length; ++j) {
-            var imgHldr = imgs.children[j];
-            imgHldr.children[imgHldr.children.length-2].
-               classList.add("hidden");
+         UserThingEditBtn.onclick=editThing;
+         var tid=GetElementInsideContainer(thingN, "ThingId");
+         tid.innerText=thing.id;
+         var tusr=GetElementInsideContainer(thingN, "ThingUsr");
+         tusr.innerText=un;
+      }
+      for (var j=0; j<imgs.children.length; ++j) {
+         var imgHldr = imgs.children[j];
+         imgHldr.children[imgHldr.children.length-2].
+            classList.add("hidden");
+      }
+      var dummies=imgs.getElementsByClassName("dummy");
+      if (imgs.children.length>1 && imgs.children.length>dummies.length)
+         for (var j=0; j<dummies.length; ++j) {
+            dummies[j].classList.add("hidden");
          }
-         var dummies=imgs.getElementsByClassName("dummy");
-         if (imgs.children.length>1 && imgs.children.length>dummies.length)
-            for (var j=0; j<dummies.length; ++j) {
-               dummies[j].classList.add("hidden");
-            }
-         if (thing.name && thing.name.length) {
-            var name=GetElementInsideContainer(thingN, "ThingName");
-            name.innerText=thing.name;
-            name.onclick=showThingDetails;
-            name.classList.remove("hidden");
-         }
-         var locPin = GetElementInsideContainer(thingN, "ThingLocationPin");
-         if (thing.location && thing.location.length) {
-            var location=GetElementInsideContainer(thingN, "ThingLocation");
-            thingN.loc=thing.location;
-            var locStr=thing.location.length?thing.location.join(","):
-               thing.location;
-            location.innerText=locStr;
-            if (locStr.length) {
-               locPin.title=locStr;
-               locPin.classList.remove("empty");
-               locPin.onclick=openMap;
-               locPin.url="https://maps.google.com?q="+locStr;
-            } else {
-               locPin.classList.add("empty");
-               locPin.onclick=getLocation;
-            }
+      if (thing.name && thing.name.length) {
+         var name=GetElementInsideContainer(thingN, "ThingName");
+         name.innerText=thing.name;
+         name.onclick=showThingDetails;
+         name.classList.remove("hidden");
+      }
+      var locPin = GetElementInsideContainer(thingN, "ThingLocationPin");
+      if (thing.location && thing.location.length) {
+         var location=GetElementInsideContainer(thingN, "ThingLocation");
+         thingN.loc=thing.location;
+         var locStr=thing.location.length?thing.location.join(","):
+             thing.location;
+         location.innerText=locStr;
+         if (locStr.length) {
+            locPin.title=locStr;
+            locPin.classList.remove("empty");
+            locPin.onclick=openMap;
+            locPin.url="https://maps.google.com?q="+locStr;
          } else {
             locPin.classList.add("empty");
+            locPin.onclick=getLocation;
          }
-         var dtls=GetElementInsideContainer(thingN, "ThingDetails");
-         var dtlsta;
-         if (thing.details) {
-            dtls.innerHTML=thing.details;
-            dtlsta = GetElementInsideContainer(thingN, "ThingDetailsTA")
-            dtlsta.value=thing.details;
-         }
-         dtlsta  = GetElementInsideContainer(thingN, "ThingDetailsDiv");
-         if (!dtlsta.classList.contains("hidden")) {
-            dtlsta.classList.add("hidden");
-            dtls.classList.remove("hidden");
-         }
-         if (thisThingUser) {
-            UserThingEditBtn.classList.remove("hidden");
-         } else {
-            UserThingEditBtn.classList.add("hidden");
-         }
-         if (!User.innerHTML.length) {
-               msgDiv.classList.add("hidden");
-         } else {
-            if (thisThingUser) {
-               QSendDiv.classList.add("hidden");
-            } else {
-               QSendDiv.classList.remove("hidden");
-            }
-         }
-         var rmsgs=res.things[i].rmsgs;
-         var itms;
-         if (!Inbox.things[thing.id]) {
-            itms=Inbox.things[thing.id]=new Set();
-         } else {
-            itms=Inbox.things[thing.id];
-         }
-         if (rmsgs && newThing) {
-            for (var l=0,m=0; l<rmsgs.length; ++l,++m) {
-               var rmsg=rmsgs[l];
-               var md;
-               if (l<msgd.children.length) {
-                  md = msgd.children[m];
-                  var ld = md.children[0];
-                  var id = parseInt(ld.innerHTML);
-                  if (id<rmsg["id"]) {
-                     --l;
-                  } else {
-                     md.children[0].innerHTML=rmsg["id"];
-                     md.children[1].innerHTML=rmsg["user"]+": ";
-                     md.children[2].innerHTML=rmsg["msg"];
-                  }
+      } else {
+         locPin.classList.add("empty");
+      }
+      var dtls=GetElementInsideContainer(thingN, "ThingDetails");
+      var dtlsta;
+      if (thing.details) {
+         dtls.innerHTML=thing.details;
+         dtlsta = GetElementInsideContainer(thingN, "ThingDetailsTA")
+         dtlsta.value=thing.details;
+      }
+      dtlsta  = GetElementInsideContainer(thingN, "ThingDetailsDiv");
+      if (!dtlsta.classList.contains("hidden")) {
+         dtlsta.classList.add("hidden");
+         dtls.classList.remove("hidden");
+      }
+      if (thisThingUser) {
+         thingN.classList.add("mine");
+      } else {
+         thingN.classList.remove("mine");
+      }
+      var rmsgs=res.things[i].rmsgs;
+      var itms;
+      if (!Inbox.things[thing.id]) {
+         itms=Inbox.things[thing.id]=new Set();
+      } else {
+         itms=Inbox.things[thing.id];
+      }
+      if (rmsgs && newThing) {
+         for (var l=0,m=0; l<rmsgs.length; ++l,++m) {
+            var rmsg=rmsgs[l];
+            var md;
+            if (l<msgd.children.length) {
+               md = msgd.children[m];
+               var ld = md.children[0];
+               var id = parseInt(ld.innerHTML);
+               if (id<rmsg["id"]) {
+                  --l;
                } else {
-                  md = msgd.children[0].cloneNode(true);
-                  md.classList.remove("new");
                   md.children[0].innerHTML=rmsg["id"];
                   md.children[1].innerHTML=rmsg["user"]+": ";
                   md.children[2].innerHTML=rmsg["msg"];
-                  if (md.children.length==4) {
-                     md.removeChild(md.children[3]);
-                  }
-                  msgd.insertAdjacentElement("beforeEnd", md);
                }
-               if (thisThingUser && !itms.has(rmsg["id"])) {
-                  var imd = md.cloneNode(true);
-                  Inbox.insertAdjacentElement(
-                     "beforeEnd", imd);
-                  if (rmsg["new"]) {
-                     imd.classList.add("new");
-                     md.onclick=markAsRead;
-                     md.classList.add("new");
-                     ++Inbox.news;
-                  }
-                  imd.md=md;
-                  md.imd=imd;
-                  imd.onclick=showThing;
-                  itms.add(rmsg["id"]);  
-               }
-               if (rmsg["rep"]) {
-                  var reply=ReplyDiv.firstElementChild.cloneNode(true);
-                  reply.lastElementChild.innerHTML=rmsg["rep"];
-                  md.insertAdjacentElement("beforeEnd", reply);
-                  reply.classList.remove("inQ");
-                  reply.classList.remove("hidden");
-               } else {
-                  if (!md.onclick && thisThingUser) {
-                     md.onclick=popReplyBtn;
-                  }
-               }
-            }
-         }
-         UserThings[un][thing.id]=thingN;
-         thingN.user=un;
-         if (newThing) {
-            if (thing.id!="-1") {
-               insertThing(thingN);
             } else {
-               Things.insertAdjacentElement('afterBegin', thingN);
+               md = msgd.children[0].cloneNode(true);
+               md.classList.remove("new");
+               md.children[0].innerHTML=rmsg["id"];
+               md.children[1].innerHTML=rmsg["user"]+": ";
+               md.children[2].innerHTML=rmsg["msg"];
+               if (md.children.length==4) {
+                  md.removeChild(md.children[3]);
+               }
+               msgd.insertAdjacentElement("beforeEnd", md);
             }
-         } else {
-            thingN.classList.remove("hidden");
+            if (thisThingUser && !itms.has(rmsg["id"])) {
+               var imd = md.cloneNode(true);
+               Inbox.insertAdjacentElement(
+                  "beforeEnd", imd);
+               if (rmsg["new"]) {
+                  imd.classList.add("new");
+                  md.onclick=markAsRead;
+                  md.classList.add("new");
+                  ++Inbox.news;
+               }
+               imd.md=md;
+               md.imd=imd;
+               imd.onclick=showThing;
+               itms.add(rmsg["id"]);  
+            }
+            if (rmsg["rep"]) {
+               var reply=ReplyDiv.firstElementChild.cloneNode(true);
+               reply.lastElementChild.innerHTML=rmsg["rep"];
+               md.insertAdjacentElement("beforeEnd", reply);
+               reply.classList.remove("inQ");
+               reply.classList.remove("hidden");
+            } else {
+               if (!md.onclick && thisThingUser) {
+                  md.onclick=popReplyBtn;
+               }
+            }
          }
       }
-      Things.classList.remove("hidden");
+      UserThings[un][thing.id]=thingN;
+      thingN.user=un;
+      if (newThing) {
+         if (thing.id!="-1") {
+            insertThing(thingN);
+         } else {
+            Things.insertAdjacentElement('afterBegin', thingN);
+         }
+      } else {
+         thingN.classList.remove("hidden");
+      }
    }
+   if (!thingCount && res.name) {
+      var uts = UserThings[res.name];
+      for (var tid in uts) {
+         uts[tid].classList.add("mine");
+      }
+   }
+   Things.classList.remove("hidden");
+   
    if (res.smsgs) {
       for (var j=0; j<res.smsgs.length; ++j) {
          var smsg=res.smsgs[j];
@@ -1185,8 +1180,8 @@ var authenticateUser = function () {
       ferrylog("Location: " + pstr);
       
       f.content="{username:\""+Username.value+"\"";
-      f.content+=",password:\""+core.MD5(Password.value) +
-         "\",geoposition:["+pstr+"]}";
+      var md5Pass = core.MD5(Password.value);
+      f.content+=",password:\""+ md5Pass +"\",geoposition:["+pstr+"]}";
       f.postExpdtn=login;
       f.reqHeaders=[["content-type", "text/json"]];
       Password.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
@@ -1225,16 +1220,16 @@ var lock = function () {
 }
 var logoutui = function () {
    clearInterval(owlMail);
-   Usermenu.classList.add("hidden");
    Username.value="";
    Password.value="";
-   LockBlock.classList.remove("hidden");
-   UserActions.classList.add("hidden");
-   var edbns = document.getElementsByClassName("thngEdBtn");
-   for (var i=0; i<edbns.length; ++i) {
-      edbns[i].classList.add("hidden");
+   User.innerHTML="";
+   Inbox.innerHTML="";
+   Outbox.innerHTML="";
+   document.body.classList.remove("signed");
+   var mine = document.getElementsByClassName("mine");
+   while (mine.length) {
+      mine[0].classList.remove("mine");
    }
-   OwlOnPerch.classList.add("hidden");
    ferrylog("Bye!");
 }
 
@@ -1567,7 +1562,7 @@ var uploadFile = function(infoBox) {
          return;
       }
       if (feed.response.success) {
-		   feed.pInd.parentElement.removeChild(feed.pInd);
+		   feed.pInd.remove();
 		   feed.elm.postUpload(feed);
 	   } else if (feed.response.error) {
 		   feed.pInd.src = '/images/x.png';

@@ -75,8 +75,8 @@ header input {
 #logoDiv.if {
    position:fixed;
    z-index:10;
-   width: 100vw;
-   height: 100vh;
+   width: 99vw;
+   height: 80vh;
    top:0px;
    left:0px;
    background-color: black;
@@ -186,12 +186,6 @@ footer.if {
 }
 #Log.visible div.hidden {
    display: revert;
-   position: revert;
-   width: revert;
-   height: revert;
-   padding: revert;
-   border: revert;
-   margin: revert;
 }
 #search-bar {
    width: 100%;
@@ -232,6 +226,19 @@ footer.if {
 .inptTxtBx.typing:blur {
    color: black;
 }
+body.signed #LockBlock, body.signed #Credentials, body.signed #signupdiv {
+   display: none;
+}
+body.signed #usermenu, body.signed #UserActions, body.signed #owlOnPerch {
+   display: revert;
+}
+#ThingEditBtn {
+   display: none;
+   position: absolute;
+   top: 1mm;
+   right: 1mm;
+}
+
 #UserActions {
    margin-top:2mm;
    margin-bottom:2mm;
@@ -239,9 +246,25 @@ footer.if {
 #AddThing {
    text-align: center;
    vertical-align: middle;
-   border-radius: 1mm;
+   border-radius: 4mm;
 }
 #Things {
+}
+#Thing {
+   margin-top: 1mm;
+   margin-right: 3mm;
+   border-radius: 1mm;
+}
+#Thing input[type=button] {
+   border: 0px;
+   vertical-align: middle;
+   text-align: center;
+   background-color: rgba(255,255,255,0.3);
+   backdrop-filter: blur(1mm);
+   color: rgb(0,0,128);
+}
+#Thing.mine #ThingEditBtn {
+   display:revert;
 }
 #Thing.active {
    /* scale: 1.2; */
@@ -249,7 +272,6 @@ footer.if {
 #Thing.active #ImgHldr {
    height: revert;
 }
-
 #ImgsHldr {
    position: relative;
    margin-bottom: 0.1cm;
@@ -261,27 +283,16 @@ footer.if {
    left: 1mm;
    margin:0.2cm;
 }
-#Thing input[type=button] {
-   border: 0px;
-   vertical-align: middle;
-   text-align: center;
-   background-color: rgba(255,255,255,0.3);
-   backdrop-filter: blur(1mm);
-   color: rgb(0,0,128);
-}
 .imgNxtBtns {
    width: 7mm;
 }
-#Thing {
-   margin-top: 1mm;
-   margin-right: 3mm;
-   border-radius: 1mm;
-}
-#Thing #msgdiv {
-   
-}
+
 #ThingNameBox {
    /* position: relative; */
+}
+
+body.signed #Thing.active #ThingDetails, body.signed #Thing.active #msgdiv {
+   display:revert;
 }
 inptTxtBx.typing {
    color: black;
@@ -533,19 +544,17 @@ footer {
    position: relative;
    vertical-align: top;
 }
-.thngEdBtn {
-   position: absolute;
-   top: 1mm;
-   right: 1mm;
-}
+/* .hidden { */
+/*    position: absolute; */
+/*    width: 0px; */
+/*    height: 0px; */
+/*    display: none; */
+/*    padding: 0px; */
+/*    border: 0px; */
+/*    margin: 0px; */
+/* } */
 .hidden {
-   position: absolute;
-   width: 0px;
-   height: 0px;
    display: none;
-   padding: 0px;
-   border: 0px;
-   margin: 0px;
 }
 .plot {
    position: relative;
