@@ -428,7 +428,9 @@ svg.fixedSize {
 #ThingLocationPin.empty, #LocationPin.empty {
    background-position: -4.75cm -3.18cm
 }
-
+#LocationDDiv #LocationBox {
+   width: 45mm;
+}
 #LocationDDiv.if {
    position: fixed;
    top: 50vh;
