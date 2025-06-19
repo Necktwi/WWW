@@ -13,7 +13,9 @@ var Passwords2, ConsentL, Consent, NonRecovery;
 var SignIn,SignUp,Recover;
 var Usermenu;
 var User;
-var Unlock, Log;
+var Unlock, Log, ThingRemovables=[];
+var ThingLocationL, ThingLocationBox, ThingNameL, ThingNameBox;
+var chusPicBtn, chusPicBtnL, ThingDetailsDiv, CnclEdtBtn;
 var Thing, Things, UserThings, UserActions, AddThing, ChoosePic, ReplyBtn;
 var SVGS, ReplyBox, ReplyDiv, Msginpt, QSendDiv, MsgBtn;
 var searchPlcHldr = 'Search things near U';
@@ -45,9 +47,9 @@ var toggleLog = function () {
    }
 }
 var Rotate = function () {
-   var props = 'transform WebkitTransform MozTransform OTransform msTransform'.split(' '),
-       prop,
-       el = document.createElement('div');
+   var props =
+       'transform WebkitTransform MozTransform OTransform msTransform'.
+       split(' '), prop, el = document.createElement('div');
    for (var i = 0, l = props.length; i < l; i++) {
       if (typeof el.style[props[i]] !== "undefined") {
          prop = props[i];
@@ -119,7 +121,8 @@ var isPrintable = function (keycode) {
 var inputOnKeyDown = function () {
    //console.log("onKeyDown: "+this.value + ", " + event.keyCode);
    if ((event.keyCode == 8 || event.keyCode == 46 || event.keyCode == 229 ||
-        event.inputType === 'deleteContentBackward') && this.value.length<=1) {
+        event.inputType === 'deleteContentBackward') &&
+       this.value.length<=1) {
       // Backspace
       showPlaceHolder.call(this);
       event.preventDefault();
@@ -161,17 +164,16 @@ var nxtImg = function (reverse) {
    event.cancelBubble=true;
    var nxtBtn = event.target;
    var imgs = nxtBtn.parentElement.parentElement.firstElementChild;
-   var img;
-   if (!imgs.cimg) {
-      imgs.cimg=imgs.firstElementChild;
+   var thing = imgs.parentElement.parentElement;
+   var imgHldr = imgs.children[imgs.cid];
+   imgs.cid = reverse?(imgs.cid?imgs.cid-1:imgs.children.length-1):
+      (imgs.cid+1)%imgs.children.length;
+   imgHldr.classList.add("hidden");
+   imgHldr = imgs.children[imgs.cid];
+   imgHldr.classList.remove("hidden");
+   if (thing.classList.contains("editMode")) {
+      chusPicBtnL.picId=imgs.cid;
    }
-   var img = imgs.cimg;
-   imgs.cimg = reverse?
-       (img.previousElementSibling?img.previousElementSibling:
-        imgs.lastElementChild):
-       (img.nextElementSibling?img.nextElementSibling:imgs.firstElementChild);
-   img.classList.add("hidden");
-   imgs.cimg.classList.remove("hidden");
 }
 
 var viewportHandler = function() {
@@ -560,6 +562,27 @@ var init = function () {
    Thing = GetElementInsideContainer(Things, "Thing");
    lstThn = Thing;
    UserThings = {};
+   let ctrs = Thing.getElementsByClassName("removable");
+   chusPicBtnL = GetElementInsideContainer(Thing, "chusPicBtnL");
+   chusPicBtn = GetElementInsideContainer(Thing, "chusPicBtn");
+   ThingLocationL = GetElementInsideContainer(Thing, "ThingLocationL");
+   ThingLocationBox = GetElementInsideContainer(Thing, "ThingLocationBox");
+   ThingNameL = GetElementInsideContainer(Thing, "ThingNameL");
+   ThingNameBox = GetElementInsideContainer(Thing, "ThingNameBox");
+   ThingDetailsDiv = GetElementInsideContainer(Thing, "ThingDetailsDiv");
+   cnclEdtBtn = GetElementInsideContainer(Thing, "cnclEdtBtn");
+   cnclEdtBtn.onclick=updateThing;
+   chusPicBtn.onclick=openfileprompt;
+   chusPicBtn.cid=0;
+   for (let i=0; i<ctrs.length; ++i) {
+      ThingRemovables.push(ctrs[i]);
+      let r = ThingRemovables[i];
+      r.pid = r.previousElementSibling.id;
+   }
+   for (let i=0; i<ThingRemovables.length; ++i) {
+      let r = ThingRemovables[i];
+      r.remove();
+   }
    Thing.remove();
    addEvent(Passwords2, 'keydown', signup);
    addEvent(Captcha, 'keydown', signup);
@@ -567,6 +590,7 @@ var init = function () {
    AddThing=document.getElementById("AddThing");
    AddThing.plcHldr="Add a thing to the fair";
    SVGS=document.getElementById("SVGS");
+   SVGS.remove();
    window.cookieShuttle = function () {
       Location.classList.add("hidden");
       var url = "cookie";
@@ -639,8 +663,7 @@ var selectFiles = function(ev) {
    }
    var l = btn.previousElementSibling;
    r.readAsArrayBuffer(f);
-   var thisThing =
-       this.parentElement.parentElement.parentElement.parentElement;
+   var thisThing = this.parentElement.parentElement;
    if (!l.teb) {
       var teb = GetElementInsideContainer(thisThing, "ThingEditBtn");
       teb.disabled=true;
@@ -655,26 +678,24 @@ var selectFiles = function(ev) {
       l.postUpload = function() {
          var jso=JSON.parse(this.text);
          this.thingId=jso["thingId"];
-         var thissvg=this.parentElement.getElementsByTagName('svg');
-         if (thissvg.length) {
-            thissvg = thissvg[0];
-            thissvg.classList.add("hidden");
+         var imgsHldr = this.parentElement;
+         var imgs = imgsHldr.children[0];
+         var imgHldr = imgs.children[imgs.cid];
+         var img = imgHldr.firstElementChild;
+         if (imgHldr.classList.contains("dummy")) {
+            img.remove();
+            imgHldr.classList.remove("dummy");
+            img = document.createElement('img');
+            imgHldr.insertAdjacentElement('beforeEnd', img);
+            img.classList.add("fixedSize");
+            addDummyImgs(thisThing);
          }
-         var thisimg=this.parentElement.getElementsByTagName('img');
-         if (thisimg.length)
-            thisimg = thisimg[0];
-         else
-            thisimg=document.createElement("img");
-         thisimg.classList.add("fixedSize");
-         thisimg.src=
+         img.src=
             "/upload/"+User.innerHTML+"/"+this.thingId+"."+this.picId+".jpg?"+
             new Date().getTime();
-         this.insertAdjacentElement('beforeBegin', thisimg);
-         var thisThing = this.parentElement.parentElement.parentElement.parentElement;
          thisThing.thingId=this.thingId;
          var tid = GetElementInsideContainer(thisThing, "ThingId");
          tid.innerHTML=this.thingId.toString();
-         this.parentElement.classList.remove("dummy");
          this.teb.disabled=false;
       }
       sendFileData(f.name, new Uint8Array(r.result), 2048, l);
@@ -920,6 +941,7 @@ var updateThings = function (res) {
       thingN.thingId=thing.id;
       var imgsHldr = thingN.children[0];
       var imgs = imgsHldr.children[0];
+      imgs.cid = 0;
       resizeObserver.observe(imgs);
       var msgDiv = GetElementInsideContainer(thingN, "msgdiv");
       var msgd = GetElementInsideContainer(msgDiv, "msgs");
@@ -929,10 +951,6 @@ var updateThings = function (res) {
          imgsHldr.onclick=showThingDetails;
          var imgHldr = imgs.children[0];
          var img = imgHldr.children[0];
-         var SIB = imgHldr.children[1];
-         SIB.onclick=openfileprompt;
-         SIB.thingId=thing.id;
-         SIB.picId=0;
          var pics = res.things[i].pics;
          if (pics && pics.length) {
             img.src="/upload/"+res.things[i].user+"/"+res.things[i].id+
@@ -941,11 +959,8 @@ var updateThings = function (res) {
                imgHldr = imgs.children[0].cloneNode(true);
                imgHldr.classList.add("hidden");
                img = imgHldr.children[0];
-               SIB = imgHldr.children[1];
                img.src="/upload/"+res.things[i].user+"/"+res.things[i].id+
                   "."+j+".jpg?"+pics[j].ts;
-               SIB.thingId=thing.id;
-               SIB.picId=j;
                imgs.children[j-1].insertAdjacentElement(
                   'afterEnd', imgHldr);
             }
@@ -960,16 +975,6 @@ var updateThings = function (res) {
          var tusr=GetElementInsideContainer(thingN, "ThingUsr");
          tusr.innerText=un;
       }
-      for (var j=0; j<imgs.children.length; ++j) {
-         var imgHldr = imgs.children[j];
-         imgHldr.children[imgHldr.children.length-2].
-            classList.add("hidden");
-      }
-      var dummies=imgs.getElementsByClassName("dummy");
-      if (imgs.children.length>1 && imgs.children.length>dummies.length)
-         for (var j=0; j<dummies.length; ++j) {
-            dummies[j].classList.add("hidden");
-         }
       if (thing.name && thing.name.length) {
          var name=GetElementInsideContainer(thingN, "ThingName");
          name.innerText=thing.name;
@@ -996,16 +1001,9 @@ var updateThings = function (res) {
          locPin.classList.add("empty");
       }
       var dtls=GetElementInsideContainer(thingN, "ThingDetails");
-      var dtlsta;
+      var dtlsDiv;
       if (thing.details) {
          dtls.innerHTML=thing.details;
-         dtlsta = GetElementInsideContainer(thingN, "ThingDetailsTA")
-         dtlsta.value=thing.details;
-      }
-      dtlsta  = GetElementInsideContainer(thingN, "ThingDetailsDiv");
-      if (!dtlsta.classList.contains("hidden")) {
-         dtlsta.classList.add("hidden");
-         dtls.classList.remove("hidden");
       }
       if (thisThingUser) {
          thingN.classList.add("mine");
@@ -1378,76 +1376,78 @@ var addThing = function () {
    editThing.call(GetElementInsideContainer(
       Things.children[0], "ThingEditBtn"));
 }
+var addRemovables = function (thing) {
+   for (let i=0; i<ThingRemovables.length; ++i) {
+      let r = ThingRemovables[i];
+      let p = GetElementInsideContainer(thing, r.pid);
+      p.insertAdjacentElement('afterEnd', r);
+   }
+}
+var removeRemovables = function (thing) {
+   for (let i=0; i<ThingRemovables.length; ++i) {
+      ThingRemovables[i].remove();
+   }
+}
+var removeDummyImgs = function (thing) {
+   var imgs=GetElementInsideContainer(thing, "Imgs");
+   var dummies=imgs.getElementsByClassName("dummy");
+   if (imgs.children.length>1 && dummies.length) {
+      dummies[0].remove();
+   }
+}
+var addDummyImgs = function (thing) {
+   var imgs=GetElementInsideContainer(thing, "Imgs");
+   var i=imgs.children.length;
+   if (i<MaxImgsPerThing && !imgs.children[0].classList.contains("dummy")) {
+      var imgHldr = imgs.children[0].cloneNode(true);
+      var img = imgHldr.children[0];
+      var thisSVG = SVGS.children[i].cloneNode(true);
+      imgHldr.replaceChild(thisSVG,img);
+      imgHldr.classList.add("dummy");
+      imgHldr.classList.add("hidden")
+      imgs.children[i-1].insertAdjacentElement('afterEnd', imgHldr);
+   }
+}
+
 var lastCnclEdtBtn;
-var editThing = function(newThing) {
+var editThing = function (newThing) {
    if (lastCnclEdtBtn) {
       updateThing.call(lastCnclEdtBtn);
    }
    UserActions.classList.add("hidden");
    this.classList.remove("thngEdBtn");
    var thisUserThing = this.parentElement;
-   var ThingName = GetElementInsideContainer(thisUserThing, "ThingName");
-   var ThingNameL = GetElementInsideContainer(thisUserThing, "ThingNameL");
-   var ThingNameB = GetElementInsideContainer(thisUserThing, "ThingNameBox");
-   var CnclEdtBtn = GetElementInsideContainer(thisUserThing, "cnclEdtBtn");
-   ThingNameB.value=ThingName.innerText;
-   ThingName.classList.add("hidden");
-   ThingNameB.classList.remove("hidden");
-   ThingNameL.classList.remove("hidden");
-   CnclEdtBtn.classList.remove("hidden");
+   thisUserThing.classList.add("editMode");
    var ThingLocation = GetElementInsideContainer(
       thisUserThing, "ThingLocation");
-   var ThingLocationL = GetElementInsideContainer(
-      thisUserThing, "ThingLocationL");
-   var ThingLocationB = GetElementInsideContainer(
-      thisUserThing, "ThingLocationBox");
-   var ThingLocPin = GetElementInsideContainer(
-      thisUserThing, "ThingLocationPin");
    var ThingDetails = GetElementInsideContainer(
       thisUserThing, "ThingDetails");
-   var ThingDetailsDiv = GetElementInsideContainer(
-      thisUserThing, "ThingDetailsDiv");
-   var ThingDetailsTA = GetElementInsideContainer(
-      ThingDetailsDiv, "ThingDetailsTA");
-   ThingLocationB.value=ThingLocation.innerText;
-   ThingLocationB.classList.remove("hidden");
-   ThingLocationL.classList.remove("hidden");
-   ThingDetails.classList.add("hidden");
-   ThingDetailsDiv.classList.remove("hidden");
-   ThingDetailsTA.classList.remove("hidden");
+   //ThingDetails.classList.add("hidden");
+   //ThingName.classList.add("hidden");
+   addRemovables(thisUserThing);
+   //ThingNameB.classList.remove("hidden");
+   //ThingNameL.classList.remove("hidden");
+   //CnclEdtBtn.classList.remove("hidden");
+   var ThingName = GetElementInsideContainer(thisUserThing, "ThingName");
+   var ThingLocPin = GetElementInsideContainer(
+      thisUserThing, "ThingLocationPin");
+   var imgs = GetElementInsideContainer(thisUserThing, "Imgs");
+   ThingLocationBox.value=ThingLocation.innerText;
+   ThingNameBox.value=ThingName.innerText;
+   ThingDetailsDiv.children[1].value=ThingDetails.innerHTML;
+   //ThingLocationB.classList.remove("hidden");
+   //ThingLocationL.classList.remove("hidden");
+   //ThingDetailsDiv.classList.remove("hidden");
+   //ThingDetailsTA.classList.remove("hidden");
    ThingLocPin.classList.add("empty");
    ThingLocPin.onclick=getLocation;
-   var imgs=GetElementInsideContainer(thisUserThing, "Imgs");
-   for (var i=0;i<imgs.children.length; ++i) {
-      var imgH = imgs.children[i];
-      var SIB = imgH.children[imgH.children.length-2];
-      SIB.classList.remove("hidden");
-   }
-   var dummies=imgs.getElementsByClassName("dummy");
-   // for (var i=0; i<dummies.length; ++i) {
-   //    dummies[i].classList.replace("inlineHidden","inlineVisible");;
-   // }
-   for (var i=imgs.children.length; i<MaxImgsPerThing; ++i) {
-      var imgHldr = imgs.children[0].cloneNode(true);
-      var img = imgHldr.children[0];
-      var thisSVG = SVGS.children[i].cloneNode(true);
-      imgHldr.replaceChild(thisSVG,img);
-      imgHldr.classList.add("dummy");
-      var SIBl = imgHldr.children[1];
-      SIBl.picId=i;
-      SIBl.onclick=openfileprompt;
-      SIBl.thingId=thisUserThing.thingId;
-      SIBl.classList.remove("hidden");
-      if (i) {
-         imgHldr.classList.add("hidden")
-         imgs.children[i-1].insertAdjacentElement('afterEnd', imgHldr);
-      } else
-         imgs.insertAdjacentElement('afterBegin', imgHldr);
-   }
+   chusPicBtn.onclick=openfileprompt;
+   chusPicBtnL.picId=imgs.cid;
+   chusPicBtnL.thingId=thisUserThing.thingId;
+   addDummyImgs(thisUserThing)
    this.value="Update";
    this.onclick=updateThing;
-   CnclEdtBtn.onclick=updateThing;
-   lastCnclEdtBtn=CnclEdtBtn;
+   lastCnclEdtBtn=cnclEdtBtn;
    this.classList.remove("hidden");
 }
 
@@ -1455,60 +1455,43 @@ var updateThing = function() {
    lastCnclEdtBtn=null;
    UserActions.classList.remove("hidden");
    var cncl = this.value=="Cancel";
+   var edtBtn = this;
+   if (cncl) {
+      edtBtn = this.nextElementSibling;
+   }
    var url = "updateThing";
    var f={};
    var content = {};
    content.things=[];
    var UserThing = this.parentElement;
-   var ThingName = GetElementInsideContainer(UserThing, "ThingName");
-   var ThingNameL = GetElementInsideContainer(UserThing, "ThingNameL");
-   var ThingNameB = GetElementInsideContainer(UserThing, "ThingNameBox");
-   var ThingLocation = GetElementInsideContainer(UserThing, "ThingLocation");
-   var ThingLocationL = GetElementInsideContainer(UserThing, "ThingLocationL");
-   var ThingLocationB = GetElementInsideContainer(
-      UserThing, "ThingLocationBox");
-   var ThingDetails = GetElementInsideContainer(
-      UserThing, "ThingDetails");
-   var ThingDetailsTA = GetElementInsideContainer(
-      UserThing, "ThingDetailsTA");
-   var ThingDetailsDiv = GetElementInsideContainer(
-      UserThing, "ThingDetailsDiv");
-   var updtBtn = cncl?this.previousElementSibling:this;
-   var cnclBtn = cncl?this:this.nextElementSibling;
+   var imgs=GetElementInsideContainer(UserThing, "Imgs");
+   var ImgsHldr=imgs.parentElement;
+   edtBtn.onclick=editThing;
+   edtBtn.value="Edit";
    if (!(cncl && UserThing.thingId==-1)) {
-      ThingName.classList.remove("hidden");
-      ThingNameB.classList.add("hidden");
-      ThingNameL.classList.add("hidden");
-      ThingLocationL.classList.add("hidden");
-      ThingLocationB.classList.add("hidden");
-      ThingDetails.classList.remove("hidden");
-      ThingDetailsDiv.classList.add("hidden");
-      updtBtn.value="edit";
-      updtBtn.classList.add("thngEdBtn");
-      updtBtn.onclick=editThing;
-      cnclBtn.classList.add("hidden");
-      var imgs=GetElementInsideContainer(UserThing, "Imgs");
-      for (var i=0;i<imgs.children.length; ++i) {
-         var imgH = imgs.children[i];
-         var SIB = imgH.children[imgH.children.length-2];
-         SIB.classList.add("hidden");
+      removeDummyImgs(UserThing);
+      if (imgs.cid>=imgs.children.length) {
+         imgs.cid=0;
+         imgs.children[0].classList.remove("hidden");
       }
+      removeRemovables(UserThing);
+      UserThing.classList.remove("editMode");
    } else {
       UserThing.classList.add("hidden");
       return;
    }
    if (cncl) {
-      this.classList.add("hidden");
-      return;
+      return false;
    }
-   if (!validThingName(ThingNameB.value)) {
+   if (!validThingName(ThingNameBox.value)) {
       ferrylog("InvalidThingName-NoNumberOnlyWords");
       return false;
    }
    var thing={};thing.id=UserThing.thingId;
-   thing.name=ThingNameB.value;
-   var location = ThingLocationB.value.split(',');
+   thing.name=ThingNameBox.value;
+   var location = ThingLocationBox.value.split(',');
    thing.location = [parseFloat(location[0]), parseFloat(location[1])];
+   var ThingDetailsTA = ThingDetailsDiv.children[1];
    if (!validThingDetails(ThingDetailsTA.value)) {
       ferrylog("Invalid thing details.");
    }
@@ -1524,63 +1507,13 @@ var updateThing = function() {
       }
       if (res.things) {
          updateThings(res);
+         showThingDetails.call(ImgsHldr);
       } else {
          ferrylog(res.error);
       }
       delete f.shuttle;
    };
    f.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
-}
-
-var uploadFile = function(infoBox) {
-	var file = this.files[0];
-	var feed = new Object();
-	var fileName = document.createElement('span');
-	fileName.id = file.name;
-	fileName.innerHTML = file.name;
-	infoBox.appendChild(fileName);
-	var pInd = new Image();
-	pInd.src = 'images/loading.gif';
-	pInd.id = 'pInd';
-	feed.pInd = pInd;
-	var gauge = document.createElement('span');
-	gauge.id = 'gauge';
-	feed.elm = this;
-	feed.upldOnProgress = function(e) {
-	   if (e.lengthComputable) {
-		   gauge.innerHTML = '(' + parseInt(e.loaded / e.total * 100) + '%)';
-	   }
-	}
-	feed.postExpedition = function(feed) {
-	   feed.response = null;
-	   try {
-		   feed.response = eval("(" + feed.responseText + ")");
-	   } catch (err) {
-		   feed.response = {};
-	   }
-	   if (!signOk(feed.response)) {
-         return;
-      }
-      if (feed.response.success) {
-		   feed.pInd.remove();
-		   feed.elm.postUpload(feed);
-	   } else if (feed.response.error) {
-		   feed.pInd.src = '/images/x.png';
-		   feed.pInd.parentElement.children['gauge'].innerHTML = '';
-		   statusField.innerHTML = feed.response.error;
-	   }
-	}
-	feed.reqHeaders = [
-      ["X-Requested-With", "XMLHttpRequest"],
-      ["X-File-Name", encodeURIComponent(name)],
-      ["Content-Type", "application/octet-stream"]];
-	feed.ferry = new core.shuttle(
-      "uplaod?file=" + encodeURIComponent(file.name),
-      file, feed.postExpedition, feed);
-	fileName.insertAdjacentElement('beforeBegin',
-                                  document.createElement('br'));
-	fileName.insertAdjacentElement('beforeBegin', pInd);
-	fileName.insertAdjacentElement('afterEnd', gauge);
 }
 
 // Send a large blob of data chunk by chunk
@@ -1605,6 +1538,7 @@ var sendFileData = function(name, data, chunkSize, l) {
          })
          .then(function(text) {
             if (!ok) {
+               var res=JSON.parse(text);
                if (!signOk(res)) {
                   return;
                }

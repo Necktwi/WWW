@@ -10,8 +10,8 @@
          content="user-scalable=no" />
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
    <script type="text/javascript" src="js/core.js"></script>
-   <script type="text/javascript" src="js/init.js?17"></script>
-   <link type="text/css" href="css/main.css?3" rel="stylesheet"/>
+   <script type="text/javascript" src="js/init.js?21"></script>
+   <link type="text/css" href="css/main.css?4" rel="stylesheet"/>
    <link type="text/css" href="css/main-dark.css" rel="stylesheet"/>
    <link type="text/css" href="css/svg.css?1" rel="stylesheet"/>
 </head>
@@ -585,17 +585,17 @@
          id="AddThing" type="button" value="Add a thing to the fair"
          onclick="addThing()" class=""/>
    </form>
-   <div id="Things" class="">
+   <div id="Things" class="hidden">
       <div id="Thing" class="thing">
          <div id="ImgsHldr"class="">
          <div id='Imgs' class="">
             <div id="ImgHldr" class="center">
-               <img id="ThingImg" class="fixedSize center"/>
-               <label id="picBrsr" class="hidden">Browse...</label>
-               <input id="SIB" type="file" class="editBtn hidden"
-                      onchange="selectFiles.call(this, event);"/>
+               <img id="ThingImg" class="fixedSize"/>
             </div>
          </div>
+         <label id="chusPicBtnL" class="removable hidden">Browse...</label>
+         <input id="chusPicBtn" type="file" class="editBtn removable"
+                onchange="selectFiles.call(this, event);"/>
          <div id="NxtBtnHldr">
          <input id="pImg" type="button" value="<" class="imgNxtBtns"
                 onclick="nxtImg(1)"/>&nbsp &nbsp
@@ -603,13 +603,13 @@
                 onclick="nxtImg(0)"/>
          </div>
          </div>
-         <label id="ThingLocationL" class="hidden">Location: </label>
+         <label id="ThingLocationL" class="removable">Location: </label>
          <span id="ThingLocationPin"></span>
          <span id="ThingLocation" class="hidden"></span>
-         <input id="ThingLocationBox" class="hidden" type="text"/>
-         <label id="ThingNameL" class="hidden"><br/>Name: </label>
-         <input id="ThingNameBox" class="hidden" type="text"/>
-         <span id="ThingName"></span>
+         <input id="ThingLocationBox" class="removable" type="text"/>
+         <label id="ThingNameL" class="removable"><br/>Name: </label>
+         <input id="ThingNameBox" class="removable" type="text"/>
+         <span id="ThingName" class="edtHide"></span>
          <br/>
          <div id="thingInfo" class="hidden">
             <label id="ThingUsrL">Usr:</label>
@@ -617,11 +617,11 @@
             <label id="ThingIdL">ID: </label>
             <span id="ThingId"></span>
          </div>
-         <div id="ThingDetailsDiv" class="hidden">
-            <label id="ThingDetailsL">Details: </label><br/>
-            <textarea id="ThingDetailsTA" class="hidden" rows="3"></textarea>
+         <div id="ThingDetailsDiv" class="removable">
+            <label id="ThingDetailsL">Details: <br/></label>
+            <textarea id="ThingDetailsTA" rows="3"></textarea>
          </div>
-         <div id="ThingDetails" class="hidden"></div>
+         <div id="ThingDetails" class="hidden edtHide"></div>
          <div id="msgdiv" class="hidden">
             <div id="msgs">
                <div class="query">
@@ -629,8 +629,9 @@
                </div>
             </div>
          </div>
-         <input id="ThingEditBtn" class="" type="Button" value="edit"/>
-         <input id="cnclEdtBtn" class="hidden" type="Button" value="Cancel"/>
+         <input id="cnclEdtBtn" class="removable" type="Button"
+                value="Cancel"/>
+         <input id="ThingEditBtn" class="" type="Button" value="Edit"/>
       </div>
       <div id="qSendDiv" class="hidden">
          <textarea id="msginpt" rows="2" cols="22"></textarea><br/>

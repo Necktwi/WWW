@@ -232,13 +232,31 @@ body.signed #LockBlock, body.signed #Credentials, body.signed #signupdiv {
 body.signed #usermenu, body.signed #UserActions, body.signed #owlOnPerch {
    display: revert;
 }
-#ThingEditBtn {
-   display: none;
+inptTxtBx.typing {
+   color: black;
+}
+#lips {
    position: absolute;
-   top: 1mm;
-   right: 1mm;
+   height: 0.2cm;
+   bottom: 0.1cm;
+   border-left: 1px solid black;
+   border-right: 1px solid black;
+   border-bottom: 1px solid black;
+   border-bottom-left-radius:3px;
+   border-bottom-right-radius:3px;
+   -webkit-border-bottom-left-radius:3px;
+   -webkit-border-bottom-right-radius:3px;
+   display: inline-block;
 }
 
+#mouth-pad {
+   padding-left:6px;
+   padding-right:6px;
+   display:inline-block;
+   top:-0.7cm;
+   position:relative;
+   font-size:0px;
+}
 #UserActions {
    margin-top:2mm;
    margin-bottom:2mm;
@@ -263,9 +281,16 @@ body.signed #usermenu, body.signed #UserActions, body.signed #owlOnPerch {
    backdrop-filter: blur(1mm);
    color: rgb(0,0,128);
 }
-#Thing.mine #ThingEditBtn {
-   display:revert;
+#ThingEditBtn {
+   display: none;
+   position: absolute;
+   top: 1mm;
+   right: 1mm;
 }
+#Thing.mine #ThingEditBtn {
+   display:block;
+}
+
 #Thing.active {
    /* scale: 1.2; */
 }
@@ -293,31 +318,6 @@ body.signed #usermenu, body.signed #UserActions, body.signed #owlOnPerch {
 
 body.signed #Thing.active #ThingDetails, body.signed #Thing.active #msgdiv {
    display:revert;
-}
-inptTxtBx.typing {
-   color: black;
-}
-#lips {
-   position: absolute;
-   height: 0.2cm;
-   bottom: 0.1cm;
-   border-left: 1px solid black;
-   border-right: 1px solid black;
-   border-bottom: 1px solid black;
-   border-bottom-left-radius:3px;
-   border-bottom-right-radius:3px;
-   -webkit-border-bottom-left-radius:3px;
-   -webkit-border-bottom-right-radius:3px;
-   display: inline-block;
-}
-
-#mouth-pad {
-   padding-left:6px;
-   padding-right:6px;
-   display:inline-block;
-   top:-0.7cm;
-   position:relative;
-   font-size:0px;
 }
 
 #ImgHldr {
@@ -376,6 +376,17 @@ svg.fixedSize {
 }
 #Thing textarea {
    width: 38mm;
+}
+
+#Thing.editMode .edtHide {
+   display:none;
+}
+
+#Thing.editMode #ThingEditBtn {
+   position: relative;
+   top: 0px;
+   right: 0px;
+   display: inline-block;
 }
 
 #ThingLocationPin, #LocationPin {
@@ -477,9 +488,10 @@ svg.fixedSize {
    font-size: 3.7mm;
    background-color: rgb(96,96,234);
 }
-#SIB {
-   top: -1.3cm;
-   position: relative;
+#chusPicBtn {
+   top: 1mm;
+   position: absolute;
+   width: 22mm;
 }
 footer {
    /* position: relative; */
