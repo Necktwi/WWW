@@ -118,6 +118,11 @@ var isPrintable = function (keycode) {
       (keycode > 185 && keycode < 193)     || // ;=,-./` (in order)
       (keycode > 218 && keycode < 223);       // [\]' (in order)
 }
+var showAllThings = function () {
+   for (let i=0;i<Things.children.length;++i) {
+      Things.children[i].classList.remove("hidden");
+   }
+}
 var inputOnKeyDown = function () {
    //console.log("onKeyDown: "+this.value + ", " + event.keyCode);
    if ((event.keyCode == 8 || event.keyCode == 46 || event.keyCode == 229 ||
@@ -133,7 +138,8 @@ var inputOnKeyDown = function () {
          // if(this.ctype==='password')
          //    this.type='password';
       } else {
-         search.call(this);
+         //search.call(this);
+         showAllThings();
       }
       event.preventDefault(event);
       return false;
@@ -178,9 +184,11 @@ var nxtImg = function (reverse) {
 
 var viewportHandler = function() {
    var viewport = event.target;
-   var bottom =
-       (CMPD*(window.innerHeight-event.target.height)+0.2).toString()+"cm";
+   //var bottom =
+   //    (CMPD*(window.innerHeight-event.target.height)+0.2).toString()+"cm";
+   let bottom = (window.innerHeight-event.target.height+Log.iypos)+"px";
    Log.style.bottom=bottom;
+   //ferrylog(bottom+" "+Log.children.length);
 }
 
 var showBoxUpdtLoc = function() {
@@ -616,6 +624,9 @@ var init = function () {
       }
    }
    updateLocation();
+   // window.onresize = function () {
+   //    Log.style.bottom = "0.2cm";
+   // };
 };
 var sendMsg = function () {
    var thing=this.parentElement.parentElement.parentElement;
@@ -708,6 +719,8 @@ var about = function () {
 var onBID = function (feed) {
    var res = JSON.parse(feed.responseText);
    if (res.bid) {
+      Log.iypos=window.innerHeight-(Log.offsetTop+Log.offsetHeight);
+      window.visualViewport.addEventListener("resize", viewportHandler);
       setCookie("bid", res.bid, 7);
       window.bidLoc=feed.pstr.split(',');
       browserID=getCookie("bid");
@@ -1201,7 +1214,11 @@ var search = function () {
    var f={};
    f.content = "{bid:\"" + browserID +"\"";
    f.content += ",search:\"";
-   f.content+= mouth.value==mouth.plcHldr?"":mouth.value;
+   if (mouth.value==mouth.plcHldr) {
+      showAllThings();
+      return;
+   }
+   f.content+= mouth.value;
    f.content+="\",geoposition:["+pstr+"]}";
    f.postExpdtn=updateSearchedThings;
    f.reqHeaders=[["Content-type", "text/json"]];
@@ -1287,7 +1304,6 @@ var signup = function () {
       var f={};
       Username.value=Username.value.trim();
       if (SignUp.checked && !validUsername(Username.value)) {
-         ferrylog("Invalid Username, should be [a-zA-Z.] and length <24");
          return;
       } else if (Passwords1.value!=Passwords2.value) {
          ferrylog("passwords didn't match");
@@ -1296,7 +1312,6 @@ var signup = function () {
          ferrylog("Password not made of [a-zA-Z0-9.@#$%] or its length >24");
          return;
       } else if (!validEmail(Email.value)) {
-         ferrylog("Email not made of [a-zA-Z.@] or its length >48");
          return;
       } else if (!Consent.checked) {
          ferrylog("U didn't consent to this tool usage :/");
@@ -1432,6 +1447,8 @@ var editThing = function (newThing) {
    var ThingLocPin = GetElementInsideContainer(
       thisUserThing, "ThingLocationPin");
    var imgs = GetElementInsideContainer(thisUserThing, "Imgs");
+   var ImgsHldr=imgs.parentElement;
+   ImgsHldr.onclick=null;
    ThingLocationBox.value=ThingLocation.innerText;
    ThingNameBox.value=ThingName.innerText;
    ThingDetailsDiv.children[1].value=ThingDetails.innerHTML;
@@ -1466,6 +1483,7 @@ var updateThing = function() {
    var UserThing = this.parentElement;
    var imgs=GetElementInsideContainer(UserThing, "Imgs");
    var ImgsHldr=imgs.parentElement;
+   ImgsHldr.onclick=showThingDetails;
    edtBtn.onclick=editThing;
    edtBtn.value="Edit";
    if (!(cncl && UserThing.thingId==-1)) {
@@ -1484,7 +1502,6 @@ var updateThing = function() {
       return false;
    }
    if (!validThingName(ThingNameBox.value)) {
-      ferrylog("InvalidThingName-NoNumberOnlyWords");
       return false;
    }
    var thing={};thing.id=UserThing.thingId;
@@ -1579,26 +1596,35 @@ function GetElementInsideContainer(container, childID) {
 
 function validUsername (name) {
    for (var i=0; i<name.length;++i) {
-      if (!((name.charAt(i)>='A' && name.charAt(i)<='Z') ||
-            (name.charAt(i)>='a' && name.charAt(i)<='z') ||
+      if (!((name.charAt(i)>='a' && name.charAt(i)<='z') ||
             (name.charAt(i)>='0' && name.charAt(i)<='9') ||
             (name.charAt(i)=='.') || (name.charAt(i)=='_'))) {
+         ferrylog("Invalid Username, should be [a-z._]");
          return false;
       }
    }
-   return (name.length && name.length < 24);
+   if (!(name.length && name.length <= 24)) {
+      ferrylog("Username length should be >0 && <=24");
+      return false;
+   }
+   return true;
 }
 
 function validEmail (name) {
    for (var i=0; i<name.length;++i) {
-      if (!((name.charAt(i)>='@' && name.charAt(i)<='Z') ||
-            (name.charAt(i)>='a' && name.charAt(i)<='z') ||
+      if (!((name.charAt(i)>='a' && name.charAt(i)<='z') ||
             (name.charAt(i)>='0' && name.charAt(i)<='9') ||
-            (name.charAt(i)=='.') || (name.charAt(i)=='_'))) {
+            name.charAt(i)>='@' ||
+            name.charAt(i)=='.' || name.charAt(i)=='_')) {
+         ferrylog("Invalid Email, should be [a-z_.@]");
          return false;
       }
    }
-   return (name.length && name.length < 48);
+   if (!(name.length && name.length <= 48)) {
+      ferrylog("Email length should be >0 && <=48");
+      return false;
+   }
+   return true;
 }
 function validPassword (name) {
    for (var i=0; i<name.length;++i) {
@@ -1611,13 +1637,20 @@ function validPassword (name) {
          return false;
       }
    }
-   return (name.length && name.length < 24);
+   return (name.length && name.length <= 24);
 }
 
 var validThingName = function (name) {
    var numstart = false;
    for (var i=0; i<name.length;++i) {
-      if (!((name.charCodeAt(i)>=65 && name.charCodeAt(i)<=90) ||
+      if (name.charAt(i)==' ') {
+         if (i+1<name.length) {
+            if (name.charAt(i+1)==' ') {
+               ferrylog("ThingNameDoubleSpace at "+i);
+               return false;
+            }
+         }
+      } else if (!((name.charCodeAt(i)>=65 && name.charCodeAt(i)<=90) ||
             (name.charCodeAt(i)>=97 && name.charCodeAt(i)<=122) ||
             (name.charAt(i)==' '))) {
          if (name.charAt(i)>='0' && name.charAt(i)<='9') {
@@ -1635,13 +1668,19 @@ var validThingName = function (name) {
             }
             continue;
          }
+         ferrylog("InvalidThingName-NoNumberOnlyWords");
          return false;
       }
    }
    if (numstart) {
+      ferrylog("InvalidThingName-NoNumberOnlyWords");
       return false;
    }
-   return (name.length && name.length <= 64);
+   if (!(name.length && name.length <= 64)) {
+      ferrylog("InvalidThingNameLength, should be >0 && <=64!");
+      return false;
+   }
+   return true;
 }
 
 var validThingDetails = function (name) {
