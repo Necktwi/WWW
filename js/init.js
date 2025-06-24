@@ -1485,6 +1485,7 @@ var updateThing = function() {
    content.things=[];
    var UserThing = this.parentElement;
    var imgs=GetElementInsideContainer(UserThing, "Imgs");
+   var ThingLocPin = GetElementInsideContainer(UserThing, "ThingLocationPin");
    var ImgsHldr=imgs.parentElement;
    ImgsHldr.onclick=showThingDetails;
    edtBtn.onclick=editThing;
@@ -1497,6 +1498,7 @@ var updateThing = function() {
       }
       removeRemovables(UserThing);
       UserThing.classList.remove("editMode");
+      ThingLocPin.classList.remove('empty');
    } else {
       UserThing.classList.add("hidden");
       return;
