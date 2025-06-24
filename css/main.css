@@ -477,16 +477,24 @@ svg.fixedSize {
    backdrop-filter: blur(1mm);
    -webkit-backdrop-filter: blur(1mm);
 }
+#mbox {
+   overflow: scroll;
+}
 .reply {
    background-color: rgb(120,120,234);
    margin: 1mm;
    border-radius:1mm;
+   width: fit-content;
 }
 .query {
    margin:1px;
    border-radius:1mm;
    font-size: 3.7mm;
    background-color: rgb(96,96,234);
+   width: fit-content;
+}
+#Thing #msgBtn, #Thing.editMode #ThingEditBtn, #Thing #cnclEdtBtn{
+   background-color: rgb(200,200,200);
 }
 #chusPicBtn {
    top: 1mm;

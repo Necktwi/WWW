@@ -25,7 +25,7 @@ var browserID;
 var userData;
 var clearLogInterval;
 var lstThn, lstThnDtls;
-var Header;
+var Header,Htable;
 
 var ferrylog = function (msg, interval=15000) {
    if (Log.children.length)
@@ -189,6 +189,7 @@ var viewportHandler = function() {
    let bottom = (window.innerHeight-event.target.height+Log.iypos)+"px";
    Log.style.bottom=bottom;
    //ferrylog(bottom+" "+Log.children.length);
+   mbox.style.maxHeight=event.target.height-Htable.offsetHeight-10+"px";
 }
 
 var showBoxUpdtLoc = function() {
@@ -448,6 +449,7 @@ var sendOwl = function () {
 }
 var init = function () {
    Header=document.getElementsByTagName("header")[0];
+   Htable=Header.firstElementChild;
    Logo=document.getElementById('logo');
    LogoDiv=document.getElementById('logoDiv');
    Inbox=document.getElementById('inbox');
@@ -720,6 +722,8 @@ var onBID = function (feed) {
    var res = JSON.parse(feed.responseText);
    if (res.bid) {
       Log.iypos=window.innerHeight-(Log.offsetTop+Log.offsetHeight);
+      mbox.style.maxHeight=window.visualViewport.height-Htable.offsetHeight-
+         10+"px";
       window.visualViewport.addEventListener("resize", viewportHandler);
       setCookie("bid", res.bid, 7);
       window.bidLoc=feed.pstr.split(',');
@@ -764,6 +768,12 @@ var onCaptcha = function(feed){
    }
    delete shuttle;
 }
+var markUserThings = function () {
+   var uts = UserThings[User.innerHTML];
+   for (var tid in uts) {
+      uts[tid].classList.add("mine");
+   }
+}
 var login = function(feed) {
    var res = JSON.parse(feed.responseText);
    if(res.password) {
@@ -771,6 +781,7 @@ var login = function(feed) {
       User.innerHTML=res.name;
       User.obj=res;
       updateThings(res);
+      markUserThings();
       owlMail=setInterval(sendOwl, 30000);
       ferrylog("SignedIn!");
    } else {
@@ -1018,11 +1029,6 @@ var updateThings = function (res) {
       if (thing.details) {
          dtls.innerHTML=thing.details;
       }
-      if (thisThingUser) {
-         thingN.classList.add("mine");
-      } else {
-         thingN.classList.remove("mine");
-      }
       var rmsgs=res.things[i].rmsgs;
       var itms;
       if (!Inbox.things[thing.id]) {
@@ -1094,12 +1100,6 @@ var updateThings = function (res) {
          }
       } else {
          thingN.classList.remove("hidden");
-      }
-   }
-   if (!thingCount && res.name) {
-      var uts = UserThings[res.name];
-      for (var tid in uts) {
-         uts[tid].classList.add("mine");
       }
    }
    Things.classList.remove("hidden");
@@ -1235,6 +1235,10 @@ var lock = function () {
 }
 var logoutui = function () {
    clearInterval(owlMail);
+   if (UserThings[User.innerHTML][-1]) {
+      UserThings[User.innerHTML][-1].remove();
+      delete UserThings[User.innerHTML][-1];
+   }
    Username.value="";
    Password.value="";
    User.innerHTML="";
@@ -1375,8 +1379,7 @@ var makeid = function (length) {
 var addThing = function () {
    if (!userData["things"]) {
       userData["things"]=[];
-   }
-   if (userData["things"][userData["things"].length-1].id==-1) {
+   } else if (userData["things"][userData["things"].length-1].id==-1) {
       UserActions.classList.add("hidden");
       UserThings[User.innerHTML][-1].classList.remove("hidden");
       return;
