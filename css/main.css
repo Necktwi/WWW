@@ -295,7 +295,7 @@ inptTxtBx.typing {
    /* scale: 1.2; */
 }
 #Thing.active #ImgHldr {
-   height: revert;
+   /* height: revert; */
 }
 #ImgsHldr {
    position: relative;

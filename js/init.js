@@ -967,6 +967,9 @@ var updateThings = function (res) {
          continue;
       }
       thingN.thingId=thing.id;
+      if (thing.id==-1) {
+         thingN.classList.add("mine");
+      }
       var imgsHldr = thingN.children[0];
       var imgs = imgsHldr.children[0];
       imgs.cid = 0;
@@ -1390,10 +1393,10 @@ var addThing = function () {
    }
    userData["things"][userData["things"].length] = {
       "id":-1,
-      "name":"",
       "location":"",
       "pics":[]
    };
+   userData["things"]["user"]=User.innerHTML;
    updateThings(userData);
    editThing.call(GetElementInsideContainer(
       Things.children[0], "ThingEditBtn"));
