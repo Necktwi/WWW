@@ -682,13 +682,13 @@ var selectFiles = function(ev) {
       teb.disabled=true;
       l.teb=teb;
    }
-   r.onload = function() {
+   r.onload = function () {
       //ev.target.value = '';
       l.postChunk = function() {
          var jso=JSON.parse(this.text);
          this.thingId=jso["thingId"];
       }
-      l.postUpload = function() {
+      l.postUpload = function () {
          var jso=JSON.parse(this.text);
          this.thingId=jso["thingId"];
          var imgsHldr = this.parentElement;
@@ -1548,18 +1548,19 @@ var updateThing = function() {
 // Send a large blob of data chunk by chunk
 var sendFileData = function(name, data, chunkSize, l) {
    var totalKB=Math.ceil(data.length/1000);
+   var opts = {method: 'POST'};
+   var curl = '/upload?thingId=' + l.thingId;
+   curl += '&chunkSize=' + chunkSize;
+   curl += '&totalSize=' + data.length;
+   curl += "&picId=" + l.picId;
    var sendChunk = function(offset) {
       var chunk = data.subarray(offset, offset + chunkSize) || '';
-      var opts = {method: 'POST', body: chunk};
-      var url = '/upload?offset=' + offset;
-      url += '&chunkSize=' + chunkSize;
-      url += '&totalSize=' + data.length;
-      url += "&thingId=" + l.thingId;
-      url += "&picId=" + l.picId;
+      let url = curl + '&offset=' + offset;
       var ok;
       var sentKB=Math.ceil((offset+chunk.length)/1000);
       var percent=Math.floor(sentKB*100/totalKB);
       ferrylog('Uploading '+name+sentKB+'/'+totalKB+'KB'+'|'+percent+'%');
+      opts.body=chunk;
       fetch(url, opts)
          .then(function(res) {
             ok = res.ok;
