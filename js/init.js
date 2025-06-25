@@ -962,6 +962,10 @@ var updateThings = function (res) {
       var thisThingUser = User.innerHTML==thing.user;
       var thingN=
           newThing?Thing.cloneNode(true):UserThings[un][thing.id];
+      if (Object.keys(thing).length==2) {
+         thingN.classList.remove("hidden");
+         continue;
+      }
       thingN.thingId=thing.id;
       var imgsHldr = thingN.children[0];
       var imgs = imgsHldr.children[0];
