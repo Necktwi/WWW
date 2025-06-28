@@ -122,6 +122,9 @@ var showAllThings = function () {
    for (let i=0;i<Things.children.length;++i) {
       Things.children[i].classList.remove("hidden");
    }
+   setTimeout(function(){
+      document.body.scrollIntoView({behavior: "smooth", block: "start"});
+   },100)
 }
 var inputOnKeyDown = function () {
    //console.log("onKeyDown: "+this.value + ", " + event.keyCode);
@@ -130,7 +133,10 @@ var inputOnKeyDown = function () {
        this.value.length<=1) {
       // Backspace
       showPlaceHolder.call(this);
-      event.preventDefault();
+      if (Things.classList.contains("search")) {
+         showAllThings();
+         Things.classList.remove("search");
+      }
    } else if(this.value === this.plcHldr) {
       if (event.data !== null || isPrintable(event.keyCode)) {
          this.value=event.data;
@@ -139,11 +145,12 @@ var inputOnKeyDown = function () {
          //    this.type='password';
       } else {
          //search.call(this);
-         showAllThings();
       }
-      event.preventDefault(event);
-      return false;
+   } else {
+      return;
    }
+   event.preventDefault();
+   return false;
 };
 var onBeforeInput = function () {
    console.log("beforeInput: " + this.value);
@@ -186,8 +193,8 @@ var viewportHandler = function() {
    var viewport = event.target;
    //var bottom =
    //    (CMPD*(window.innerHeight-event.target.height)+0.2).toString()+"cm";
-   let bottom = (window.innerHeight-event.target.height+Log.iypos)+"px";
-   Log.style.bottom=bottom;
+   let bottom = (window.innerHeight-event.target.height+Log.iypos);
+   Log.style.bottom=(bottom<Log.iypos?Log.iypos:bottom)+"px";
    //ferrylog(bottom+" "+Log.children.length);
    mbox.style.maxHeight=event.target.height-Htable.offsetHeight-10+"px";
 }
@@ -238,15 +245,15 @@ var updateLocation = function (show) {
       setTimeout(updateLocation, 60000);
    }
    var onPosErr = function (posErr) {
+      LocTxt.classList.add("hidden");
+      Location.classList.remove("hidden");
+      LocationPin.onclick=window.cookieShuttle;
       if (posErr.code == posErr.PERMISSION_DENIED) {
          ferrylog("U denied locating you! Enter ur preferred "+
-                  "Longitude,Latitude above.");
-         LocTxt.classList.add("hidden");
-         Location.classList.remove("hidden");
-         LocationPin.onclick=window.cookieShuttle;
+                  "Latitude,Longitude above.");
          return;
       }
-      ferrylog(posErr.message);
+      ferrylog(posErr.message+"<br/>Give Latitude,Longitude above");
       setTimeout(updateLocation, 60000);
    }
    var options = {
@@ -257,10 +264,17 @@ var updateLocation = function (show) {
          enableHighAccuracy:false
       }
       navigator.geolocation.getCurrentPosition(onPosition,onPosErr,options);
-      ferrylog("LocatingU!", 100000);
+      if (!browserID)
+         ferrylog("LocatingU!", 100000);
    } else {
       ferrylog("Geolocation is not supported by this browser.");
       cookieShuttle();
+   }
+   if (!browserID) {
+      Log.iypos=window.innerHeight-(Log.offsetTop+Log.offsetHeight);
+      mbox.style.maxHeight=
+         window.visualViewport.height-Htable.offsetHeight-10+"px";
+      window.visualViewport.addEventListener("resize", viewportHandler);
    }
 }
 
@@ -424,7 +438,7 @@ var sendOwl = function () {
                reply.classList.remove("hidden");
                reply.classList.add("new");
                var oreply=reply.cloneNode(true);
-               Outbox.insertAdjacentElement("beforeEnd",oreply);
+               Inbox.insertAdjacentElement("beforeEnd",oreply);
                reply.imd=oreply;
                reply.onclick=markAsRead;
                oreply.rmd=reply;
@@ -602,6 +616,10 @@ var init = function () {
    SVGS=document.getElementById("SVGS");
    SVGS.remove();
    window.cookieShuttle = function () {
+      hideKeyboard();
+      if (location.protocol!="https:") {
+         setCookie("bid", "", 7);
+      }
       Location.classList.add("hidden");
       var url = "cookie";
       var f={};
@@ -721,10 +739,6 @@ var about = function () {
 var onBID = function (feed) {
    var res = JSON.parse(feed.responseText);
    if (res.bid) {
-      Log.iypos=window.innerHeight-(Log.offsetTop+Log.offsetHeight);
-      mbox.style.maxHeight=window.visualViewport.height-Htable.offsetHeight-
-         10+"px";
-      window.visualViewport.addEventListener("resize", viewportHandler);
       setCookie("bid", res.bid, 7);
       window.bidLoc=feed.pstr.split(',');
       browserID=getCookie("bid");
@@ -809,8 +823,8 @@ var hideThings = function () {
 var openfileprompt = function () {
    this.nextElementSibling.click();
 }
-var showThingDetails = function () {
-   if (this.parentElement.classList.contains("active")) {
+var showThingDetails = function (show) {
+   if (!show && this.parentElement.classList.contains("active")) {
       this.parentElement.classList.remove("active");
       return;
    }
@@ -821,6 +835,25 @@ var showThingDetails = function () {
        !lstThn.classList.contains("mine")) {
       popQueryBtn.call(lstThn);
    }
+   lstThn.scrollIntoView({behavior: "smooth", block: "end"});
+}
+function hideKeyboard () {
+   if ("virtualKeyboard" in navigator) {
+      navigator.virtualKeyboard.hide();
+      return;
+   }
+   Mouth.focus();
+   // Force keyboard to hide on input field.
+   Mouth.setAttribute('readonly', 'readonly');
+   // Force keyboard to hide on textarea field.
+   Mouth.setAttribute('disabled', 'true');
+   setTimeout(function() {
+      //actually close the keyboard
+      Mouth.blur(); 
+      // Remove readonly attribute after keyboard is hidden.
+      Mouth.removeAttribute('readonly');
+      Mouth.removeAttribute('disabled');
+   }, 100);
 }
 
 var replyQuery = function () {
@@ -873,19 +906,23 @@ var markAsRead = function () {
 }
 var showThing = function () {
    Mbox.classList.add("hidden");
-   thing=this.md?this.md.parentElement.parentElement.parentElement:
-      this.rmd.parentElement.parentElement.parentElement.parentElement;
-   var md = GetElementInsideContainer(thing, "msgdiv");
-   if (md.classList.contains("hidden")) {
-      showThingDetails.call(GetElementInsideContainer(thing, "ThingName"));
+   var thing;
+   if (this.md) {
+      thing=this.md.parentElement.parentElement.parentElement;
+   } else {
+      thing=this.rmd.parentElement.parentElement.parentElement.parentElement;
    }
-   thing.scrollIntoView({behavior: "smooth", block: "end"});
+   showThingDetails.call(GetElementInsideContainer(thing, "ThingName"), true);
    md = this.md?this.md:this.rmd;
    md.classList.add("highlight");
    setTimeout(function(){md.classList.remove("highlight")}, 3000);
    if (this.classList.contains("new")) {
       markAsRead.call(md);
+      if (this.md) {
+         popReplyBtn.call(md)
+      }
    }
+   thing.scrollIntoView({behavior: "smooth", block: "end"});
 }
 const resizeObserver = new ResizeObserver(entries => {
    for (let entry of entries) {
@@ -1173,6 +1210,10 @@ var updateThings = function (res) {
 }
 
 var unlock = function(){
+   if (location.protocol!="https:") {
+      ferrylog("U r not using HTTPS; can't unlock!");
+      return;
+   }
    LockBlock.classList.add("hidden");
    Credentials.classList.remove("hidden");
    SignUp.checked=false;
@@ -1192,6 +1233,7 @@ var usrnmEvent = function () {
 var authenticateUser = function () {
    if ((event.keyCode==13 && this.value !== this.plcHldr) ||
        this === SubmitBtn) { //13==enter
+      hideKeyboard();
       var url = "login";
       var f={};
       var pstr = Location.value;
@@ -1208,14 +1250,18 @@ var authenticateUser = function () {
 
 var updateSearchedThings = function (feed) {
    var res = JSON.parse(feed.responseText);
-   ferrylog(res.things.length+" thing"+(res.things.length==1?"":"s")+" found");
+   ferrylog(
+      res.things.length+" thing"+(res.things.length==1?"":"s")+" found");
    res.search=true;
    //deleteThings();
    hideThings();
+   Things.classList.add("search");
    updateThings(res);
+   document.body.scrollIntoView({behavior: "smooth", block: "start"});
 }
 
 var search = function () {
+   hideKeyboard();
    var pstr = Location.value;
    var url = "search";
    var f={};
@@ -1223,6 +1269,7 @@ var search = function () {
    f.content += ",search:\"";
    if (mouth.value==mouth.plcHldr) {
       showAllThings();
+      event.preventDefault();
       return;
    }
    f.content+= mouth.value;
@@ -1242,7 +1289,7 @@ var lock = function () {
 }
 var logoutui = function () {
    clearInterval(owlMail);
-   if (UserThings[User.innerHTML][-1]) {
+   if (UserThings[User.innerHTML] && UserThings[User.innerHTML][-1]) {
       UserThings[User.innerHTML][-1].remove();
       delete UserThings[User.innerHTML][-1];
    }
@@ -1311,6 +1358,7 @@ var togglesignup = function () {
 var signup = function () {
    if(event.keyCode==13 && this.value !== this.plcHldr ||
       this === SubmitBtn) { //13==enter
+      hideKeyboard();
       var url = "signup";
       var f={};
       Username.value=Username.value.trim();
@@ -1536,7 +1584,7 @@ var updateThing = function() {
       }
       if (res.things) {
          updateThings(res);
-         showThingDetails.call(ImgsHldr);
+         showThingDetails.call(ImgsHldr,true);
       } else {
          ferrylog(res.error);
       }
