@@ -1,6 +1,6 @@
 var Logo, LogoDiv,Mbox,Inbox,Outbox,OwlOnPerch, owlMail;
 var LocationPin,LocationDDiv,LocationDiv,Location,LocTxt,LocTTimeout,LocTHide;
-var SearchTool,SearchToolOpacity=1;
+var SearchTool,SearchToolOpacity=1,SearchBar;
 var SearchToolBlink;
 var Mouth,MouthPad;
 var Lock,Desc,LockBlock,CMPD;
@@ -28,20 +28,23 @@ var lstThn, lstThnDtls;
 var Header,Htable;
 
 var ferrylog = function (msg, interval=15000) {
-   if (Log.children.length)
+   if (Log.children.length) {
       Log.lastElementChild.classList.add("hidden");
+   }
    var nl=document.createElement("div");
    nl.innerHTML=msg;
    Log.insertAdjacentElement("beforeEnd", nl);
    clearInterval(clearLogInterval);
    clearLogInterval = setInterval(
-      function(){Log.lastElementChild.classList.add("hiddenLog")}, interval
+      function(){Log.lastElementChild.classList.add("hidden")}, interval
    );
+   return Log.children.length-1;
 }
 
 var toggleLog = function () {
    if (Log.classList.contains("visible")) {
       Log.classList.remove("visible");
+      Log.lastElementChild.classList.add("hidden");
    } else {
       Log.classList.add("visible");
    }
@@ -196,7 +199,8 @@ var viewportHandler = function() {
    let bottom = (window.innerHeight-event.target.height+Log.iypos);
    Log.style.bottom=(bottom<Log.iypos?Log.iypos:bottom)+"px";
    //ferrylog(bottom+" "+Log.children.length);
-   mbox.style.maxHeight=event.target.height-Htable.offsetHeight-10+"px";
+   mbox.style.maxHeight=
+      viewport.height-Htable.offsetHeight-mmToPxls(10+2)+"px";
 }
 
 var showBoxUpdtLoc = function() {
@@ -213,6 +217,9 @@ var LocDHide = function () {
    setTimeout(LocTHide,7000);
 }
 
+var mmToPxls = function (mm) {
+   return mm/pxlHtMm;
+}
 var updateLocation = function (show) {
    if (show) {
       if (!Location.classList.contains("hidden")) {
@@ -271,9 +278,10 @@ var updateLocation = function (show) {
       cookieShuttle();
    }
    if (!browserID) {
-      Log.iypos=window.innerHeight-(Log.offsetTop+Log.offsetHeight);
+      pxlHtMm=50/Logo.getBoundingClientRect().height;
       mbox.style.maxHeight=
-         window.visualViewport.height-Htable.offsetHeight-10+"px";
+         window.visualViewport.height-Htable.offsetHeight-
+         mmToPxls(10+2)+"px";
       window.visualViewport.addEventListener("resize", viewportHandler);
    }
 }
@@ -477,7 +485,8 @@ var init = function () {
    OwlOnPerch=document.getElementById('owlOnPerch');
    OwlOnPerch.onclick=toggleMbox;
    LogoDiv.parentElement.style.display="block";
-   SearchTool=document.getElementById('search-tool');
+   SearchTool=document.getElementById('searchTool');
+   SearchBar=document.getElementById('searchBar');
    LocationPin=document.getElementById('LocationPin');
    Location=document.getElementById('LocationBox');
    LocationDiv=document.getElementById('LocationDiv');
@@ -505,7 +514,7 @@ var init = function () {
    });
    LocTxt=document.getElementById('LocTxt');
    Mouth=document.getElementById('mouth');
-   MouthPad=document.getElementById('mouth-pad');
+   MouthPad=document.getElementById('mouthPad');
    if (location.href.indexOf('?')==-1) {
       Logo.classList.add("big");
    }

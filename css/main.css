@@ -187,11 +187,11 @@ footer.if {
 #Log.visible div.hidden {
    display: revert;
 }
-#search-bar {
+#searchBar {
    width: 100%;
    height: 1cm;
 }
-#search-tool {
+#searchTool {
    width:0.5292cm; /*20px on iphone 12 mini*/
    height:0.7cm;
    padding-left:0px;
@@ -249,7 +249,7 @@ inptTxtBx.typing {
    display: inline-block;
 }
 
-#mouth-pad {
+#mouthPad {
    padding-left:6px;
    padding-right:6px;
    display:inline-block;

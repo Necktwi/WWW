@@ -62,23 +62,23 @@ svg path#unlock {
     stroke: rgb(255,255,255);
 }
 
-#search-tool path#mirror {
+#searchTool path#mirror {
     stroke: black;
     fill: rgba(192, 192, 255, 0.498039);
 }
 
-#search-tool path#stock {
+#searchTool path#stock {
     stroke: black;
     stroke-width: 0;
     fill: rgb(255, 255, 255);
 }
 
-.dark #search-tool path#mirror {
+.dark #searchTool path#mirror {
     stroke: white;
     fill: rgba(80, 80, 255, 0.9);
 }
 
-.dark #search-tool path#stock {
+.dark #searchTool path#stock {
     stroke: white;
     stroke-width: 2.0;
     fill: rgb(0, 0, 0);
