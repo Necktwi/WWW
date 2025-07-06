@@ -5,7 +5,8 @@ svg #spiral {
 }
 
 .dark svg #spiral {
-    stroke: rgb(255,255,255);
+   stroke: rgb(255,255,255);
+   fill: rgb(0, 128, 0); 
 }
 
 svg #feet {
@@ -13,7 +14,8 @@ svg #feet {
 }
 
 .dark svg #feet {
-    stroke: rgb(255, 255, 255);
+   stroke: rgb(255, 255, 255);
+   fill:#ffff00;
 }
 
 svg #bubble {

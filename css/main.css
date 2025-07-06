@@ -57,17 +57,14 @@ header input {
 }
 #logo {
    height: 3.3cm;
-   width: 3.3cm;
    padding-right: 0.1cm;
    /* position: relative; */
 }
 #logo.big {
-   height: 5cm;
-   width: 5cm;
+   height: 7cm;
 }
 #logo.small {
    height: 1cm;
-   width: 1cm;
 }
 #logoDiv {
    /* position: relative; */
@@ -86,9 +83,8 @@ header input {
 }
 #logoDiv.if #logo {
    position: relative;
-   width: 5cm;
-   height: 5cm;
-   top: 50vh;
+   height: 9cm;
+   top: 40vh;
    left: 50vw;
    padding: 0mm;
    transform: translate(-50%,-50%);
@@ -293,6 +289,7 @@ inptTxtBx.typing {
 
 #Thing.active {
    /* scale: 1.2; */
+   float: left;
 }
 #Thing.active #ImgHldr {
    /* height: revert; */
@@ -452,7 +449,7 @@ svg.fixedSize {
 
 #LocationDDiv.if #LocationDiv {
    position: relative;
-   top: 3cm;
+   top: 4cm;
    left: 0cm;
 }
 

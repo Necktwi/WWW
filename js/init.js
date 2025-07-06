@@ -833,7 +833,7 @@ var openfileprompt = function () {
    this.nextElementSibling.click();
 }
 var showThingDetails = function (show) {
-   if (!show && this.parentElement.classList.contains("active")) {
+   if (show!==true && this.parentElement.classList.contains("active")) {
       this.parentElement.classList.remove("active");
       return;
    }
