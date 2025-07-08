@@ -7,7 +7,7 @@
    <link rel='icon' href='img/favicon.ico' type='image/x-icon'/>
    <meta name="viewport" 
          content="width=device-width,initial-scale=1,maximum-scale=1"
-         content="user-scalable=no" />
+         content="user-scalable=no,interactive-widget=resizes-content"/>
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
    <script type="text/javascript" src="js/core.js"></script>
    <script type="text/javascript" src="js/init.js?2"></script>
@@ -19,16 +19,30 @@
    <script>0</script>
    <div id="LocationDDiv" class="if">
       <div id="LocationDiv">
-         <input id="LocationBox" class="hidden"/>
+         <input id="LocationBox" class="labeled hidden"/>
          <span id="LocTxt" class="hidden"></span>
          <div id="LocationPin" class="empty hidden"></div>
       </div>
    </div>
+   <footer onclick="about()" class="if">
+      <div id="cr">© FerryFair<span id="beta">BETA</span></div>
+      <address>
+         <a id="jackmail"
+            href="mailto:jack@ferryfair.com">jack@ferryfair.com</a>
+      </address>
+   </footer>
+   <div id="Log"></div>
    <header class="">
-      <table id="htable"><tr><td style="vertical-align: top;">
+      <div id="mbox" class="hidden">
+         <div id="inboxL">Inbox:</div>
+         <div id="inbox" class=""></div>
+         <div id="outboxL">Outbox:</div>
+         <div id="outbox" class=""></div>
+      </div>
+      <table id="htable"><tr><td id="logoTd" style="vertical-align: top;">
       <div id="logoDiv" class="if">
       <svg xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink" id="logo" class="small"
+   xmlns:xlink="http://www.w3.org/1999/xlink" id="logo" class=""
    viewBox="0 0 288 446.208" style="">
          <style>
          .back {
@@ -49,16 +63,31 @@
          #Hull {
             stroke-width: 3;
          }
-         .dark #Waves {
-            stroke-width: 3;
-            stroke: #4444ff;
+         #Ferry {
+            stroke: #888888;
          }
          .dark #Ferry {
             fill-opacity:0.5;
          }
+         #Waves {
+            stroke-width: 3;
+            stroke: #4444ff;
+            fill: #4444ff;
+            fill-opacity: 0.3;
+         }
+         .small #Ferry, .dark .small #Ferry, .small #Waves,
+         .dark .small #Waves {
+            fill-opacity: 1;
+         }
+         .small #Ferry #Hull {
+            stroke-width: 8;
+         }
+         .small #Waves {
+            fill:#8888ff
+         }
       </style>
    <g id="Ferry" transform="matrix(1 0 0 1 0 24)"
-      style="fill-opacity:0.3;stroke:#888888">
+      style="">
       <g>
          <g transform="matrix(0.724861, 0, 0, 0.724861, -197.491806,
             -594.726929)"
@@ -447,16 +476,12 @@
             8,8 8,8 16,0 c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 c 8,-8 8,-8 16,0
             c 8,8 8,8 16,0 c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 c 8,-8 8,-8
             16,0 c 8,8 8,8 16,0 c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 c 8,-8
-            8,-8 16,0 c 8,8 8,8 16,0 c 8,-8 8,-8 16,0 c 8,8 8,8 16,0"
-         style="fill: none;">
+            8,-8 16,0 c 8,8 8,8 16,0 c 8,-8 8,-8 16,0 c 8,8 8,8 16,0
+            c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 l 0 512 l -352 0 Z">
          <animateTransform attributeName="transform" dur="4s" begin="0s"
             type="scale" additive="sum" repeatCount="indefinite"
             calcMode="spline" keySplines=".5 0 .8 .2; .2 .8 .5 1"
             values="1 1; 1 0.3; 1 1" keyTimes="0; 0.5; 1"/>
-         <animateTransform attributeName="transform" dur="1.5s" begin="3s"
-            type="translate" additive="sum" repeatCount="1"
-            calcMode="spline" keySplines="0 .3 .8 1" values="0 0; 32 0"
-            keyTimes="0; 1"/>
          <animateMotion path="M 0 0 H 32" begin="3s" dur="2s"
             repeatCount="indefinite"/>
       </path>
@@ -817,12 +842,6 @@
         </svg>
       </td>
       </tr></table>
-      <div id="mbox" class="hidden">
-         <div id="inboxL">Inbox:</div>
-         <div id="inbox" class=""></div>
-         <div id="outboxL">Outbox:</div>
-         <div id="outbox" class=""></div>
-      </div>
       <div id="searchBar">
          <div id="lips"><form id="mouthPad">
             <input id="mouth" name="search" type="text" class="labeled"/>
@@ -875,6 +894,7 @@
          <input id="ThingNameBox" class="removable" type="text"/>
          <span id="ThingName" class="edtHide"></span>
          <br/>
+         <div id="thnBtm">
          <div id="thingInfo" class="hidden">
             <label id="ThingUsrL">Usr:</label>
             <span id="ThingUsr"></span>
@@ -892,6 +912,7 @@
                   <span class="hidden"></span><span></span><span></span>
                </div>
             </div>
+         </div>
          </div>
          <input id="cnclEdtBtn" class="removable" type="Button"
                 value="Cancel"/>
@@ -929,14 +950,7 @@
          </div>
       </div></div>
    </div-->
-   <br/><br/>
-   <footer onclick="about()" class="if">
-      <div id="cr">© FerryFair<span id="beta">BETA</span></div>
-      <address>
-         <a id="jackmail"
-            href="mailto:jack@ferryfair.com">jack@ferryfair.com</a>
-      </address>
-   </footer>
+   <br/><br/><br/><br/><br/><br/>
 <div id="SVGS" hidden>
    <svg id="SpiralSVG" class="fixedSize" viewBox="0 0 288 288"
         xmlns="http://www.w3.org/2000/svg"
@@ -1015,5 +1029,4 @@
       </g>
    </svg>
 </div>
-<div id="Log"></div>
 </body></html>

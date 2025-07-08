@@ -1,5 +1,5 @@
 @font-face {
-   font-family:CascadiaMono.ttf;
+   font-family:CascadiaMono;
    src:url("/fnt/CascadiaMono.ttf");
 }
 @font-face {
@@ -22,6 +22,10 @@
    font-family: NSR;
    src:url("/fnt/NSR.ttf");
 }
+@font-face {
+   font-family: TrebuchetMS;
+   src:url("/fnt/trebuc.ttf");
+}
 #user {
    font-family: AB;
    position: relative;
@@ -43,21 +47,26 @@ body {
    /* display: inline; */
 }
 header {
-   width: 100%;
+   width: fit-content;
    z-index: 10;
-   position: sticky;
-   top: 0;
-   background-color: rgba(0,0,0,0.3);
-   backdrop-filter: blur(2px);
-   -webkit-backdrop-filter: blur(2px);
+   position: fixed;
+   bottom: 0;
+   left:0;
+   background-color: rgba(0,0,0,0.6);
+   backdrop-filter: blur(3px);
+   -webkit-backdrop-filter: blur(3px);
+   padding: 1mm;
+   padding-bottom: 3mm;
+   border-radius: 2mm;
 }
 header input {
    font-size: 4mm;
    margin: 1px;
 }
 #logo {
-   height: 3.3cm;
+   height: 1cm;
    padding-right: 0.1cm;
+   border-radius: 1px;
    /* position: relative; */
 }
 #logo.big {
@@ -71,9 +80,9 @@ header input {
 }
 #logoDiv.if {
    position:fixed;
-   z-index:10;
+   z-index:11;
    width: 99vw;
-   height: 80vh;
+   height: 99vh;
    top:0px;
    left:0px;
    background-color: black;
@@ -84,11 +93,13 @@ header input {
 #logoDiv.if #logo {
    position: relative;
    height: 9cm;
-   top: 40vh;
+   top: 45vh;
    left: 50vw;
    padding: 0mm;
    transform: translate(-50%,-50%);
+   border-radius: 7mm;
 }
+
 footer.if {
    position: fixed;
    bottom: 2mm;
@@ -170,15 +181,18 @@ footer.if {
    top: -0.06cm;   
 }
 #Log {
-   position: fixed;
-   bottom: 0.2cm;
-   right: 0.2cm;
+   position: sticky;
+   top: 0.2cm;
+   left: 0.2cm;
+   width: fit-content;
+   max-height: 80vh;
+   overflow:scroll;
    background-color: rgba(0,0,0,0.3);
    backdrop-filter: blur(2mm);
    -webkit-backdrop-filter: blur(2mm);
    border-radius: 1mm;
    z-index:11;
-   text-align:right;
+   text-align:left;
 }
 #Log.visible div.hidden {
    display: revert;
@@ -201,12 +215,15 @@ footer.if {
    border-width:0px;
    line-height: 0.8cm;
    resize: none;
-   position: relative;
-   font-family:Quicksand;
+   /* position: relative; */
+   font-family:TrebuchetMS;
    font-size:0.72cm;
+   /* font-weight: 600; */
    margin:0px;
-   padding:0px;
-   width:7.55cm;
+   padding:0;
+   padding-left:2px;
+   width:6.7cm;
+   caret-color: #4444ff;
 }
 .inptTxtBx {
    color: rgb(192,192,192);
@@ -232,9 +249,9 @@ inptTxtBx.typing {
    color: black;
 }
 #lips {
-   position: absolute;
+   position: relative;
    height: 0.2cm;
-   bottom: 0.1cm;
+   top: 0.8cm;
    border-left: 1px solid black;
    border-right: 1px solid black;
    border-bottom: 1px solid black;
@@ -247,7 +264,7 @@ inptTxtBx.typing {
 
 #mouthPad {
    padding-left:6px;
-   padding-right:6px;
+   padding-right:4px;
    display:inline-block;
    top:-0.7cm;
    position:relative;
@@ -275,7 +292,20 @@ inptTxtBx.typing {
    text-align: center;
    background-color: rgba(255,255,255,0.3);
    backdrop-filter: blur(1mm);
+   -webkit-backdrop-filter: blur(1mm);
    color: rgb(0,0,128);
+}
+#thnBtm {
+   position: absolute;
+   z-index: 2;
+   background-color: rgba(0, 0, 0, 0.5);
+   backdrop-filter: blur(3px);
+   -webkit-backdrop-filter: blur(3px);
+   border-radius: 2mm;
+   padding: 1mm;
+}
+#Thing.editMode #thnBtm {
+   position: relative;
 }
 #ThingEditBtn {
    display: none;
@@ -289,7 +319,7 @@ inptTxtBx.typing {
 
 #Thing.active {
    /* scale: 1.2; */
-   float: left;
+   /* float: left; */
 }
 #Thing.active #ImgHldr {
    /* height: revert; */
@@ -438,19 +468,22 @@ svg.fixedSize {
 }
 #LocationDDiv #LocationBox {
    width: 45mm;
+   background:transparent;
 }
 #LocationDDiv.if {
    position: fixed;
    top: 50vh;
-   left: 50vw;
-   transform: translate(-50%,0);
+   left: calc(50vw - 25mm);
+   /* transform: translate(-50%,0); */
    z-index: 11;
 }
 
 #LocationDDiv.if #LocationDiv {
    position: relative;
-   top: 4cm;
+   top: 3cm;
    left: 0cm;
+   backdrop-filter: blur(1px);
+   -webkit-backdrop-filter: blur(1px);
 }
 
 #ThingName {
@@ -482,6 +515,9 @@ svg.fixedSize {
    margin: 1mm;
    border-radius:1mm;
    width: fit-content;
+}
+#replyBtn, #msgBtn {
+   display:block;
 }
 .query {
    margin:1px;

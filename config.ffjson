@@ -2,5 +2,5 @@
 	maxThings: 5,
 	maxThingPics: 3,
 	maxMsgs: 25,
-	secret: file:///home/gowtham/workspace/WWW-development/red/secret.ffjson
+   secret: file://red/secret.ffjson
 }

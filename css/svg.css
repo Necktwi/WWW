@@ -38,15 +38,15 @@ svg #Hull {
     stroke: rgb(255, 192, 192);
 }
 
-svg #Waves {
-    fill: rgba(255, 255, 255, 0); 
-    stroke: rgb(0, 0, 256);
-}
+/* svg #Waves { */
+/*     fill: rgba(255, 255, 255, 0);  */
+/*     stroke: rgb(0, 0, 256); */
+/* } */
 
-.dark svg #Waves {
-    fill: rgba(255, 255, 255, 0);
-    stroke: rgb(128, 128, 256);
-}
+/* .dark svg #Waves { */
+/*     fill: rgba(255, 255, 255, 0); */
+/*     stroke: rgb(128, 128, 256); */
+/* } */
 
 svg path#lock {
     fill: rgb(184,115,51);

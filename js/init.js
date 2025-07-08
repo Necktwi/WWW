@@ -1,4 +1,4 @@
-var Logo, LogoDiv,Mbox,Inbox,Outbox,OwlOnPerch, owlMail;
+var Logo,LogoDiv,LogoTd,Mbox,Inbox,Outbox,OwlOnPerch, owlMail;
 var LocationPin,LocationDDiv,LocationDiv,Location,LocTxt,LocTTimeout,LocTHide;
 var SearchTool,SearchToolOpacity=1,SearchBar;
 var SearchToolBlink;
@@ -19,9 +19,10 @@ var chusPicBtn, chusPicBtnL, ThingDetailsDiv, CnclEdtBtn;
 var Thing, Things, UserThings, UserActions, AddThing, ChoosePic, ReplyBtn;
 var SVGS, ReplyBox, ReplyDiv, Msginpt, QSendDiv, MsgBtn;
 var searchPlcHldr = 'Search things near U';
+var locPlcHldr = "E.g. 12.3456,-78.9012";
 var caretPos=0;
 const MaxImgsPerThing=3;
-var browserID;
+var browserID,isApple;
 var userData;
 var clearLogInterval;
 var lstThn, lstThnDtls;
@@ -123,7 +124,10 @@ var isPrintable = function (keycode) {
 }
 var showAllThings = function () {
    for (let i=0;i<Things.children.length;++i) {
-      Things.children[i].classList.remove("hidden");
+      let thing = Things.children[i];
+      if (thing.thingId!=-1) {
+         thing.classList.remove("hidden");
+      }
    }
    setTimeout(function(){
       document.body.scrollIntoView({behavior: "smooth", block: "start"});
@@ -136,7 +140,7 @@ var inputOnKeyDown = function () {
        this.value.length<=1) {
       // Backspace
       showPlaceHolder.call(this);
-      if (Things.classList.contains("search")) {
+      if (this.id==="mouth" && Things.classList.contains("search")) {
          showAllThings();
          Things.classList.remove("search");
       }
@@ -193,14 +197,18 @@ var nxtImg = function (reverse) {
 }
 
 var viewportHandler = function() {
+   if (isApple) {
+      return;
+   }
    var viewport = event.target;
    //var bottom =
    //    (CMPD*(window.innerHeight-event.target.height)+0.2).toString()+"cm";
-   let bottom = (window.innerHeight-event.target.height+Log.iypos);
-   Log.style.bottom=(bottom<Log.iypos?Log.iypos:bottom)+"px";
+   //let bottom = (window.innerHeight-event.target.height+Log.iypos);
+   //Log.style.bottom=(bottom<Log.iypos?Log.iypos:bottom)+"px";
    //ferrylog(bottom+" "+Log.children.length);
+   Header.style.bottom=window.innerHeight-viewport.height+"px";
    mbox.style.maxHeight=
-      viewport.height-Htable.offsetHeight-mmToPxls(10+2)+"px";
+      viewport.height-Htable.offsetHeight-mmToPxls(10+5)+"px";
 }
 
 var showBoxUpdtLoc = function() {
@@ -252,9 +260,12 @@ var updateLocation = function (show) {
       setTimeout(updateLocation, 60000);
    }
    var onPosErr = function (posErr) {
-      LocTxt.classList.add("hidden");
-      Location.classList.remove("hidden");
-      LocationPin.onclick=window.cookieShuttle;
+      if (Location.dont || !Location.classList.contains("hidden")) {
+         return;
+      }
+      if (browserID) {
+         Logo.onclick.call(Logo);
+      }
       if (posErr.code == posErr.PERMISSION_DENIED) {
          ferrylog("U denied locating you! Enter ur preferred "+
                   "Latitude,Longitude above.");
@@ -274,14 +285,17 @@ var updateLocation = function (show) {
       if (!browserID)
          ferrylog("LocatingU!", 100000);
    } else {
-      ferrylog("Geolocation is not supported by this browser.");
-      cookieShuttle();
+      let err={};
+      err.message="GeoLocationNotSupportedByUrBrowser";
+      err.code=100;
+      onPosErr(err);
+      return;
    }
    if (!browserID) {
       pxlHtMm=50/Logo.getBoundingClientRect().height;
       mbox.style.maxHeight=
          window.visualViewport.height-Htable.offsetHeight-
-         mmToPxls(10+2)+"px";
+         mmToPxls(10+5)+"px";
       window.visualViewport.addEventListener("resize", viewportHandler);
    }
 }
@@ -323,7 +337,7 @@ var sendOwl = function () {
    Inbox.replies=[];
    for (var i=0; i<mds.length; ++i) {
       md = mds[i];
-      var thing = md.parentElement.parentElement.parentElement;
+      var thing = md.parentElement.parentElement.parentElement.parentElement;
       var tusr = GetElementInsideContainer(thing, "ThingUsr").innerHTML;
       if (!cnt.Qs)
          cnt["Qs"]={};
@@ -344,7 +358,7 @@ var sendOwl = function () {
             cnt.rrs=[];
          cnt.rrs.push(imd.ind);
       } else {
-         thing=md.parentElement.parentElement.parentElement;
+         thing=md.parentElement.parentElement.parentElement.parentElement;
          tid=thing.thingId;
          mid=parseInt(md.children[0].innerHTML);
          if (!cnt.Rs)
@@ -357,7 +371,8 @@ var sendOwl = function () {
    for (var i=0; i<replies.length; ++i) {
       reply = replies[i];
       var thing =
-          reply.parentElement.parentElement.parentElement.parentElement;
+          reply.parentElement.parentElement.parentElement.parentElement.
+          parentElement;
       var mid = reply.parentElement.firstElementChild.innerHTML
       if (!cnt.Reps)
          cnt["Reps"]={};
@@ -373,7 +388,8 @@ var sendOwl = function () {
       }
       if (res.status==1) {
          for (var md of mds) {
-            var thing = md.parentElement.parentElement.parentElement;
+            var thing =
+                md.parentElement.parentElement.parentElement.parentElement;
             var tusr = GetElementInsideContainer(thing, "ThingUsr").innerHTML;
             var mid=res.Qs[tusr][thing.thingId];
             md.children[0].innerHTML=mid;
@@ -450,6 +466,7 @@ var sendOwl = function () {
                reply.imd=oreply;
                reply.onclick=markAsRead;
                oreply.rmd=reply;
+               oreply.ind=smsg[4];
                oreply.onclick=showThing;
                ++Inbox.news;
             }
@@ -470,10 +487,14 @@ var sendOwl = function () {
    shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
 }
 var init = function () {
+   isApple=/iPad|iPhone|iPod/.test(navigator.userAgent);
    Header=document.getElementsByTagName("header")[0];
    Htable=Header.firstElementChild;
    Logo=document.getElementById('logo');
    LogoDiv=document.getElementById('logoDiv');
+   LogoTd=document.getElementById('logoTd');
+   LogoDiv.remove();
+   document.body.insertAdjacentElement('afterBegin',LogoDiv);
    Inbox=document.getElementById('inbox');
    Mbox=document.getElementById('mbox');
    Outbox=document.getElementById('outbox');
@@ -489,6 +510,8 @@ var init = function () {
    SearchBar=document.getElementById('searchBar');
    LocationPin=document.getElementById('LocationPin');
    Location=document.getElementById('LocationBox');
+   Location.plcHldr=locPlcHldr;
+   Location.value=locPlcHldr;
    LocationDiv=document.getElementById('LocationDiv');
    LocationDDiv=document.getElementById('LocationDDiv');
    ReplyDiv=document.getElementById('replyDiv');
@@ -515,9 +538,6 @@ var init = function () {
    LocTxt=document.getElementById('LocTxt');
    Mouth=document.getElementById('mouth');
    MouthPad=document.getElementById('mouthPad');
-   if (location.href.indexOf('?')==-1) {
-      Logo.classList.add("big");
-   }
    /*
    setTimeout(function() {
       Logo.classList.add("transform2s3d");
@@ -697,6 +717,9 @@ var selectFiles = function(ev) {
    if (!ev.target.files[0]) return;
    var btn = ev.target;
    var f = btn.files[0], r = new FileReader();
+   if (!validFileName(f.name)) {
+      reutrn;
+   }
    if (f.size>2000000) {
       ferrylog("File size exceeded 2MB");
       return;
@@ -752,9 +775,11 @@ var onBID = function (feed) {
       window.bidLoc=feed.pstr.split(',');
       browserID=getCookie("bid");
       LogoDiv.classList.remove("if");
+      LogoTd.insertAdjacentElement("afterBegin",LogoDiv);
       LogoDiv.parentElement.style.display="table-cell";
       LocationDDiv.classList.remove("if");
       document.getElementsByTagName("footer")[0].classList.remove("if");
+      Logo.classList.add("small");
       Logo.onclick=null;
       LocationPin.classList.remove("hidden");
       LocTHide = function () {
@@ -844,7 +869,7 @@ var showThingDetails = function (show) {
        !lstThn.classList.contains("mine")) {
       popQueryBtn.call(lstThn);
    }
-   lstThn.scrollIntoView({behavior: "smooth", block: "end"});
+   lstThn.scrollIntoView({behavior: "smooth", block: "start"});
 }
 function hideKeyboard () {
    if ("virtualKeyboard" in navigator) {
@@ -917,9 +942,10 @@ var showThing = function () {
    Mbox.classList.add("hidden");
    var thing;
    if (this.md) {
-      thing=this.md.parentElement.parentElement.parentElement;
+      thing=this.md.parentElement.parentElement.parentElement.parentElement;
    } else {
-      thing=this.rmd.parentElement.parentElement.parentElement.parentElement;
+      thing=this.rmd.parentElement.parentElement.parentElement.parentElement.
+         parentElement;
    }
    showThingDetails.call(GetElementInsideContainer(thing, "ThingName"), true);
    md = this.md?this.md:this.rmd;
@@ -931,7 +957,7 @@ var showThing = function () {
          popReplyBtn.call(md)
       }
    }
-   thing.scrollIntoView({behavior: "smooth", block: "end"});
+   thing.scrollIntoView({behavior: "smooth", block: "start"});
 }
 const resizeObserver = new ResizeObserver(entries => {
    for (let entry of entries) {
@@ -1082,7 +1108,7 @@ var updateThings = function (res) {
       if (thing.details) {
          dtls.innerHTML=thing.details;
       }
-      var rmsgs=res.things[i].rmsgs;
+      var rmsgs=thing.rmsgs;
       var itms;
       if (!Inbox.things[thing.id]) {
          itms=Inbox.things[thing.id]=new Set();
@@ -1307,6 +1333,7 @@ var logoutui = function () {
    User.innerHTML="";
    Inbox.innerHTML="";
    Outbox.innerHTML="";
+   Mbox.classList.add("hidden");
    document.body.classList.remove("signed");
    var mine = document.getElementsByClassName("mine");
    while (mine.length) {
@@ -1606,13 +1633,12 @@ var updateThing = function() {
 var sendFileData = function(name, data, chunkSize, l) {
    var totalKB=Math.ceil(data.length/1000);
    var opts = {method: 'POST'};
-   var curl = '/upload?thingId=' + l.thingId;
-   curl += '&chunkSize=' + chunkSize;
+   var curl = '/upload?chunkSize=' + chunkSize;
    curl += '&totalSize=' + data.length;
-   curl += "&picId=" + l.picId;
+   curl += "&picId=" + l.picId + '&thingId=';
    var sendChunk = function(offset) {
       var chunk = data.subarray(offset, offset + chunkSize) || '';
-      let url = curl + '&offset=' + offset;
+      let url = curl + l.thingId+'&offset=' + offset;
       var ok;
       var sentKB=Math.ceil((offset+chunk.length)/1000);
       var percent=Math.floor(sentKB*100/totalKB);
@@ -1625,12 +1651,16 @@ var sendFileData = function(name, data, chunkSize, l) {
          })
          .then(function(text) {
             if (!ok) {
-               var res=JSON.parse(text);
-               if (!signOk(res)) {
-                  return;
+               try {
+                  var res=JSON.parse(text);
+                  if (!signOk(res)) {
+                     return;
+                  }
+                  ferrylog('Error: ' + text);
+                  l.teb.disabled=false;
+               } catch (e) {
+                  ferrylog(e+"|"+text);
                }
-               ferrylog('Error: ' + text);
-               l.teb.disabled=false;
             } else if(offset+chunk.length >= data.length){
                ferrylog(name + ' uploaded!');
                if(l.postUpload) {
@@ -1675,6 +1705,19 @@ function validUsername (name) {
    }
    if (!(name.length && name.length <= 24)) {
       ferrylog("Username length should be >0 && <=24");
+      return false;
+   }
+   return true;
+}
+
+function validFileName (name) {
+   let ext=name.split('.').pop();
+   if (ext!="jpg" && ext!="jpeg") {
+      ferrylog("Invalid file name, should be .jpg or .jpeg");
+      return false;
+   }
+   if (!(name.length && name.length <= 32)) {
+      ferrylog("File name length should be >0 && <=32");
       return false;
    }
    return true;
