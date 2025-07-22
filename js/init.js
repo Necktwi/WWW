@@ -263,7 +263,7 @@ var updateLocation = function (show) {
       if (Location.dont || !Location.classList.contains("hidden")) {
          return;
       }
-      if (browserID) {
+      if (!browserID) {
          Logo.onclick.call(Logo);
       }
       if (posErr.code == posErr.PERMISSION_DENIED) {
@@ -775,6 +775,7 @@ var onBID = function (feed) {
       window.bidLoc=feed.pstr.split(',');
       browserID=getCookie("bid");
       LogoDiv.classList.remove("if");
+      Log.classList.remove("if");
       LogoTd.insertAdjacentElement("afterBegin",LogoDiv);
       LogoDiv.parentElement.style.display="table-cell";
       LocationDDiv.classList.remove("if");
@@ -1296,7 +1297,6 @@ var updateSearchedThings = function (feed) {
 }
 
 var search = function () {
-   hideKeyboard();
    var pstr = Location.value;
    var url = "search";
    var f={};

@@ -90,6 +90,12 @@ header input {
    /* justify-content: center; */
    /* align-items: center; */
 }
+#logoDiv #about {
+   display: none;
+}
+#logoDiv.if #about {
+   display: block;
+}
 #logoDiv.if #logo {
    position: relative;
    height: 9cm;
@@ -193,6 +199,9 @@ footer.if {
    border-radius: 1mm;
    z-index:11;
    text-align:left;
+}
+#Log.if {
+   top: 7mm;
 }
 #Log.visible div.hidden {
    display: revert;
@@ -480,7 +489,7 @@ svg.fixedSize {
 
 #LocationDDiv.if #LocationDiv {
    position: relative;
-   top: 3cm;
+   top: 32mm;
    left: 0cm;
    backdrop-filter: blur(1px);
    -webkit-backdrop-filter: blur(1px);
