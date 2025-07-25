@@ -1,4 +1,4 @@
-var Logo,LogoDiv,LogoTd,Mbox,Inbox,Outbox,OwlOnPerch, owlMail;
+var Footer,Logo,LogoDiv,LogoTd,Mbox,Inbox,Outbox,OwlOnPerch,owlMail;
 var LocationPin,LocationDDiv,LocationDiv,Location,LocTxt,LocTTimeout,LocTHide;
 var SearchTool,SearchToolOpacity=1,SearchBar;
 var SearchToolBlink;
@@ -488,6 +488,7 @@ var sendOwl = function () {
 }
 var init = function () {
    isApple=/iPad|iPhone|iPod/.test(navigator.userAgent);
+   Footer=document.getElementsByTagName("footer")[0];
    Header=document.getElementsByTagName("header")[0];
    Htable=Header.firstElementChild;
    Logo=document.getElementById('logo');
@@ -765,7 +766,11 @@ var selectFiles = function(ev) {
    };
 }
 var about = function () {
-   ferrylog("Gowtham Kudupudi");
+   if (Log.classList.contains('about')) {
+      Log.classList.remove('about');
+   } else {
+      Log.classList.add('about');
+   }
 }
 
 var onBID = function (feed) {
@@ -779,7 +784,7 @@ var onBID = function (feed) {
       LogoTd.insertAdjacentElement("afterBegin",LogoDiv);
       LogoDiv.parentElement.style.display="table-cell";
       LocationDDiv.classList.remove("if");
-      document.getElementsByTagName("footer")[0].classList.remove("if");
+      Footer.classList.remove("if");
       Logo.classList.add("small");
       Logo.onclick=null;
       LocationPin.classList.remove("hidden");
@@ -1468,6 +1473,7 @@ var makeid = function (length) {
 }
 
 var addThing = function () {
+   Footer.scrollIntoView({behavior: "smooth", block: "start"});
    if (!userData["things"]) {
       userData["things"]=[];
    } else if (userData["things"][userData["things"].length-1].id==-1) {
@@ -1482,8 +1488,9 @@ var addThing = function () {
    };
    userData["things"]["user"]=User.innerHTML;
    updateThings(userData);
+   let thing = Things.children[0];
    editThing.call(GetElementInsideContainer(
-      Things.children[0], "ThingEditBtn"));
+      thing, "ThingEditBtn"));
 }
 var addRemovables = function (thing) {
    for (let i=0; i<ThingRemovables.length; ++i) {
@@ -1579,8 +1586,6 @@ var updateThing = function() {
    var ThingLocPin = GetElementInsideContainer(UserThing, "ThingLocationPin");
    var ImgsHldr=imgs.parentElement;
    ImgsHldr.onclick=showThingDetails;
-   edtBtn.onclick=editThing;
-   edtBtn.value="Edit";
    if (!(cncl && UserThing.thingId==-1)) {
       removeDummyImgs(UserThing);
       if (imgs.cid>=imgs.children.length) {
@@ -1594,6 +1599,8 @@ var updateThing = function() {
       UserThing.classList.add("hidden");
       return;
    }
+   edtBtn.onclick=editThing;
+   edtBtn.value="Edit";
    if (cncl) {
       return false;
    }

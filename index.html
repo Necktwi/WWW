@@ -3,17 +3,19 @@
 -->
 <!DOCTYPE html>
 <html><head>
-   <title>FerryFair|HyperFastSpatialSearch</Title>
+   <title>FerryFair | Hyper fast spatial search</Title>
    <link rel='icon' href='img/favicon.ico' type='image/x-icon'/>
    <meta name="description"
          content="Super quickly search for things U need among billions
-                  of things around U!"/>
+                  of things around U! Add things to the fair to ferry!"/>
    <meta name="keywords"
-         content="fast,spatial,search,things,near,around,items,goods"/>
+         content="fast,spatial,search,things,near,around,items,goods,ferry
+                  fair"/>
    <meta name="author" content="Gowtham Kudupudi"/>
    <meta name="viewport"
-         content="width=device-width,initial-scale=1,maximum-scale=1"
-         content="user-scalable=no,interactive-widget=resizes-content"/>
+         content="width=device-width,initial-scale=1,
+                  maximum-scale=1,user-scalable=no,
+                  interactive-widget=resizes-content"/>
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
    <script type="text/javascript" src="js/core.js"></script>
    <script type="text/javascript" src="js/init.js?2"></script>
@@ -31,13 +33,23 @@
       </div>
    </div>
    <footer onclick="about()" class="if">
-      <div id="cr">© FerryFair<span id="beta">BETA</span></div>
+      <div id="cr">© FerryFair<span id="beta">BETA</span>
+      </div>
       <address>
          <a id="jackmail"
             href="mailto:jack@ferryfair.com">jack@ferryfair.com</a>
       </address>
    </footer>
-   <div id="Log" class="if"></div>
+   <div id="Log" class="if">
+      <div id="about" class="hidden">
+         <a href="https://github.com/gowthamkudupudi/ferryfair">
+            Super fast spatial search!</a><br/>
+         <a href="https://github.com/gowthamkudupuid/FFJSON">
+            Powered by FFJSON</a>
+         <p id="jack" class="hidden">
+            <a href="notes/">- Gowtham Kudupudi</a></p>
+      </div>
+   </div>
    <header class="">
       <div id="mbox" class="hidden">
          <div id="inboxL">Inbox:</div>
@@ -47,7 +59,6 @@
       </div>
       <table id="htable"><tr><td id="logoTd" style="vertical-align: top;">
       <div id="logoDiv" class="if">
-      <div id="about">Fastest spatial search!</div>
       <svg xmlns="http://www.w3.org/2000/svg"
    xmlns:xlink="http://www.w3.org/1999/xlink" id="logo" class=""
    viewBox="0 0 288 446.208" style="">
@@ -501,6 +512,7 @@
            xmlns="http://www.w3.org/2000/svg"
            xmlns:xlink="http://www.w3.org/1999/xlink"
            onclick="unlock()">
+         <title>SignIn</title>
          <path
             id="lock"
             style="stroke-opacity: 1"
@@ -572,7 +584,9 @@
          <svg id="unlock" height="24" viewBox="0 0 24 24" width="24"
               xmlns="http://www.w3.org/2000/svg"
               xmlns:xlink="http://www.w3.org/1999/xlink"
-              onclick="lock()">
+              onclick="lock()" aria-label="SignOut">
+            <title>SignOut</title>
+            <desc>SignOut</desc>
             <path
                id="unlock"
                style="stroke-opacity: 1"
@@ -585,10 +599,9 @@
          <span id="user"></span>
       </div>
       </td>
-      <td>
+      <td  title="Mailbox">
         <svg
-           id="owlOnPerch" class="hidden nonews"
-           version="1.1"
+           id="owlOnPerch" class="hidden nonews" version="1.1"
            xmlns="http://www.w3.org/2000/svg"
            xmlns:xlink="http://www.w3.org/1999/xlink"
            viewBox="0 0 511.988 511.988"
@@ -848,6 +861,20 @@
            /></g>
         </svg>
       </td>
+      <td>
+         <div id="UserActions" class="hidden">
+            <button id="AddThing" onclick="addThing()"
+                    title="Add a thing to fair">
+               <svg viewBox="0 0 256 256" id="AddThingSVG"
+                    xmlns="http://www.w3.org/2000/svg">
+                  <path
+                     d="M220,128a4.0002,4.0002,0,0,1-4,4H132v84a4,4,0,0,1-8,0
+                        V132H40a4,4,0,0,1,0-8h84V40a4,4,0,0,1,8,0v84h84
+                        A4.0002,4.0002,0,0,1,220,128Z"/>
+               </svg>
+            </button>
+         </div>
+      </td>
       </tr></table>
       <div id="searchBar">
          <div id="lips"><form id="mouthPad">
@@ -870,11 +897,6 @@
          </form></div>
       </div>
    </header>
-   <form id="UserActions" class="hidden">
-      <input
-         id="AddThing" type="button" value="Add a thing to the fair"
-         onclick="addThing()" class=""/>
-   </form>
    <div id="Things" class="hidden">
       <div id="Thing" class="thing">
          <div id="ImgsHldr"class="">

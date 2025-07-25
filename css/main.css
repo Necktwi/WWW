@@ -90,12 +90,6 @@ header input {
    /* justify-content: center; */
    /* align-items: center; */
 }
-#logoDiv #about {
-   display: none;
-}
-#logoDiv.if #about {
-   display: block;
-}
 #logoDiv.if #logo {
    position: relative;
    height: 9cm;
@@ -200,10 +194,26 @@ footer.if {
    z-index:11;
    text-align:left;
 }
-#Log.if {
-   top: 7mm;
-}
 #Log.visible div.hidden {
+   display: revert;
+}
+#Log #about a {
+   color: azure;
+   text-decoration: none;
+   font-size: 3mm;
+}
+#Log.about {
+   display: revert;
+}
+#Log.about #about, #Log.if #about {
+   display: revert;
+}
+#Log #about #jack a {
+   font-style: italic;
+   font-size: 4mm;
+   padding-left: 4mm;
+}
+#Log.about #jack {
    display: revert;
 }
 #searchBar {
@@ -280,13 +290,21 @@ inptTxtBx.typing {
    font-size:0px;
 }
 #UserActions {
-   margin-top:2mm;
-   margin-bottom:2mm;
+   padding-left: 1mm;
 }
 #AddThing {
    text-align: center;
    vertical-align: middle;
-   border-radius: 4mm;
+   border: none;
+   cursor: pointer;
+   padding: 0px;
+   background-color: transparent;
+}
+#AddThingSVG {
+   width: 1cm;
+   height: 1cm;
+   vertical-align: middle;
+   fill: #77ff77;
 }
 #Things {
 }
