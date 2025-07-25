@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      <script type="text/javascript" src="/js/showdown.min.js"></script>
+      <script type="text/javascript" src="/js/core.js"></script>
+      <script type="text/javascript">
+         var init = function () {
+            let url = "/"+window.location.search.substr(1);
+            if (!url.endsWith(".md")) {
+               document.body.innerHTML="Invalid URL!"
+            }
+            let f={};
+            f.postExpdtn = function (feed) {
+               const sdc = new showdown.Converter();
+               document.body.innerHTML=sdc.makeHtml(feed.responseText);
+            }
+            let shuttle = new core.shuttle(url,f.content,f.postExpdtn,f);
+         }
+      </script>
+      <style>
+         body {
+            background-color: black;
+            color: white;
+         }
+         a {
+            color: #9955ff;
+         }
+      </style>
+   </head>
+   <body onload="init()"></body>
+</html>
