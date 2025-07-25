@@ -198,6 +198,9 @@ footer.if {
    display: revert;
 }
 #Log #about a {
+   color: #8888ff;
+}
+#Log #about a.plain {
    color: azure;
    text-decoration: none;
    font-size: 3mm;
@@ -208,7 +211,7 @@ footer.if {
 #Log.about #about, #Log.if #about {
    display: revert;
 }
-#Log #about #jack a {
+#Log #about #jack a.plain {
    font-style: italic;
    font-size: 4mm;
    padding-left: 4mm;
