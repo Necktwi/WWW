@@ -13,7 +13,7 @@ var Passwords2, ConsentL, Consent, NonRecovery;
 var SignIn,SignUp,Recover;
 var Usermenu;
 var User;
-var Unlock, Log, ThingRemovables=[];
+var Unlock, Log, ThingRemovables=[], imageCompressor;
 var ThingLocationL, ThingLocationBox, ThingNameL, ThingNameBox;
 var chusPicBtn, chusPicBtnL, ThingDetailsDiv, CnclEdtBtn;
 var Thing, Things, UserThings, UserActions, AddThing, ChoosePic, ReplyBtn;
@@ -25,7 +25,7 @@ const MaxImgsPerThing=3;
 var browserID,isApple;
 var userData;
 var clearLogInterval;
-var lstThn, lstThnDtls;
+var lstThn, lstThnDtls, Chin;
 var Header,Htable;
 
 var ferrylog = function (msg, interval=15000) {
@@ -496,6 +496,7 @@ var init = function () {
    LogoTd=document.getElementById('logoTd');
    LogoDiv.remove();
    document.body.insertAdjacentElement('afterBegin',LogoDiv);
+   Chin=document.getElementById('chin');
    Inbox=document.getElementById('inbox');
    Mbox=document.getElementById('mbox');
    Outbox=document.getElementById('outbox');
@@ -714,20 +715,52 @@ var sendMsg = function () {
    ferrylog("Ur query will b sent by next owl!");
 }
 
-var selectFiles = function(ev) {
+var proceedCompressedImage = function (compressedSrc) {
+   sendFileData(new Uint8Array(compressedSrc), 2048, l);
+}
+
+function resizeMe(img,qf,gotBlob,thumbNail) {  
+   var canvas = document.createElement('canvas');
+   var width = img.width;
+   var height = img.height;
+   let lMaxWidth = thumbNail?mmToPxls(60):mmToPxls(150);
+   let lMaxHeight = lMaxWidth;
+  // calculate the width and height, constraining the proportions
+  if (width > height) {
+    if (width > lMaxWidth) {
+      //height *= lMaxWidth / width;
+      height = Math.round(height *= lMaxWidth / width);
+      width = lMaxWidth;
+    }
+  } else {
+    if (height > lMaxHeight) {
+      //width *= lMaxHeight / height;
+      width = Math.round(width *= lMaxHeight / height);
+      height = lMaxHeight;
+    }
+  }
+  // resize the canvas and draw the image data into it
+  canvas.width = width;
+  canvas.height = height;
+  //document.body.appendChild(canvas);
+  var ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0, width, height);
+  // do the actual resized preview
+  // get the data from canvas as 70% JPG (can be also PNG, etc.)
+   return canvas.toBlob(gotBlob,"image/jpeg",qf);
+}
+
+function selectFiles (ev) {
    if (!ev.target.files[0]) return;
    var btn = ev.target;
    var f = btn.files[0], r = new FileReader();
-   if (!validFileName(f.name)) {
-      reutrn;
-   }
-   if (f.size>2000000) {
-      ferrylog("File size exceeded 2MB");
-      return;
-   }
    var l = btn.previousElementSibling;
    r.readAsArrayBuffer(f);
-   var thisThing = this.parentElement.parentElement;
+   var imgsHldr = this.parentElement;
+   var thisThing = imgsHldr.parentElement;
+   var imgs = imgsHldr.children[0];
+   var imgHldr = imgs.children[imgs.cid];
+   var img = imgHldr.firstElementChild;
    if (!l.teb) {
       var teb = GetElementInsideContainer(thisThing, "ThingEditBtn");
       teb.disabled=true;
@@ -742,27 +775,81 @@ var selectFiles = function(ev) {
       l.postUpload = function () {
          var jso=JSON.parse(this.text);
          this.thingId=jso["thingId"];
-         var imgsHldr = this.parentElement;
-         var imgs = imgsHldr.children[0];
-         var imgHldr = imgs.children[imgs.cid];
-         var img = imgHldr.firstElementChild;
-         if (imgHldr.classList.contains("dummy")) {
-            img.remove();
-            imgHldr.classList.remove("dummy");
-            img = document.createElement('img');
-            imgHldr.insertAdjacentElement('beforeEnd', img);
-            img.classList.add("fixedSize");
-            addDummyImgs(thisThing);
-         }
-         img.src=
-            "/upload/"+User.innerHTML+"/"+this.thingId+"."+this.picId+".jpg?"+
-            new Date().getTime();
          thisThing.thingId=this.thingId;
          var tid = GetElementInsideContainer(thisThing, "ThingId");
          tid.innerHTML=this.thingId.toString();
          this.teb.disabled=false;
       }
-      sendFileData(f.name, new Uint8Array(r.result), 2048, l);
+      let limg=r.result;
+      let image;
+      var ontblob = function (ab) {
+         ferrylog("gotThumbab: "+ab.length);
+         img.remove();
+         imgHldr.classList.remove("dummy");
+         img = document.createElement('img');
+         imgHldr.insertAdjacentElement('beforeEnd', img);
+         img.classList.add("fixedSize");
+         addDummyImgs(thisThing);
+         img.onload = function () {
+            ferrylog("thumbLoaded");
+            resizeMe(image,0.7,(ablob)=>{
+               ferrylog("gotBlob: "+ablob.size);
+               if (ablob.bytes) {
+                  ablob.bytes().then((bytes)=>{
+                     sendFileData(bytes, 2048,l);
+                  })
+               } else if (ablob.arrayBuffer) {
+                  ablob.arrayBuffer().then((bytes)=>{
+                     sendFileData(new Uint8Array(bytes), 2048,l);
+                  })
+               }
+            })
+         }
+         img.src=window.URL.createObjectURL(
+            new Blob([ab], {'type': 'image/jpeg'}));
+      }
+      if (f.size>1000000) {
+         ferrylog("File size exceeded 2MB! Compressing");
+         var blob = new Blob([limg]); // create blob...
+         window.URL = window.URL || window.webkitURL;
+         var blobURL = window.URL.createObjectURL(blob); // and get it's URL
+      
+         // helper Image object
+         image = new Image();
+         image.onload = function () {
+            ferrylog("imageLoaded");
+            var resized = resizeMe(image,0.7,(tblob)=>{
+               ferrylog("gotThumbBlob: "+tblob.size);
+               if (tblob.bytes) {
+                  tblob.bytes().then((tbytes)=>{
+                     ontblob(tbytes);
+                  })
+               } else if (tblob.arrayBuffer) {
+                  tblob.arrayBuffer().then((tbytes)=>{
+                     ontblob(new Uint8Array(tbytes));
+                  });
+               } else {
+                  ontblob();
+               }
+            },true);
+         }
+         image.src = blobURL;
+         //preview.appendChild(image); // preview commented out, I am using the canvas instead
+         //image.onload = function() {
+            // have to wait till it's loaded
+         // img.src=resized;
+         // resized = resizeMe(image,0.7);
+         // resized = resized.split(';base64,')[1];
+         // console.log(resized);
+         // resized=atob(resized); // send it to canvas
+         // const byteNumbers = new Array(resized.length);
+         // for (let i = 0; i < resized.length; i++) {
+         //    byteNumbers[i] = resized.charCodeAt(i);
+         // }
+         // sendFileData(new Uint8Array(byteNumbers), 2048, l);
+         return;
+      }
+      ontblob(new Uint8Array(limg));
    };
 }
 var about = function () {
@@ -863,9 +950,20 @@ var hideThings = function () {
 var openfileprompt = function () {
    this.nextElementSibling.click();
 }
+var hideThingDetails = function (event) {
+   if (event.target==this) {
+      showThingDetails(false);
+   }
+}
 var showThingDetails = function (show) {
-   if (show!==true && this.parentElement.classList.contains("active")) {
-      this.parentElement.classList.remove("active");
+   if (show!==true && lstThn.classList.contains("active")) {
+      lstThn.classList.remove("active");
+      Chin.classList.add("hidden");
+      return;
+   }
+   if (show===false) {
+      lstThn.classList.remove("active");
+      Chin.classList.add("hidden");
       return;
    }
    lstThn.classList.remove("active");
@@ -875,6 +973,7 @@ var showThingDetails = function (show) {
        !lstThn.classList.contains("mine")) {
       popQueryBtn.call(lstThn);
    }
+   Chin.classList.remove("hidden");
    lstThn.scrollIntoView({behavior: "smooth", block: "start"});
 }
 function hideKeyboard () {
@@ -1015,6 +1114,7 @@ var updateThings = function (res) {
    if (res.name) {
       userData = res;
    }
+   Things.onclick=hideThingDetails;
    var thingCount = res.things?res.things.length:0;
    for (var i=0; i<thingCount; ++i) {
       var thing=res.things[i];
@@ -1637,7 +1737,7 @@ var updateThing = function() {
 }
 
 // Send a large blob of data chunk by chunk
-var sendFileData = function(name, data, chunkSize, l) {
+var sendFileData = function(data, chunkSize, l) {
    var totalKB=Math.ceil(data.length/1000);
    var opts = {method: 'POST'};
    var curl = '/upload?chunkSize=' + chunkSize;
@@ -1649,7 +1749,7 @@ var sendFileData = function(name, data, chunkSize, l) {
       var ok;
       var sentKB=Math.ceil((offset+chunk.length)/1000);
       var percent=Math.floor(sentKB*100/totalKB);
-      ferrylog('Uploading '+name+sentKB+'/'+totalKB+'KB'+'|'+percent+'%');
+      ferrylog('Uploading '+sentKB+'/'+totalKB+'KB'+'|'+percent+'%');
       opts.body=chunk;
       fetch(url, opts)
          .then(function(res) {
@@ -1669,7 +1769,7 @@ var sendFileData = function(name, data, chunkSize, l) {
                   ferrylog(e+"|"+text);
                }
             } else if(offset+chunk.length >= data.length){
-               ferrylog(name + ' uploaded!');
+               ferrylog('Uploaded!');
                if(l.postUpload) {
                   l.text=text;
                   l.postUpload();

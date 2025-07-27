@@ -178,7 +178,9 @@ footer.if {
 }
 #Desc {
    position: relative;
-   top: -0.06cm;   
+   top: -0.06cm;
+   float: right;
+   padding-left: 1mm;
 }
 #Log {
    position: sticky;
