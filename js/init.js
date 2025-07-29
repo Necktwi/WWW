@@ -486,8 +486,23 @@ var sendOwl = function () {
    f.reqHeaders=[["content-type", "text/json"]];
    shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
 }
+var lastViewPortHeight = 0;
+var blurInput = function () {
+   window.removeEventListener('scroll', blurInput);
+   if (lastViewPortHeight-window.visualViewport.height>40) {
+      document.activeElement.blur();
+   }
+}
 var init = function () {
    isApple=/iPad|iPhone|iPod/.test(navigator.userAgent);
+   inps=document.getElementsByTagName("input");
+   for (let i=0;i<inps.length;++i) {
+      inps[i].addEventListener(
+         'focus',(e)=>{
+            lastViewPortHeight=window.visualViewport.height;
+            setTimeout(()=>{window.addEventListener('scroll', blurInput)},2000);
+         });
+   }
    Footer=document.getElementsByTagName("footer")[0];
    Header=document.getElementsByTagName("header")[0];
    Htable=Header.firstElementChild;
