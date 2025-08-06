@@ -175,7 +175,7 @@ var onInput = function () {
 }
 var getLocation = function () {
    var locateBtn = event.target;
-   var locationBox = GetElementInsideContainer(locateBtn.parentElement,
+   var locationBox = getElementInsideContainer(locateBtn.parentElement,
                                                "ThingLocationBox");
    locationBox.value = Location.value;
 }
@@ -193,6 +193,19 @@ var nxtImg = function (reverse) {
    imgHldr.classList.remove("hidden");
    if (thing.classList.contains("editMode")) {
       chusPicBtnL.picId=imgs.cid;
+   }
+}
+
+var incImg = function (reverse) {
+   var incBtn = event.target;
+   var imgs = incBtn.parentElement.parentElement.firstElementChild;
+   var thing = imgs.parentElement.parentElement;
+   var imgHldr = imgs.children[imgs.cid];
+   var img = imgHldr.children[0];
+   if (img.classList.contains("plusSize")) {
+      img.classList.remove("plusSize");
+   } else {
+      img.classList.add("plusSize");
    }
 }
 
@@ -249,6 +262,7 @@ var updateLocation = function (show) {
       }
       Location.value=position.coords.latitude.toPrecision(9);
       Location.value+=","+position.coords.longitude.toPrecision(9);
+      LocTxt.innerHTML=Location.value;
       if (!browserID) {
          window.cookieShuttle();
       }
@@ -338,7 +352,7 @@ var sendOwl = function () {
    for (var i=0; i<mds.length; ++i) {
       md = mds[i];
       var thing = md.parentElement.parentElement.parentElement.parentElement;
-      var tusr = GetElementInsideContainer(thing, "ThingUsr").innerHTML;
+      var tusr = getElementInsideContainer(thing, "ThingUsr").innerHTML;
       if (!cnt.Qs)
          cnt["Qs"]={};
       if (!cnt.Qs[tusr])
@@ -390,7 +404,7 @@ var sendOwl = function () {
          for (var md of mds) {
             var thing =
                 md.parentElement.parentElement.parentElement.parentElement;
-            var tusr = GetElementInsideContainer(thing, "ThingUsr").innerHTML;
+            var tusr = getElementInsideContainer(thing, "ThingUsr").innerHTML;
             var mid=res.Qs[tusr][thing.thingId];
             md.children[0].innerHTML=mid;
             md.classList.remove("inQ");
@@ -415,7 +429,7 @@ var sendOwl = function () {
             var tid = parseInt(stid);
             var things = UserThings[User.innerHTML];
             var thing = things[tid];
-            var msgd = GetElementInsideContainer(thing, "msgs");
+            var msgd = getElementInsideContainer(thing, "msgs");
             md = msgd.firstElementChild;
             var itms=Inbox.things[tid];
             for (const smid in tthing) {
@@ -449,7 +463,7 @@ var sendOwl = function () {
             var things=UserThings[tusr];
             var tid = smsg[1];
             var thing = things[tid];
-            var msgd = GetElementInsideContainer(thing, "msgs");
+            var msgd = getElementInsideContainer(thing, "msgs");
             for (var i=0; i<msgd.children.length; ++i) {
                var md = msgd.children[i];
                var mid = parseInt(md.children[0].innerHTML);
@@ -629,18 +643,18 @@ var init = function () {
    Things = document.getElementById('Things');
    Consent = document.getElementById('Consent');
    ConsentL = document.getElementById('ConsentL');
-   Thing = GetElementInsideContainer(Things, "Thing");
+   Thing = getElementInsideContainer(Things, "Thing");
    lstThn = Thing;
    UserThings = {};
    let ctrs = Thing.getElementsByClassName("removable");
-   chusPicBtnL = GetElementInsideContainer(Thing, "chusPicBtnL");
-   chusPicBtn = GetElementInsideContainer(Thing, "chusPicBtn");
-   ThingLocationL = GetElementInsideContainer(Thing, "ThingLocationL");
-   ThingLocationBox = GetElementInsideContainer(Thing, "ThingLocationBox");
-   ThingNameL = GetElementInsideContainer(Thing, "ThingNameL");
-   ThingNameBox = GetElementInsideContainer(Thing, "ThingNameBox");
-   ThingDetailsDiv = GetElementInsideContainer(Thing, "ThingDetailsDiv");
-   cnclEdtBtn = GetElementInsideContainer(Thing, "cnclEdtBtn");
+   chusPicBtnL = getElementInsideContainer(Thing, "chusPicBtnL");
+   chusPicBtn = getElementInsideContainer(Thing, "chusPicBtn");
+   ThingLocationL = getElementInsideContainer(Thing, "ThingLocationL");
+   ThingLocationBox = getElementInsideContainer(Thing, "ThingLocationBox");
+   ThingNameL = getElementInsideContainer(Thing, "ThingNameL");
+   ThingNameBox = getElementInsideContainer(Thing, "ThingNameBox");
+   ThingDetailsDiv = getElementInsideContainer(Thing, "ThingDetailsDiv");
+   cnclEdtBtn = getElementInsideContainer(Thing, "cnclEdtBtn");
    cnclEdtBtn.onclick=updateThing;
    chusPicBtn.onclick=openfileprompt;
    chusPicBtn.cid=0;
@@ -667,7 +681,7 @@ var init = function () {
          setCookie("bid", "", 7);
       }
       Location.classList.add("hidden");
-      var url = "cookie";
+      var url = "cookie"+window.location.search;
       var f={};
       f.pstr = Location.value;
       ferrylog("Location: " + f.pstr);
@@ -689,6 +703,9 @@ var init = function () {
          }
       }
    }
+   if (window.location.search.indexOf("?user=")==0) {
+      cookieShuttle();
+   }
    updateLocation();
    // window.onresize = function () {
    //    Log.style.bottom = "0.2cm";
@@ -696,10 +713,10 @@ var init = function () {
 };
 var sendMsg = function () {
    var thing=this.parentElement.parentElement.parentElement;
-   var tusr= GetElementInsideContainer(thing, "ThingUsr");
-   var mdiv = GetElementInsideContainer(thing, "msgdiv");
-   var msgd = GetElementInsideContainer(mdiv, "msgs");
-   var msginpt = GetElementInsideContainer(mdiv, "msginpt");
+   var tusr= getElementInsideContainer(thing, "ThingUsr");
+   var mdiv = getElementInsideContainer(thing, "msgdiv");
+   var msgd = getElementInsideContainer(mdiv, "msgs");
+   var msginpt = getElementInsideContainer(mdiv, "msginpt");
    var md = msgd.firstElementChild;
    var ld = md.firstElementChild;
    var id = parseInt(ld.innerHTML);
@@ -729,7 +746,9 @@ var sendMsg = function () {
    Inbox.mds.push(md);
    ferrylog("Ur query will b sent by next owl!");
 }
-
+var gotoHome = function () {
+   window.location.href=window.location.origin;
+}
 var proceedCompressedImage = function (compressedSrc) {
    sendFileData(new Uint8Array(compressedSrc), 2048, l);
 }
@@ -777,7 +796,7 @@ function selectFiles (ev) {
    var imgHldr = imgs.children[imgs.cid];
    var img = imgHldr.firstElementChild;
    if (!l.teb) {
-      var teb = GetElementInsideContainer(thisThing, "ThingEditBtn");
+      var teb = getElementInsideContainer(thisThing, "ThingEditBtn");
       teb.disabled=true;
       l.teb=teb;
    }
@@ -791,14 +810,16 @@ function selectFiles (ev) {
          var jso=JSON.parse(this.text);
          this.thingId=jso["thingId"];
          thisThing.thingId=this.thingId;
-         var tid = GetElementInsideContainer(thisThing, "ThingId");
+         var tid = getElementInsideContainer(thisThing, "ThingId");
          tid.innerHTML=this.thingId.toString();
          this.teb.disabled=false;
       }
-      let limg=r.result;
-      let image;
+      var limg=r.result;
+      var image;
+      var blob = new Blob([limg]); // create blob...
+      window.URL = window.URL || window.webkitURL;
+      var blobURL = window.URL.createObjectURL(blob); // and get it's URL
       var ontblob = function (ab) {
-         ferrylog("gotThumbab: "+ab.length);
          img.remove();
          imgHldr.classList.remove("dummy");
          img = document.createElement('img');
@@ -807,66 +828,51 @@ function selectFiles (ev) {
          addDummyImgs(thisThing);
          img.onload = function () {
             ferrylog("thumbLoaded");
-            resizeMe(image,0.7,(ablob)=>{
-               ferrylog("gotBlob: "+ablob.size);
-               if (ablob.bytes) {
-                  ablob.bytes().then((bytes)=>{
-                     sendFileData(bytes, 2048,l);
-                  })
-               } else if (ablob.arrayBuffer) {
-                  ablob.arrayBuffer().then((bytes)=>{
-                     sendFileData(new Uint8Array(bytes), 2048,l);
-                  })
-               }
-            })
+            if (f.size>2000000) {
+               ferrylog("File size exceeded 2MB! Compressing");
+               resizeMe(image,0.7,(ablob)=>{
+                  ferrylog("gotBlob: "+ablob.size);
+                  if (ablob.bytes) {
+                     ablob.bytes().then((bytes)=>{
+                        sendFileData(bytes, 2048,l);
+                     })
+                  } else if (ablob.arrayBuffer) {
+                     ablob.arrayBuffer().then((bytes)=>{
+                        sendFileData(new Uint8Array(bytes), 2048,l);
+                     })
+                  }
+               })
+            } else {
+               sendFileData(new Uint8Array(limg), 2048, l);
+            }
          }
          img.src=window.URL.createObjectURL(
             new Blob([ab], {'type': 'image/jpeg'}));
       }
-      if (f.size>1000000) {
-         ferrylog("File size exceeded 2MB! Compressing");
-         var blob = new Blob([limg]); // create blob...
-         window.URL = window.URL || window.webkitURL;
-         var blobURL = window.URL.createObjectURL(blob); // and get it's URL
       
-         // helper Image object
-         image = new Image();
-         image.onload = function () {
-            ferrylog("imageLoaded");
-            var resized = resizeMe(image,0.7,(tblob)=>{
-               ferrylog("gotThumbBlob: "+tblob.size);
-               if (tblob.bytes) {
-                  tblob.bytes().then((tbytes)=>{
-                     ontblob(tbytes);
-                  })
-               } else if (tblob.arrayBuffer) {
-                  tblob.arrayBuffer().then((tbytes)=>{
-                     ontblob(new Uint8Array(tbytes));
-                  });
-               } else {
-                  ontblob();
-               }
-            },true);
-         }
-         image.src = blobURL;
-         //preview.appendChild(image); // preview commented out, I am using the canvas instead
-         //image.onload = function() {
-            // have to wait till it's loaded
-         // img.src=resized;
-         // resized = resizeMe(image,0.7);
-         // resized = resized.split(';base64,')[1];
-         // console.log(resized);
-         // resized=atob(resized); // send it to canvas
-         // const byteNumbers = new Array(resized.length);
-         // for (let i = 0; i < resized.length; i++) {
-         //    byteNumbers[i] = resized.charCodeAt(i);
-         // }
-         // sendFileData(new Uint8Array(byteNumbers), 2048, l);
-         return;
+      // helper Image object
+      image = new Image();
+      image.onload = function () {
+         ferrylog("imageLoaded");
+         var resized = resizeMe(image,0.7,(tblob)=>{
+            ferrylog("gotThumbBlob: "+tblob.size);
+            if (tblob.bytes) {
+               tblob.bytes().then((tbytes)=>{
+                  ontblob(tbytes);
+               })
+            } else if (tblob.arrayBuffer) {
+               tblob.arrayBuffer().then((tbytes)=>{
+                  ontblob(new Uint8Array(tbytes));
+               });
+            } else {
+               ontblob();
+            }
+         },true);
       }
-      ontblob(new Uint8Array(limg));
+      image.src = blobURL;
    };
 }
+
 var about = function () {
    if (Log.classList.contains('about')) {
       Log.classList.remove('about');
@@ -908,6 +914,9 @@ var onBID = function (feed) {
       login(feed);
    } else {
       updateThings(res);
+   }
+   if (Logo.onclick==gotoHome) {
+      ferrylog("<blink>click logo to view all things around U</blink>",50000);
    }
    Location.classList.add("hidden");
    Location.onclick=updateLocation;
@@ -1033,7 +1042,7 @@ var popQueryBtn = function () {
    if (p) {
       QSendDiv.remove();
    }
-   var md = GetElementInsideContainer(this, "msgdiv");
+   var md = getElementInsideContainer(this, "msgdiv");
    md.insertAdjacentElement("beforeEnd", QSendDiv);
    MsgBtn.onclick=sendMsg;
 }
@@ -1067,7 +1076,7 @@ var showThing = function () {
       thing=this.rmd.parentElement.parentElement.parentElement.parentElement.
          parentElement;
    }
-   showThingDetails.call(GetElementInsideContainer(thing, "ThingName"), true);
+   showThingDetails.call(getElementInsideContainer(thing, "ThingName"), true);
    md = this.md?this.md:this.rmd;
    md.classList.add("highlight");
    setTimeout(function(){md.classList.remove("highlight")}, 3000);
@@ -1167,10 +1176,10 @@ var updateThings = function (res) {
       var imgs = imgsHldr.children[0];
       imgs.cid = 0;
       resizeObserver.observe(imgs);
-      var msgDiv = GetElementInsideContainer(thingN, "msgdiv");
-      var msgd = GetElementInsideContainer(msgDiv, "msgs");
+      var msgDiv = getElementInsideContainer(thingN, "msgdiv");
+      var msgd = getElementInsideContainer(msgDiv, "msgs");
       var UserThingEditBtn =
-          GetElementInsideContainer(thingN, "ThingEditBtn");
+          getElementInsideContainer(thingN, "ThingEditBtn");
       if (newThing) {
          imgsHldr.onclick=showThingDetails;
          var imgHldr = imgs.children[0];
@@ -1194,20 +1203,20 @@ var updateThings = function (res) {
             imgHldr.classList.add("dummy");
          }
          UserThingEditBtn.onclick=editThing;
-         var tid=GetElementInsideContainer(thingN, "ThingId");
+         var tid=getElementInsideContainer(thingN, "ThingId");
          tid.innerText=thing.id;
-         var tusr=GetElementInsideContainer(thingN, "ThingUsr");
+         var tusr=getElementInsideContainer(thingN, "ThingUsr");
          tusr.innerText=un;
       }
       if (thing.name && thing.name.length) {
-         var name=GetElementInsideContainer(thingN, "ThingName");
+         var name=getElementInsideContainer(thingN, "ThingName");
          name.innerText=thing.name;
          name.onclick=showThingDetails;
          name.classList.remove("hidden");
       }
-      var locPin = GetElementInsideContainer(thingN, "ThingLocationPin");
+      var locPin = getElementInsideContainer(thingN, "ThingLocationPin");
       if (thing.location && thing.location.length) {
-         var location=GetElementInsideContainer(thingN, "ThingLocation");
+         var location=getElementInsideContainer(thingN, "ThingLocation");
          thingN.loc=thing.location;
          var locStr=thing.location.length?thing.location.join(","):
              thing.location;
@@ -1224,7 +1233,7 @@ var updateThings = function (res) {
       } else {
          locPin.classList.add("empty");
       }
-      var dtls=GetElementInsideContainer(thingN, "ThingDetails");
+      var dtls=getElementInsideContainer(thingN, "ThingDetails");
       var dtlsDiv;
       if (thing.details) {
          dtls.innerHTML=thing.details;
@@ -1313,9 +1322,14 @@ var updateThings = function (res) {
             to = User.innerHTML;
             isR=1;
          }
-         var thn = UserThings[to][smsg[1]];
-         var msgDiv = GetElementInsideContainer(thn, "msgdiv");
-         var msgd = GetElementInsideContainer(msgDiv, "msgs");
+         let toUser=UserThings[to];
+         if (!toUser)
+            continue;
+         var thn = toUser[smsg[1]];
+         if (!thn)
+            continue;
+         var msgDiv = getElementInsideContainer(thn, "msgdiv");
+         var msgd = getElementInsideContainer(msgDiv, "msgs");
          for (var i=0; i<msgd.children.length; ++i) {
             var md = msgd.children[i];
             var mid = parseInt(md.children[0].innerHTML);
@@ -1362,6 +1376,11 @@ var updateThings = function (res) {
       OwlOnPerch.classList.remove("nonews");
    } else {
       OwlOnPerch.classList.add("nonews");
+   }
+   if (window.location.search.indexOf("?user=")==0) {
+      let pBtn=getElementInsideContainer(Things.children[0],"eImg");
+      pBtn.click();
+      Logo.onclick = gotoHome;
    }
 }
 
@@ -1418,7 +1437,7 @@ var updateSearchedThings = function (feed) {
 
 var search = function () {
    var pstr = Location.value;
-   var url = "search";
+   var url = "search"+window.location.search;
    var f={};
    f.content = "{bid:\"" + browserID +"\"";
    f.content += ",search:\"";
@@ -1604,13 +1623,13 @@ var addThing = function () {
    userData["things"]["user"]=User.innerHTML;
    updateThings(userData);
    let thing = Things.children[0];
-   editThing.call(GetElementInsideContainer(
+   editThing.call(getElementInsideContainer(
       thing, "ThingEditBtn"));
 }
 var addRemovables = function (thing) {
    for (let i=0; i<ThingRemovables.length; ++i) {
       let r = ThingRemovables[i];
-      let p = GetElementInsideContainer(thing, r.pid);
+      let p = getElementInsideContainer(thing, r.pid);
       p.insertAdjacentElement('afterEnd', r);
    }
 }
@@ -1620,14 +1639,14 @@ var removeRemovables = function (thing) {
    }
 }
 var removeDummyImgs = function (thing) {
-   var imgs=GetElementInsideContainer(thing, "Imgs");
+   var imgs=getElementInsideContainer(thing, "Imgs");
    var dummies=imgs.getElementsByClassName("dummy");
    if (imgs.children.length>1 && dummies.length) {
       dummies[0].remove();
    }
 }
 var addDummyImgs = function (thing) {
-   var imgs=GetElementInsideContainer(thing, "Imgs");
+   var imgs=getElementInsideContainer(thing, "Imgs");
    var i=imgs.children.length;
    if (i<MaxImgsPerThing && !imgs.children[0].classList.contains("dummy")) {
       var imgHldr = imgs.children[0].cloneNode(true);
@@ -1639,7 +1658,12 @@ var addDummyImgs = function (thing) {
       imgs.children[i-1].insertAdjacentElement('afterEnd', imgHldr);
    }
 }
-
+var showURL = function (event) {
+   var thing = this.parentElement;
+   var tusr=getElementInsideContainer(thing, "ThingUsr");
+   let ln = window.origin+"?user="+tusr.innerText+"&thing="+thing.thingId;
+   ferrylog("<a href=\""+ln+"\">"+ln+"</a>");
+}
 var lastCnclEdtBtn;
 var editThing = function (newThing) {
    if (lastCnclEdtBtn) {
@@ -1649,9 +1673,9 @@ var editThing = function (newThing) {
    this.classList.remove("thngEdBtn");
    var thisUserThing = this.parentElement;
    thisUserThing.classList.add("editMode");
-   var ThingLocation = GetElementInsideContainer(
+   var ThingLocation = getElementInsideContainer(
       thisUserThing, "ThingLocation");
-   var ThingDetails = GetElementInsideContainer(
+   var ThingDetails = getElementInsideContainer(
       thisUserThing, "ThingDetails");
    //ThingDetails.classList.add("hidden");
    //ThingName.classList.add("hidden");
@@ -1659,10 +1683,10 @@ var editThing = function (newThing) {
    //ThingNameB.classList.remove("hidden");
    //ThingNameL.classList.remove("hidden");
    //CnclEdtBtn.classList.remove("hidden");
-   var ThingName = GetElementInsideContainer(thisUserThing, "ThingName");
-   var ThingLocPin = GetElementInsideContainer(
+   var ThingName = getElementInsideContainer(thisUserThing, "ThingName");
+   var ThingLocPin = getElementInsideContainer(
       thisUserThing, "ThingLocationPin");
-   var imgs = GetElementInsideContainer(thisUserThing, "Imgs");
+   var imgs = getElementInsideContainer(thisUserThing, "Imgs");
    var ImgsHldr=imgs.parentElement;
    ImgsHldr.onclick=null;
    ThingLocationBox.value=ThingLocation.innerText;
@@ -1697,8 +1721,8 @@ var updateThing = function() {
    var content = {};
    content.things=[];
    var UserThing = this.parentElement;
-   var imgs=GetElementInsideContainer(UserThing, "Imgs");
-   var ThingLocPin = GetElementInsideContainer(UserThing, "ThingLocationPin");
+   var imgs=getElementInsideContainer(UserThing, "Imgs");
+   var ThingLocPin = getElementInsideContainer(UserThing, "ThingLocationPin");
    var ImgsHldr=imgs.parentElement;
    ImgsHldr.onclick=showThingDetails;
    if (!(cncl && UserThing.thingId==-1)) {
@@ -1801,14 +1825,14 @@ var sendFileData = function(data, chunkSize, l) {
    sendChunk(0);
 };
 
-function GetElementInsideContainer(container, childID) {
+function getElementInsideContainer(container, childID) {
    var elms = container.children;
    for (var i = 0; i < elms.length; i++) {
       var elm=elms[i];
       if (elm.id === childID) {
          return elm;
       }
-      var child = GetElementInsideContainer(elm, childID);
+      var child = getElementInsideContainer(elm, childID);
       if (child) {
          return child;
       }

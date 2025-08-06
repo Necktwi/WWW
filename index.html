@@ -915,7 +915,9 @@
          <input id="pImg" type="button" value="<" class="imgNxtBtns"
                 onclick="nxtImg(1)"/>&nbsp &nbsp
          <input id="nImg" type="button" value=">" class="imgNxtBtns"
-                onclick="nxtImg(0)"/>
+                onclick="nxtImg(0)"/>&nbsp &nbsp
+         <input id="eImg" type="button" value="+" class="imgNxtBtns"
+                onclick="incImg(0)"/>
          </div>
          </div>
          <label id="ThingLocationL" class="removable">Location: </label>
@@ -946,6 +948,8 @@
             </div>
          </div>
          </div>
+         <input id="showURLBtn" class="" type="Button"
+                value="^" onclick="showURL.call(this, event)"/>
          <input id="cnclEdtBtn" class="removable" type="Button"
                 value="Cancel"/>
          <input id="ThingEditBtn" class="" type="Button" value="Edit"/>

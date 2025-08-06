@@ -199,6 +199,9 @@ footer.if {
 #Log.visible div.hidden {
    display: revert;
 }
+a {
+   color: #8888ff;
+}
 #Log #about a {
    color: #8888ff;
 }
@@ -339,6 +342,11 @@ inptTxtBx.typing {
 #Thing.editMode #thnBtm {
    position: relative;
 }
+#showURLBtn {
+   position: absolute;
+   top: 1mm;
+   right: 15mm;
+}
 #ThingEditBtn {
    display: none;
    position: absolute;
@@ -348,7 +356,9 @@ inptTxtBx.typing {
 #Thing.mine #ThingEditBtn {
    display:block;
 }
-
+#Thing.mine #qSendDiv {
+   display: none;
+}
 #Thing.active {
    /* scale: 1.2; */
    /* float: left; */
@@ -381,6 +391,7 @@ body.signed #Thing.active #ThingDetails, body.signed #Thing.active #msgdiv {
 
 #ImgHldr {
    height: 6cm;
+   height: fit-content;
 }
 #Imgs {
    width: fit-content;
@@ -391,6 +402,10 @@ svg.fixedSize, img.fixedSize {
    height: 6cm;
    background-color: rgb(64,64,64);
    border-radius: 2mm;
+}
+
+svg.plusSize, img.plusSize {
+   height: 61.8vh;
 }
 
 svg.fixedSize {
@@ -422,6 +437,7 @@ svg.fixedSize {
 }
 #ThingImg {
    display:block;
+   max-width:98vw;
 }
 #Thing input {
    font-size: 4mm;
@@ -589,6 +605,13 @@ footer {
    -moz-transform-style: preserve-3d;
    transition: width 2s, height 2s, transform 2s linear;
    transform-style: preserve-3d;
+}
+@keyframes blink {
+	0% { opacity:1 } 75% { opacity:1 } 76% { opacity:0 } 100% { opacity:0 }
+}
+
+blink, .blink-css {
+	animation:blink 0.75s ease-in infinite alternate!important;
 }
 .middle {
    position: relative;
