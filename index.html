@@ -31,15 +31,8 @@
 </head>
 <body onload="init()" class="dark">
    <script>0</script>
-   <div id="LocationDDiv" class="if">
-      <div id="LocationDiv">
-         <input id="LocationBox" class="labeled hidden"/>
-         <span id="LocTxt" class="hidden"></span>
-         <div id="LocationPin" class="empty hidden"></div>
-      </div>
-   </div>
    <footer onclick="about()" class="if">
-      <div id="cr">© FerryFair<span id="beta">BETA</span>
+      <div id="cr">© FerryFair <span id="beta">β</span>
       </div>
       <address>
          <a id="jackmail"
@@ -53,72 +46,80 @@
          <a class="plain" href="https://github.com/gowthamkudupudi/FFJSON">
             Backed by FFJSON</a><br/>
          <a href="/md.html?HowTo.md">HowTo</a>
-         <p id="jack" class="hidden">
-            <a class="plain" href="notes/">- Gowtham Kudupudi</a></p>
+         <template><p id="jack" class="hidden">
+            <a class="plain" href="notes/">- Gowtham Kudupudi</a></p></template>
+      </div>
+   </div>
+   <img src="img/FerryFair2.png?2" class="hidden"/>
+   <div id="LocationDDiv" class="if">
+      <div id="LocationDiv">
+         <input id="LocationBox" class="labeled hidden"/>
+         <span class="hidden"> :location</span>
+         <span id="LocTxt" class="hidden"></span>
+         <div id="LocationPin" class="empty hidden"></div>
       </div>
    </div>
    <header class="">
-      <div id="mbox" class="hidden">
+      <template><div id="mbox" class="hidden">
          <div id="inboxL">Inbox:</div>
          <div id="inbox" class=""></div>
          <div id="outboxL">Outbox:</div>
          <div id="outbox" class=""></div>
       </div>
       <table id="htable"><tr><td id="logoTd" style="vertical-align: top;">
-      <div id="logoDiv" class="if">
+               <div id="logoDiv" class="if">
       <svg xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink" id="logo" class=""
-   viewBox="0 0 288 446.208" style="">
+           xmlns:xlink="http://www.w3.org/1999/xlink" id="logo" class=""
+           viewBox="0 0 288 446.208" style="">
          <style>
-         .back {
-            stroke:#888888;
-         }
-         .front {
-            stroke:#000000;
-         }
-         .far {
-            fill-opacity:0.7;
-         }
-         .dark .back {
-            stroke:#888888;
-         }
-         .dark .front {
-            stroke:#ffffff;
-         }
-         #Hull {
-            stroke-width: 3;
-         }
-         #Ferry {
-            stroke: #888888;
-         }
-         .dark #Ferry {
-            fill-opacity:0.5;
-         }
-         #Waves {
-            stroke-width: 3;
-            stroke: #4444ff;
-            fill: #4444ff;
-            fill-opacity: 0.3;
-         }
-         .small #Ferry, .dark .small #Ferry, .small #Waves,
-         .dark .small #Waves {
-            fill-opacity: 1;
-         }
-         .small #Ferry #Hull {
-            stroke-width: 8;
-         }
-         .small #Waves {
-            fill:#8888ff
-         }
-      </style>
-   <g id="Ferry" transform="matrix(1 0 0 1 0 24)"
-      style="">
-      <g>
-         <g transform="matrix(0.724861, 0, 0, 0.724861, -197.491806,
-            -594.726929)"
-            id="icosohedron"
-            style=" stroke-miterlimit: 4;
-               stroke-dasharray: none; fill: red;">
+           .back {
+              stroke:#888888;
+           }
+           .front {
+              stroke:#000000;
+           }
+           .far {
+              fill-opacity:0.7;
+           }
+           .dark .back {
+              stroke:#888888;
+           }
+           .dark .front {
+              stroke:#ffffff;
+           }
+           #Hull {
+              stroke-width: 3;
+           }
+           #Ferry {
+              stroke: #888888;
+           }
+           .dark #Ferry {
+              fill-opacity:0.5;
+           }
+           #Waves {
+              stroke-width: 3;
+              stroke: #4444ff;
+              fill: #4444ff;
+              fill-opacity: 0.3;
+           }
+           .small #Ferry, .dark .small #Ferry, .small #Waves,
+           .dark .small #Waves {
+              fill-opacity: 1;
+           }
+           .small #Ferry #Hull {
+              stroke-width: 8;
+           }
+           .small #Waves {
+              fill:#8888ff
+           }
+         </style>
+         <g id="Ferry" transform="matrix(1 0 0 1 0 24)"
+            style="">
+            <g><g transform="matrix(0.724861, 0, 0, 0.724861, -197.491806,
+                             -594.726929)"
+                  id="icosohedron"
+                  style="stroke-miterlimit: 4;
+                         stroke-dasharray: none; fill: red;">
             <path id="path5139-8-1-9-4-6-0-4-0" class="far"
                   d="m 412.76277,893.14547 38.68576,37.33417 4.12655,-63.3926
                      z"/>
@@ -208,11 +209,12 @@
                   -8.49094 m -47.51781,-68.08724 47.51781,68.08724"
                id="path4807-4-2-4-4-8-6-5-3-7-8"/>
          </g>
-         <animateTransform attributeName="transform" begin="3.7s" dur="1.5s"
-            type="rotate" additive="sum" repeatCount="1" calcMode="spline"
+               <animateTransform
+                  attributeName="transform" begin="3.7s" dur="1.5s"
+                              type="rotate" additive="sum" repeatCount="1" calcMode="spline"
             keySplines="0 .3 .8 1" values="0 128 208; 15 128 208"
             fill="freeze"/>
-         <animateTransform attributeName="transform" begin="5.2s" dur="6s"
+            <animateTransform attributeName="transform" begin="5.2s" dur="6s"
             type="rotate" additive="sum" repeatCount="7"
             calcMode="spline" keySplines=".5 0 .5 1; .5 0 .5 1"
             values="0 128 208; -30 128 208; 0 128 208" fill="freeze"
@@ -881,13 +883,13 @@
                </svg>
             </button>
          </div>
-      </td>
-      </tr></table>
+      </td></template>
+      </tr></table></template>
       <div id="searchBar">
          <div id="lips"><form id="mouthPad">
             <input id="mouth" name="search" type="text" class="labeled"/>
-            <!--input id="search-tool" type="image" src="img/SearchTool.svg"
-                alt="Search"/-->
+            <button class="hidden" id="search-tool" type="submit"
+                   src="images/search.png" value="near to me!"/>
             <svg id="searchTool" alt="Search" viewBox="0 0 42 66"
                  xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -904,12 +906,12 @@
          </form></div>
       </div>
    </header>
-   <div id="Things" class="hidden">
+   <template><div id="Things" class="hidden">
       <div id="Thing" class="thing">
          <div id="ImgsHldr"class="">
          <div id='Imgs' class="">
             <div id="ImgHldr" class="center">
-               <img id="ThingImg" class="fixedSize"/>
+               <img id="ThingImg" class="fixedSize" loading="lazy"/>
             </div>
          </div>
          <label id="chusPicBtnL" class="removable hidden">Browse...</label>
@@ -968,7 +970,7 @@
          <textarea id="replyBox" rows="2" cols="22"></textarea>
          <input id="replyBtn" type="Button" value="Reply"/>
       </div>
-   </div>
+   </div></template>
    <!--div id="land">
       <div class=""><div id="compound-wall">
          <div class="plot">

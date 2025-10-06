@@ -507,7 +507,15 @@ var blurInput = function () {
       document.activeElement.blur();
    }
 }
+var makeDynamic = function () {
+   var dElms = document.getElementsByTagName("template");
+   while (dElms.length) {
+      let dElm = dElms[0];
+      dElm.outerHTML=dElm.innerHTML;
+   }
+}
 var init = function () {
+   makeDynamic();
    isApple=/iPad|iPhone|iPod/.test(navigator.userAgent);
    inps=document.getElementsByTagName("input");
    for (let i=0;i<inps.length;++i) {
@@ -825,6 +833,7 @@ function selectFiles (ev) {
          img = document.createElement('img');
          imgHldr.insertAdjacentElement('beforeEnd', img);
          img.classList.add("fixedSize");
+         img.setAttribute("loading","lazy").
          addDummyImgs(thisThing);
          img.onload = function () {
             ferrylog("thumbLoaded");

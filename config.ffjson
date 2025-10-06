@@ -2,5 +2,8 @@
 	maxThings: 5,
 	maxThingPics: 3,
 	maxMsgs: 25,
-	secret: file:///home/Necktwi/workspace/WWW-development/red/secret.ffjson
+	secret: file://red/secret.ffjson,
+   users: file://red/users.ffjson,
+   rbs: file://red/rbs.ffjson,
+   nameints: file://red/nameints.ffjson
 }

@@ -596,7 +596,7 @@ footer {
    padding-left: 1mm;
    padding-right: 1mm;
    position: relative;
-   left: 1mm;
+   /* left: 1mm; */
 }
 .transform2s3d {
    -webkit-transition: width 2s, height 2s, -webkit-transform 2s linear;
