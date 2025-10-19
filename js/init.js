@@ -833,7 +833,7 @@ function selectFiles (ev) {
          img = document.createElement('img');
          imgHldr.insertAdjacentElement('beforeEnd', img);
          img.classList.add("fixedSize");
-         img.setAttribute("loading","lazy").
+         img.setAttribute("loading","lazy");
          addDummyImgs(thisThing);
          img.onload = function () {
             ferrylog("thumbLoaded");
