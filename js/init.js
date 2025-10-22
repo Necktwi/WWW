@@ -222,6 +222,12 @@ var viewportHandler = function() {
    Header.style.bottom=window.innerHeight-viewport.height+"px";
    mbox.style.maxHeight=
       viewport.height-Htable.offsetHeight-mmToPxls(10+5)+"px";
+   if (Header.offsetHeight>viewport.height) {
+      Header.style.maxHeight=viewport.height+"px";
+      Header.style.overflow="auto";
+   } else {
+      Header.style.overflow="unset";      
+   }
 }
 
 var showBoxUpdtLoc = function() {
@@ -761,7 +767,7 @@ var proceedCompressedImage = function (compressedSrc) {
    sendFileData(new Uint8Array(compressedSrc), 2048, l);
 }
 
-function resizeMe(img,qf,gotBlob,thumbNail) {  
+function resizeMe (img, qf, gotBlob, thumbNail) {  
    var canvas = document.createElement('canvas');
    var width = img.width;
    var height = img.height;
