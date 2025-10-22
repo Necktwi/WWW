@@ -648,6 +648,10 @@ var init = function () {
       addEvent(elm, 'beforeinput', inputOnKeyDown);
    }
    User = document.getElementById('user');
+   User.onclick = function () {
+      location.href=location.origin+"/"+User.innerHTML+"?"+
+         new Date().getTime();
+   }
    addEvent(Username, 'keydown', usrnmEvent);
    addEvent(Password, 'keydown', authenticateUser);
    addEvent(SearchTool, 'click', search);
@@ -697,9 +701,13 @@ var init = function () {
       Location.classList.add("hidden");
       var url = "cookie"+window.location.search;
       var f={};
+      if (location.pathname!="/") {
+         tgtUsr=location.pathname.substr(1);
+      }
       f.pstr = Location.value;
       ferrylog("Location: " + f.pstr);
-      f.content="{bid:\""+browserID+"\",geoposition:["+f.pstr+"]}";
+      f.content="{bid:\""+browserID+"\",geoposition:["+f.pstr+"]";
+      f.content+=!window.tgtUsr?"}":",path:\""+tgtUsr+"\"}";
       f.postExpdtn=onBID;
       f.reqHeaders=[["content-type", "text/json"]];
       shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
@@ -1222,6 +1230,10 @@ var updateThings = function (res) {
          tid.innerText=thing.id;
          var tusr=getElementInsideContainer(thingN, "ThingUsr");
          tusr.innerText=un;
+         if (window.tgtUsr) {
+            if (tgtUsr!=un)
+               thingN.classList.add("hidden");
+         }
       }
       if (thing.name && thing.name.length) {
          var name=getElementInsideContainer(thingN, "ThingName");

@@ -24,7 +24,7 @@
    <meta http-equiv="content-language" content="en">
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
    <script type="text/javascript" src="js/core.js"></script>
-   <script type="text/javascript" src="js/init.js?2"></script>
+   <script type="text/javascript" src="js/init.js?7"></script>
    <link type="text/css" href="css/main.css?4" rel="stylesheet"/>
    <link type="text/css" href="css/main-dark.css" rel="stylesheet"/>
    <link type="text/css" href="css/svg.css?1" rel="stylesheet"/>
@@ -906,6 +906,16 @@
          </form></div>
       </div>
    </header>
+   <div id="tgtUsrLgHldr"class="hidden">
+      <div id='Imgs' class="">
+         <div id="ImgHldr" class="center">
+            <img id="ThingImg" class="fixedSize" loading="lazy"/>
+         </div>
+      </div>
+      <label id="chusPicBtnL" class="removable hidden">Browse...</label>
+      <input id="chusPicBtn" type="file" class="editBtn removable"
+             onchange="selectFiles.call(this, event);"/>
+   </div>   
    <template><div id="Things" class="hidden">
       <div id="Thing" class="thing">
          <div id="ImgsHldr"class="">
