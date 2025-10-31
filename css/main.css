@@ -31,6 +31,7 @@
    position: relative;
    top: -0.06cm;
    font-size: 6mm;
+   cursor: pointer;
 }
 * {
    font-family: NSR;
@@ -69,6 +70,7 @@ header input {
    padding-right: 0.1cm;
    border-radius: 1px;
    /* position: relative; */
+   cursor: pointer;
 }
 #logo.big {
    height: 7cm;
@@ -78,15 +80,18 @@ header input {
 }
 #logoDiv {
    /* position: relative; */
+   width: 1cm;
+   text-align:center;
 }
 #logoDiv.if {
    position:fixed;
    z-index:11;
-   width: 99vw;
-   height: 99vh;
+   width: calc(100vw - 1px);
+   height: calc(100vh - 1px);
    top:0px;
    left:0px;
    background-color: black;
+   text-align: left;
    /* display: flex; */
    /* justify-content: center; */
    /* align-items: center; */
@@ -100,7 +105,21 @@ header input {
    transform: translate(-50%,-50%);
    border-radius: 7mm;
 }
-
+#gglSn {
+   transform: scale(1.6);
+   width: 6mm;
+   position: relative;
+   bottom: 1mm;
+   margin-right: 1mm;
+}
+#gglSnB {
+   margin-top: 4mm;
+   margin-bottom: 4mm;
+}
+#tgtUsrLgHldr {
+   font-family: AB;
+   font-size: 8mm;
+}
 footer.if {
    position: fixed;
    bottom: 2mm;
@@ -111,16 +130,19 @@ footer.if {
 #lock {
    height: 0.8cm;
    width: 0.8cm;
+   cursor: pointer;
 }
 #unlock {
    height: 0.8cm;
    width: 0.8cm;
    /* vertical-align: middle; */
+   cursor: pointer;
 }
 #owlOnPerch {
    width: 1cm;
    position: relative;
    top:1mm;
+   cursor: pointer;
 }
 #username {
    width: 5cm;
@@ -197,9 +219,30 @@ footer.if {
    z-index:11;
    text-align:left;
 }
+#Log div:not(#about) {
+   background-color: yellow;
+   color: black;
+   width: fit-content;
+   border-radius: 3px;
+   padding-left: 1mm;
+   padding-right: 1mm;   
+}
+#Log.visible div {
+   background-color: inherit;
+   color: inherit;
+   width: inherit;
+   border-radius: inherit;
+   padding-left: inherit;
+   padding-right: inherit;
+}
 #Log.visible div.hidden {
    display: revert;
 }
+#Log div.dim:not(#about) {
+   background-color: inherit;
+   color: inherit;
+}
+
 a {
    color: #8888ff;
 }
@@ -266,6 +309,10 @@ a {
 }
 .inptTxtBx.typing:blur {
    color: black;
+}
+#LockBloc {
+   width: 1cm;
+   text-align: center;
 }
 body.signed #LockBlock, body.signed #Credentials, body.signed #signupdiv {
    display: none;
@@ -666,6 +713,9 @@ blink, .blink-css {
 /* } */
 .hidden {
    display: none;
+}
+.mask {
+   visibility: hidden;
 }
 .plot {
    position: relative;

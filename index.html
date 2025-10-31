@@ -2,7 +2,7 @@
     @author: Gowtham Kudupudi
 -->
 <!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en" style="background-color: black"><head>
    <title>FerryFair | Hyper fast spatial search</Title>
    <link rel='icon' href='img/favicon2.ico' type='image/x-icon'/>
    <link rel='icon' href='img/favicon64.ico' type='image/x-icon' size="64x64"/>
@@ -23,13 +23,21 @@
    <meta name="language" content="English">
    <meta http-equiv="content-language" content="en">
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-   <script type="text/javascript" src="js/core.js"></script>
-   <script type="text/javascript" src="js/init.js?7"></script>
-   <link type="text/css" href="css/main.css?4" rel="stylesheet"/>
+   <meta http-equiv="Content-Security-Policy-Report-Only" content=
+         "script-src https://accounts.google.com/gsi/client;
+          frame-src https://accounts.google.com/gsi/;
+          connect-src https://accounts.google.com/gsi/;"
+   <meta name="google-signin-client_id" content=
+      "91088616070-phsro3v29up7pts7od1e8snkee0ak774.apps.googleusercontent.com"
+      />
+   <script type="text/javascript" src="js/core.js?1"></script>
+   <script type="text/javascript" src="js/init.js?74"></script>
+   <script src="https://accounts.google.com/gsi/client" async></script>
+   <link type="text/css" href="css/main.css?27" rel="stylesheet"/>
    <link type="text/css" href="css/main-dark.css" rel="stylesheet"/>
    <link type="text/css" href="css/svg.css?1" rel="stylesheet"/>
 </head>
-<body onload="init()" class="dark">
+<body onload="init()" class="dark hidden">
    <script>0</script>
    <footer onclick="about()" class="if">
       <div id="cr">© FerryFair <span id="beta">β</span>
@@ -59,6 +67,7 @@
          <div id="LocationPin" class="empty hidden"></div>
       </div>
    </div>
+   <div id="loadTop"></div>
    <header class="">
       <template><div id="mbox" class="hidden">
          <div id="inboxL">Inbox:</div>
@@ -535,21 +544,27 @@
       <span id="Desc" class="">signin/signup<br/>
       to add ur things to the fair</span></span>
       <div id="Credentials" class="hidden">
+      <div id="gglSnD"><input id="gglSn" type="checkbox"/>
+         Sign <span id="inUp">in</span> with Google<div id="gglSnB" class="hidden"></div><div id="gmail" class="hidden"></div></div>
       <div id="UsernameL" class="inlBlk">Username: <br/>
          <input id="username" alt="Username" class="" autocorrect="off"
                 autocapitalize="off"/></div>
-      <div id="PasswordL" class="inlBlk">Password: <br/>
+      <div id="PasswordL" class="inlBlk hidden">Password: <br/>
       <input id="password" alt="Password" class=""/></div>
       <div id="signupdiv" class="hidden">
          <div id="EmailL">Email: 
             <input id="email" alt="Email" class="" autocorrect="off"
                    autocapitalize="off"/></div>
-         <div id="SupPas">
+         <div id="passBlk" class="hidden">
          <div id="Password1L">
             <span id="NewL" class="hidden">New </span>Password: 
          <input id="passwords1" alt="Password"/></div>
          <div id="Password2L">Retype Password: 
-            <input id="passwords2" alt="Password" class=""/></div>
+            <input id="passwords2" alt="Password" class=""/></div><br/>
+         <label id="CaptchaL">Captcha: </label><br/>
+         <input id="Captcha" alt="Captcha" autocorrect="off"
+                autocapitalize="off"/><br/>
+         <img id="CaptchaImg" src="">
          </div>
          <div id="ConsentL">
             <svg id="ConsentImg" class="hidden" viewBox="0 0 512 512"
@@ -569,25 +584,22 @@
                      style="fill:#000000;"/>
             </svg>
             <input id="Consent" alt="Consent" type="checkbox">
-            <a id="ConsentT"href="tnc.md">I agree to terms and condition</a>
+            <a id="ConsentT"href="md.html?tnc.md">
+               I agree to terms and condition</a>
          </div>
-         <label id="CaptchaL">Captcha: </label><br/>
-         <input id="Captcha" alt="Captcha" autocorrect="off"
-                autocapitalize="off"/><br/>
-         <img id="CaptchaImg" src=""><br/>
       </div>
       <input id="SubmitBtn" value="Submit" type="button"/>
       <div class="inlBlk"><nobr><label id="SignInL">
          <input id="SignIn" alt="SignIn" type="radio" value="0" checked
                 onclick="togglesignup()"/ name="accountIntx">
       SignIn </label></nobr>
-      <nobr><input id="SignUp" alt="SignUp" type="radio" value="1"
-             onclick="togglesignup()"/ name="accountIntx">
-      <label id="SignUpL">SignUp </label></nobr>
-      <nobr><label id="RecoverL">
+      <nobr><label id="RecoverL" class="hidden">
          <input id="Recover" alt="Recover" type="radio" value="2"
                 onclick="togglesignup()"/ name="accountIntx">
-      ResetPassword</label></nobr></div>
+      ResetPassword</label></nobr>
+      <nobr><input id="SignUp" alt="SignUp" type="radio" value="1"
+             onclick="togglesignup()"/ name="accountIntx">
+      <label id="SignUpL">SignUp </label></nobr></div>
       </div>
       <div id="usermenu" class="hidden">
          <svg id="unlock" height="24" viewBox="0 0 24 24" width="24"
@@ -907,10 +919,8 @@
       </div>
    </header>
    <div id="tgtUsrLgHldr"class="hidden">
-      <div id='Imgs' class="">
-         <div id="ImgHldr" class="center">
-            <img id="ThingImg" class="fixedSize" loading="lazy"/>
-         </div>
+      <div id="ImgHldr" class="center">
+         <img id="ThingImg" class="fixedSize" loading="lazy"/>
       </div>
       <label id="chusPicBtnL" class="removable hidden">Browse...</label>
       <input id="chusPicBtn" type="file" class="editBtn removable"
@@ -1002,7 +1012,9 @@
          </div>
       </div></div>
    </div-->
-      <br/><br/><br/><br/><br/><br/>
+      <br/>
+      <button id="loadBottom" value="load more ...">load more...</button>
+      <br/><br/><br/><br/><br/><br/><br/>
    <div id="chin" class="hidden"><br/><br/><br/><br/></div>
 <div id="SVGS" hidden>
    <svg id="SpiralSVG" class="fixedSize" viewBox="0 0 288 288"

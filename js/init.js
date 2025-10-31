@@ -1,10 +1,10 @@
 var Footer,Logo,LogoDiv,LogoTd,Mbox,Inbox,Outbox,OwlOnPerch,owlMail;
 var LocationPin,LocationDDiv,LocationDiv,Location,LocTxt,LocTTimeout,LocTHide;
-var SearchTool,SearchToolOpacity=1,SearchBar;
-var SearchToolBlink;
-var Mouth,MouthPad;
+var SearchTool,SearchToolOpacity=1,SearchBar,LoadTop,LoadBottom;
+var SearchToolBlink, GglSnD, GglSn, GglSnB, Gmail, PassBlk;
+var Mouth, MouthPad, InUp;
 var Lock,Desc,LockBlock,CMPD;
-var Signupdiv;
+var Signupdiv, ffGglId;
 var Username, Credentials;
 var Password;
 var Email, SubmitBtn;
@@ -12,7 +12,7 @@ var Passwords1, Password1L, Password2L, CaptchaImg, Captcha, NewL;
 var Passwords2, ConsentL, Consent, NonRecovery;
 var SignIn,SignUp,Recover;
 var Usermenu;
-var User;
+var User, TgtUsrLgHldr;
 var Unlock, Log, ThingRemovables=[], imageCompressor;
 var ThingLocationL, ThingLocationBox, ThingNameL, ThingNameBox;
 var chusPicBtn, chusPicBtnL, ThingDetailsDiv, CnclEdtBtn;
@@ -22,24 +22,32 @@ var searchPlcHldr = 'Search things near U';
 var locPlcHldr = "E.g. 12.3456,-78.9012";
 var caretPos=0;
 const MaxImgsPerThing=3;
-var browserID,isApple;
-var userData;
-var clearLogInterval;
+var browserID,isApple,blinker;
+var userData = {};
+var LocatingULog;
 var lstThn, lstThnDtls, Chin;
 var Header,Htable;
-
-var ferrylog = function (msg, interval=15000) {
+var hideLogDiv = function (elm) {
+   elm.classList.remove("blink");
+   elm.classList.add("hidden");
+   if (document.getElementsByClassName("blink").length==0) {
+      clearTimeout(blinker);
+      blinker=null;
+   }
+}
+var ferrylog = function (msg, timeout=15000) {
    if (Log.children.length) {
       Log.lastElementChild.classList.add("hidden");
    }
    var nl=document.createElement("div");
    nl.innerHTML=msg;
    Log.insertAdjacentElement("beforeEnd", nl);
-   clearInterval(clearLogInterval);
-   clearLogInterval = setInterval(
-      function(){Log.lastElementChild.classList.add("hidden")}, interval
-   );
-   return Log.children.length-1;
+   nl.classList.add("blink");
+   if (!blinker) {
+      blink();
+   }
+   setTimeout(hideLogDiv, timeout, nl);
+   return nl;
 }
 
 var toggleLog = function () {
@@ -126,6 +134,8 @@ var showAllThings = function () {
    for (let i=0;i<Things.children.length;++i) {
       let thing = Things.children[i];
       if (thing.thingId!=-1) {
+         if (window.tgtUsr && thing.user!=window.tgtUsr)
+            continue;
          thing.classList.remove("hidden");
       }
    }
@@ -287,6 +297,8 @@ var updateLocation = function (show) {
          Logo.onclick.call(Logo);
       }
       if (posErr.code == posErr.PERMISSION_DENIED) {
+         if (LocatingULog) 
+            hideLogDiv(LocatingULog);
          ferrylog("U denied locating you! Enter ur preferred "+
                   "Latitude,Longitude above.");
          return;
@@ -302,8 +314,11 @@ var updateLocation = function (show) {
          enableHighAccuracy:false
       }
       navigator.geolocation.getCurrentPosition(onPosition,onPosErr,options);
-      if (!browserID)
-         ferrylog("LocatingU!", 100000);
+      if (!browserID) {
+         if (LocatingULog) 
+            hideLogDiv(LocatingULog);
+         LocatingULog=ferrylog("LocatingU!", 100000);
+      }
    } else {
       let err={};
       err.message="GeoLocationNotSupportedByUrBrowser";
@@ -520,6 +535,120 @@ var makeDynamic = function () {
       dElm.outerHTML=dElm.innerHTML;
    }
 }
+var onMoreThings = function (feed) {
+   var res = JSON.parse(feed.responseText);
+   if (res.things.length)
+      updateThings(res);
+   else {
+      LoadBottom.innerHTML="no more!";
+      LoadBottom.onclick=null;
+   }
+}
+var loadMore = function () {
+   let bottom = false;
+   if (this.id == "loadBottom") {
+      bottom = true;
+   }
+   var url = "pts";
+   var f={};
+   var cnt = {};
+   cnt={};
+   cnt.search=Things.classList.contains("search");
+   cnt.dir=bottom?1:-1;
+   cnt.ni=-1;
+   f.content=JSON.stringify(cnt);
+   f.postExpdtn=onMoreThings;
+   f.reqHeaders=[["content-type", "text/json"]];
+   shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
+   
+}
+function decodeJwtResponse (token) {
+    let base64Url = token.split('.')[1];
+    let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    let jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
+}
+var userKeyDown = function () {
+   if (!this.keyboardDetermined && event.type === "keydown") {
+      if (event.keyCode==229 && !event.code) {
+         this.onkeydown=null;
+         this.keyboardDetermined=true;
+         return;
+      } else {
+         this.oninput=null;
+      }
+      this.keyboardDetermined=true;
+   }
+   if (this.value.length<=2) { //46=delete
+      if(!(event.keyCode == 8 || event.keyCode == 46 || event.keyCode == 229 ||
+         event.inputType === 'deleteContentBackward')) {
+         GglSnD.classList.add("hidden");
+         PasswordL.classList.remove("hidden");
+      } else {
+         PasswordL.classList.add("hidden");      
+         GglSnD.classList.remove("hidden");
+      }
+   }
+}
+var emailKeyDown = function () {
+   if (!this.keyboardDetermined && event.type === "keydown") {
+      if (event.keyCode==229 && !event.code) {
+         this.onkeydown=null;
+         this.keyboardDetermined=true;
+         return;
+      } else {
+         this.oninput=null;
+      }
+      this.keyboardDetermined=true;
+   }
+   if (this.value.length<=2) { //46=delete
+      if (!(event.keyCode == 8 || event.keyCode == 46 || event.keyCode == 229 ||
+            event.inputType === 'deleteContentBackward')) {
+         GglSnD.classList.add("hidden");
+         PassBlk.classList.remove("hidden");
+      } else {
+         PassBlk.classList.add("hidden");      
+         GglSnD.classList.remove("hidden");
+      }
+   }
+}
+var hideUserSignIn = function () {
+   Gmail.classList.add("hidden");
+   if (this.checked) {
+      Recover.classList.add("hidden");
+      if (SignUp.checked || Recover.checked) {
+         EmailL.classList.add("hidden");
+         GglSnB.classList.remove("hidden");
+      } else {
+         UsernameL.classList.add("hidden");
+         GglSnB.classList.remove("hidden");
+         SubmitBtn.classList.add("hidden");
+      }
+   } else {
+      if (SignUp.checked || Recover.checked) {
+         GglSnB.classList.add("hidden");
+         EmailL.classList.remove("hidden");
+      } else {
+         GglSnB.classList.add("hidden");      
+         UsernameL.classList.remove("hidden");
+         SubmitBtn.classList.remove("hidden");
+      }
+   }
+}
+var gglSnHandler = function (res) {
+   const resPld = decodeJwtResponse(res.credential);
+   Username.token=res.credential;
+   Gmail.innerHTML=resPld.email;
+   gglSnB.classList.add("hidden");
+   Gmail.classList.remove("hidden");
+   if (SignIn.checked) {
+      authenticateUser(resPld);
+   } else if (SignUp.checked) {
+      signup(resPld);
+   }
+}
 var init = function () {
    makeDynamic();
    isApple=/iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -534,9 +663,13 @@ var init = function () {
    Footer=document.getElementsByTagName("footer")[0];
    Header=document.getElementsByTagName("header")[0];
    Htable=Header.firstElementChild;
+   LoadTop=document.getElementById('loadTop');
+   LoadBottom=document.getElementById('loadBottom');
+   LoadBottom.onclick = loadMore;
    Logo=document.getElementById('logo');
    LogoDiv=document.getElementById('logoDiv');
    LogoTd=document.getElementById('logoTd');
+   LogoTd.setAttribute("title",location.origin);
    LogoDiv.remove();
    document.body.insertAdjacentElement('afterBegin',LogoDiv);
    Chin=document.getElementById('chin');
@@ -609,6 +742,15 @@ var init = function () {
    Password.type='password';
    //Password.value=Password.plcHldr;
    Signupdiv=document.getElementById("signupdiv");
+   InUp=document.getElementById("inUp");
+   GglSnD=document.getElementById("gglSnD");
+   GglSn=document.getElementById("gglSn");
+   GglSnB=document.getElementById("gglSnB");
+   Gmail=document.getElementById("gmail");
+   GglSn.onchange=hideUserSignIn;
+   Username.onkeydown=userKeyDown;
+   Username.oninput=userKeyDown;
+   PassBlk=document.getElementById("passBlk");
    SignIn=document.getElementById("SignIn");
    Recover=document.getElementById("Recover");
    SignUp=document.getElementById("SignUp");
@@ -616,6 +758,8 @@ var init = function () {
    SignIn.checked=true;
    Email=document.getElementById("email");
    EmailL=document.getElementById("EmailL");
+   Email.onkeydown = emailKeyDown;
+   Email.oninput = emailKeyDown;
    Passwords1=document.getElementById("passwords1");
    Passwords2=document.getElementById("passwords2");
    Password1L=document.getElementById("Password1L");
@@ -652,6 +796,7 @@ var init = function () {
       location.href=location.origin+"/"+User.innerHTML+"?"+
          new Date().getTime();
    }
+   TgtUsrLgHldr=document.getElementById("tgtUsrLgHldr");
    addEvent(Username, 'keydown', usrnmEvent);
    addEvent(Password, 'keydown', authenticateUser);
    addEvent(SearchTool, 'click', search);
@@ -732,6 +877,17 @@ var init = function () {
    // window.onresize = function () {
    //    Log.style.bottom = "0.2cm";
    // };
+   document.body.classList.remove("hidden");
+   ffGglId="91088616070-phsro3v29up7pts7od1e8snkee0ak774";
+   ffGglId+=".apps.googleusercontent.com";
+   google.accounts.id.initialize({
+      client_id: ffGglId,
+      callback: gglSnHandler
+   });
+   google.accounts.id.renderButton(
+      GglSnB,
+      { theme: "outline", size: "small" }  // customization attributes
+   );
 };
 var sendMsg = function () {
    var thing=this.parentElement.parentElement.parentElement;
@@ -917,7 +1073,9 @@ var onBID = function (feed) {
       LocationDDiv.classList.remove("if");
       Footer.classList.remove("if");
       Logo.classList.add("small");
-      Logo.onclick=null;
+      Logo.onclick = function () {
+         location.href=location.origin+"?"+ new Date().getTime();
+      }
       LocationPin.classList.remove("hidden");
       LocTHide = function () {
          LocTxt.classList.add("hidden");
@@ -934,12 +1092,12 @@ var onBID = function (feed) {
    if (res.name && res.email) {
       Username.value=res.name;
       Email.value=res.email;
-      login(feed);
+      signin(feed);
    } else {
       updateThings(res);
    }
    if (Logo.onclick==gotoHome) {
-      ferrylog("<blink>click logo to view all things around U</blink>",50000);
+      ferrylog("click logo to view all things around U",50000);
    }
    Location.classList.add("hidden");
    Location.onclick=updateLocation;
@@ -947,7 +1105,26 @@ var onBID = function (feed) {
    LocTxt.classList.remove("hidden");
    LocationPin.onclick = showBoxUpdtLoc;
    LocationDDiv.classList.remove("hidden");
+   if (window.tgtUsr) {
+      TgtUsrLgHldr.innerHTML= tgtUsr;
+      TgtUsrLgHldr.classList.remove("hidden");
+   }
    delete shuttle;
+}
+var hideBlink = function () {
+   let blinkElms = document.getElementsByClassName("blink");
+   for (let i=0; i<blinkElms.length; ++i) 
+      blinkElms[i].classList.add("dim");
+   blinker=setTimeout(showBlink,300);
+}
+var showBlink = function () {
+   let blinkElms = document.getElementsByClassName("blink");
+   for (let i=0; i<blinkElms.length; ++i) 
+      blinkElms[i].classList.remove("dim");
+   blinker=setTimeout(hideBlink,3000);
+}
+var blink = function () {
+   blinker=setTimeout(hideBlink,3000)
 }
 var onCaptcha = function(feed){
    var res = JSON.parse(feed.responseText);
@@ -962,23 +1139,39 @@ var markUserThings = function () {
       uts[tid].classList.add("mine");
    }
 }
-var login = function(feed) {
+var signin = function(feed) {
    var res = JSON.parse(feed.responseText);
-   if(res.password) {
+   if (res.email) {
       document.body.classList.add("signed");
       User.innerHTML=res.name;
+      User.setAttribute("title",location.origin+"/"+res.name);
       User.obj=res;
       updateThings(res);
       markUserThings();
       owlMail=setInterval(sendOwl, 30000);
+      RecoverL.classList.add("hidden");
       ferrylog("SignedIn!");
    } else {
-      ferrylog("No No...! Check username and password :)");
-      // LockBlock.classList.replace("inlineVisible","inlineHidden");
-      // Credentials.classList.remove("hidden");
-      // Signupdiv.classList.add("hidden");
-      // Usermenu.classList.add("hidden");
-      // LockBlock.classList.replace("inlineHidden", "inlineVisible");
+      if (feed.cntnt.gid) {
+         let passTry = "<br/>Try signing with password;<br/>"+
+             "if u don't have one, get it by resetting password";
+         if (res.error) {
+            if (res.error == 3)
+               ferrylog("Couldn't reach google! try again..."+passTry);
+            else
+               ferrylog("Google authentication failed!" + passTry);
+         } else {
+            ferrylog("U'nt signed up yet! Sign up...");
+            SignIn.checked=false;
+            SignUp.checked=true;
+            togglesignup();
+            GglSnB.classList.add("hidden");
+            Username.focus();
+         }
+      } else {
+         ferrylog("No No...! Check username and password :)");
+         RecoverL.classList.remove("hidden");
+      }
    }
    delete Password.shuttle;
 }
@@ -1230,10 +1423,10 @@ var updateThings = function (res) {
          tid.innerText=thing.id;
          var tusr=getElementInsideContainer(thingN, "ThingUsr");
          tusr.innerText=un;
-         if (window.tgtUsr) {
-            if (tgtUsr!=un)
-               thingN.classList.add("hidden");
-         }
+      }
+      if (window.tgtUsr) {
+         if (tgtUsr!=un)
+            thingN.classList.add("hidden");
       }
       if (thing.name && thing.name.length) {
          var name=getElementInsideContainer(thingN, "ThingName");
@@ -1335,7 +1528,9 @@ var updateThings = function (res) {
             Things.insertAdjacentElement('afterBegin', thingN);
          }
       } else {
-         thingN.classList.remove("hidden");
+         if (!window.tgtUsr || tgtUsr==un) {
+            thingN.classList.remove("hidden");
+         }
       }
    }
    Things.classList.remove("hidden");
@@ -1432,21 +1627,29 @@ var usrnmEvent = function () {
    }
 }
 
-var authenticateUser = function () {
+var authenticateUser = function (ggl) {
    if ((event.keyCode==13 && this.value !== this.plcHldr) ||
-       this === SubmitBtn) { //13==enter
+       this === SubmitBtn || ggl!==event) { //13==enter
       hideKeyboard();
-      var url = "login";
+      var url = "signin";
       var f={};
       var pstr = Location.value;
       ferrylog("Location: " + pstr);
-      
-      f.content="{username:\""+Username.value+"\"";
-      var md5Pass = core.MD5(Password.value);
-      f.content+=",password:\""+ md5Pass +"\",geoposition:["+pstr+"]}";
-      f.postExpdtn=login;
+      let username;
+      let md5Pass = core.MD5(Password.value);
+      let cntnt={};
+      if (ggl!==event) {
+         cntnt.gid = Username.token;
+      } else {
+         cntnt.username = Username.value;
+         cntnt.password = md5Pass;
+      }
+      //cntnt.geoposition=pstr.split(",");
+      f.cntnt = cntnt;
+      f.content=JSON.stringify(cntnt);
+      f.postExpdtn=signin;
       f.reqHeaders=[["content-type", "text/json"]];
-      Password.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
+      Password.shuttle = new core.shuttle(url,f.content,f.postExpdtn,f);
    }
 }
 
@@ -1456,6 +1659,7 @@ var updateSearchedThings = function (feed) {
       res.things.length+" thing"+(res.things.length==1?"":"s")+" found");
    res.search=true;
    //deleteThings();
+   searchCount+=res.things.length;
    hideThings();
    Things.classList.add("search");
    updateThings(res);
@@ -1463,6 +1667,7 @@ var updateSearchedThings = function (feed) {
 }
 
 var search = function () {
+   window.searchCount=0;
    var pstr = Location.value;
    var url = "search"+window.location.search;
    var f={};
@@ -1481,14 +1686,14 @@ var search = function () {
    event.preventDefault();
 }
 var lock = function () {
-   var url = "logout";
+   var url = "signOut";
    var f={};
    f.content="";
-   f.postExpdtn=logout;
+   f.postExpdtn=signOut;
    f.reqHeaders=[["content-type", "text/json"]];
    Unlock.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
 }
-var logoutui = function () {
+var signOutUi = function () {
    clearInterval(owlMail);
    if (UserThings[User.innerHTML] && UserThings[User.innerHTML][-1]) {
       UserThings[User.innerHTML][-1].remove();
@@ -1505,13 +1710,17 @@ var logoutui = function () {
    while (mine.length) {
       mine[0].classList.remove("mine");
    }
+   PasswordL.classList.add("hidden");
+   gglSnD.classList.remove("hidden");
+   gglSn.checked=false;
+   hideUserSignIn.call(gglSn);
    ferrylog("Bye!");
 }
 
-var logout = function (feed) {
+var signOut = function (feed) {
    var res = JSON.parse(feed.responseText);
-   if (res.logout===true) {
-      logoutui();
+   if (res.signOut===true) {
+      signOutUi();
    } else {
       setCookie("bid","",0);
       ferrylog("Huh! Something went wrong! Try again:) or close window.");
@@ -1520,8 +1729,8 @@ var logout = function (feed) {
 }
 
 var signOk = function (res) {
-   if (res.logout==true) {
-      logoutui();
+   if (res.signOut==true) {
+      signOutUi();
       ferrylog("Ur account is signed in from another device. Signing out!");
       return false;
    }
@@ -1530,6 +1739,20 @@ var signOk = function (res) {
 
 var togglesignup = function () {
    if (SignUp.checked || Recover.checked) {
+      Username.onkeydown=null;
+      Username.oninput=null;
+      if (GglSn.checked)
+         EmailL.classList.add("hidden");
+      else
+         EmailL.classList.remove("hidden");
+      if (!Email.value.length) {
+         gglSnD.classList.remove("hidden");
+      }
+      if (Recover.checked) {
+         gglSnD.classList.add("hidden");
+      }
+      Username.onkeydown=null;
+      InUp.innerHTML="up";
       var url = "captcha";
       var f={};
       f.content="";
@@ -1538,6 +1761,7 @@ var togglesignup = function () {
       shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
       Signupdiv.classList.remove("hidden");
       PasswordL.classList.add("hidden");
+      SubmitBtn.classList.remove("hidden");
       if (Recover.checked){
          UsernameL.classList.add("hidden");
          NewL.classList.remove("hidden");
@@ -1548,42 +1772,83 @@ var togglesignup = function () {
       removeEvent(SubmitBtn, "click", authenticateUser);
       addEvent(SubmitBtn, "click", signup);      
    } else {
+      Username.onkeydown=userKeyDown;
+      Username.oninput=userKeyDown;
+      if (!Gmail.classList.contains("hidden")) {
+         Gmail.classList.add("hidden");
+         gglSnB.classList.remove("hidden");
+      }
+      if (Username.value.length==0) {
+         gglSnD.classList.remove("hidden");
+      } else {
+         gglSnD.classList.add("hidden");
+      }
+      Username.onkeydown=userKeyDown;
+      InUp.innerHTML="in";
       Signupdiv.classList.add("hidden");
-      PasswordL.classList.remove("hidden");
-      UsernameL.classList.remove("hidden");
-      Password.focus();
       removeEvent(SubmitBtn, "click", signup);
       addEvent(SubmitBtn, "click", authenticateUser);
+      if (GglSn.checked) {
+         SubmitBtn.classList.add("hidden");
+         PasswordL.classList.add("hidden");
+         UsernameL.classList.add("hidden");
+      } else {
+         SubmitBtn.classList.remove("hidden");
+         if (Username.value.length)
+            PasswordL.classList.remove("hidden");
+         UsernameL.classList.remove("hidden");
+         Password.focus();
+      }
    }
 }
 
-var signup = function () {
-   if(event.keyCode==13 && this.value !== this.plcHldr ||
-      this === SubmitBtn) { //13==enter
+var signup = function (resPld) {
+   if (event.keyCode==13 && this.value !== this.plcHldr ||
+       this === SubmitBtn || resPld!==event) { //13==enter
       hideKeyboard();
       var url = "signup";
       var f={};
       Username.value=Username.value.trim();
+      if (resPld!==event) {
+         if (!Username.value) {
+            Username.focus();
+            return;
+         }
+      } else {
+         Username.token=null;
+      }
+      let token = Username.token;
       if (SignUp.checked && !validUsername(Username.value)) {
          return;
-      } else if (Passwords1.value!=Passwords2.value) {
-         ferrylog("passwords didn't match");
-         return;
-      } else if (!validPassword(Passwords2.value)) {
-         ferrylog("Password not made of [a-zA-Z0-9.@#$%] or its length >24");
-         return;
-      } else if (!validEmail(Email.value)) {
-         return;
-      } else if (!Consent.checked) {
-         ferrylog("U didn't consent to this tool usage :/");
-         return;
+      } else if (!token) {
+         if (Passwords1.value!=Passwords2.value) {
+            ferrylog("passwords didn't match");
+            return;
+         } else if (!validPassword(Passwords2.value)) {
+            ferrylog(
+               "Password not made of [a-zA-Z0-9.@#$%] or its length >24");
+            return;
+         } else if (!validEmail(Email.value)) {
+            return;
+         } else if (!Consent.checked) {
+            ferrylog("U didn't consent to this tool usage :/");
+            return;
+         }
       }
-      f.content="{email:\""+Email.value+"\",captcha:\""+ Captcha.value+"\","
+      let cntnt = {};
+      if (!token) {
+         cntnt.email = Email.value;
+         cntnt.captcha = Captcha.value;
+         cntnt.password = core.MD5(Passwords2.value);
+      } else {
+         cntnt.gid=token;
+      }
       if (!Recover.checked) {
-         f.content += "username:\""+Username.value+"\",";
+         cntnt.username = Username.value;
       }
-      f.content+= "password:\""+
-         core.MD5(Passwords2.value)+"\",consent:" + Consent.checked + "}";
+      cntnt.consent=Consent.checked;
+      f.cntnt=cntnt
+      f.content=JSON.stringify(cntnt);
       f.postExpdtn=actMail;
       f.reqHeaders=[["content-type", "text/json"]];
       Passwords2.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
@@ -1596,8 +1861,12 @@ var actMail = function (feed) {
    if (res.actEmailSent == 2) {
       SignIn.checked=true;
       togglesignup();
+      if (feed.cntnt.gid) {
+         signin(feed);
+      }
+   } else {
+      togglesignup();
    }
-   togglesignup();
    delete Passwords2.shuttle;
 }
 var getCookie = function (cname) {

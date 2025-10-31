@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg"
    xmlns:xlink="http://www.w3.org/1999/xlink" id="logo" class="small"
-   viewBox="0 0 288 288" style="">
+   viewBox="0 0 288 288" style="" transform="matrix(1, 0, 0, 1, -10, -10)">
    <style>
       .dark {
          background-color: black;
@@ -38,7 +38,7 @@
          fill-opacity: 1;
       }
       .small #Ferry #Hull {
-         stroke-width: 1;
+         stroke-width: 2;
       }
       #h0 {
          fill: none;
@@ -48,17 +48,17 @@
       .small #Ferry #h1 {
          fill: none;
          stroke: #00ffff;
-         stroke-width: 1;
+         stroke-width: 2;
       }
       .small #Ferry #h2 {
          fill: none;
          stroke: #00ff00;
-         stroke-width: 1;
+         stroke-width: 2;
       }
       .small #Ferry #h3 {
          fill: none;
          stroke: #ff8800;
-         stroke-width: 1;
+         stroke-width: 2;
       }
       #h4 {
          fill: none;
@@ -71,7 +71,7 @@
       }
    </style>
    <g id="Ferry"
-      style="">
+      style="" transform="matrix(1, 0, 0, 1, 25, 33)">
       <g>
          <g id="dodecohedron"
             transform="matrix(1, 0, 0, 1, -542, -1345)"

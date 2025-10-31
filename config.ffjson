@@ -1,10 +1,8 @@
-{
-	maxThings: 5,
-	maxThingPics: 3,
-	maxMsgs: 25,
-   thing: ["id", "user", "name", "location", "pics", "lm"],
-	secret: file://red/secret.ffjson,
-   users: file://red/users.ffjson,
-   rbs: file://red/rbs.ffjson,
-   nameints: file://red/nameints.ffjson
-}
+maxThings: 5,
+maxThingPics: 3,
+maxMsgs: 25,
+thing: ["id", "user", "name", "location", "pics", "lm"],
+secret: file://red/secret.ffjson|OBJECT,
+users: file://red/users.ffjson|OBJECT,
+rbs: file://red/rbs.ffjson|OBJECT,
+nameints: file://red/nameints.ffjson|OBJECT
