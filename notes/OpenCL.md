@@ -1,1 +1,0 @@
-../../notes/OpenCL.md

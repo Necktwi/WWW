@@ -1,1 +1,0 @@
-../../notes/computer.md

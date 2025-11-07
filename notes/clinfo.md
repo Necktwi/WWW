@@ -1,1 +1,0 @@
-../../notes/clinfo.md

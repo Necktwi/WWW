@@ -1,1 +1,0 @@
-../../notes/GMP.md

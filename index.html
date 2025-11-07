@@ -29,11 +29,15 @@
           connect-src https://accounts.google.com/gsi/;"
    <meta name="google-signin-client_id" content=
       "91088616070-phsro3v29up7pts7od1e8snkee0ak774.apps.googleusercontent.com"
-      />
-   <script type="text/javascript" src="js/core.js?1"></script>
-   <script type="text/javascript" src="js/init.js?74"></script>
+         />
+   <!--meta name="apple-mobile-web-app-capable" content="yes"/>
+   <meta name="apple-mobile-web-app-status-bar-style"
+         content="black-translucent"/-->
+   <meta name="apple-mobile-web-app-title" content="FerryFair"/>
+   <script type="text/javascript" src="js/core.js?5"></script>
+   <script type="text/javascript" src="js/init.js?144"></script>
    <script src="https://accounts.google.com/gsi/client" async></script>
-   <link type="text/css" href="css/main.css?27" rel="stylesheet"/>
+   <link type="text/css" href="css/main.css?47" rel="stylesheet"/>
    <link type="text/css" href="css/main-dark.css" rel="stylesheet"/>
    <link type="text/css" href="css/svg.css?1" rel="stylesheet"/>
 </head>
@@ -53,9 +57,9 @@
             Super fast spatial search!</a><br/>
          <a class="plain" href="https://github.com/gowthamkudupudi/FFJSON">
             Backed by FFJSON</a><br/>
-         <a href="/md.html?HowTo.md">HowTo</a>
+         <a href="files/md.html?files/HowTo.md">HowTo</a>
          <template><p id="jack" class="hidden">
-            <a class="plain" href="notes/">- Gowtham Kudupudi</a></p></template>
+            <a class="plain" href="files/notes/" class="hidden">- Gowtham Kudupudi</a></p></template>
       </div>
    </div>
    <img src="img/FerryFair2.png?2" class="hidden"/>
@@ -584,7 +588,7 @@
                      style="fill:#000000;"/>
             </svg>
             <input id="Consent" alt="Consent" type="checkbox">
-            <a id="ConsentT"href="md.html?tnc.md">
+            <a id="ConsentT"href="files/md.html?files/tnc.md">
                I agree to terms and condition</a>
          </div>
       </div>
@@ -899,10 +903,8 @@
       </tr></table></template>
       <div id="searchBar">
          <div id="lips"><form id="mouthPad">
-            <input id="mouth" name="search" type="text" class="labeled"/>
-            <button class="hidden" id="search-tool" type="submit"
-                   src="images/search.png" value="near to me!"/>
-            <svg id="searchTool" alt="Search" viewBox="0 0 42 66"
+         <input id="mouth" name="search" type="text" class="labeled"/>
+         <svg id="searchTool" viewBox="0 0 42 66"
                  xmlns="http://www.w3.org/2000/svg"
                  xmlns:xlink="http://www.w3.org/1999/xlink">
                <path
@@ -914,18 +916,17 @@
                   id="stock"
                   d="M 21 7 A 20 40 45 0 1 33 21 A 20 20 0 0 0 21 7 Z"
                   style="stroke-opacity: 1.0;"/>
-            </svg>
-         </form></div>
+            </svg></form></div>
       </div>
    </header>
    <div id="tgtUsrLgHldr"class="hidden">
       <div id="ImgHldr" class="center">
-         <img id="ThingImg" class="fixedSize" loading="lazy"/>
+         <img id="ThingImg" class="fixedSize" loading="lazy" decoding="async"/>
       </div>
       <label id="chusPicBtnL" class="removable hidden">Browse...</label>
       <input id="chusPicBtn" type="file" class="editBtn removable"
              onchange="selectFiles.call(this, event);"/>
-   </div>   
+   </div>
    <template><div id="Things" class="hidden">
       <div id="Thing" class="thing">
          <div id="ImgsHldr"class="">
@@ -959,7 +960,10 @@
             <label id="ThingUsrL">Usr:</label>
             <span id="ThingUsr"></span>
             <label id="ThingIdL">ID: </label>
-            <span id="ThingId"></span>
+            <span id="ThingId"></span><br/>
+         </div>
+         <div id="lastModedD" class="hidden editHide">
+            <span id="lastModed"></span>
          </div>
          <div id="ThingDetailsDiv" class="removable">
             <label id="ThingDetailsL">Details: <br/></label>
@@ -974,14 +978,16 @@
             </div>
          </div>
          </div>
-         <input id="showURLBtn" class="" type="Button"
+         <input id="showURLBtn" class="hidden" type="Button"
                 value="^" onclick="showURL.call(this, event)"/>
          <input id="cnclEdtBtn" class="removable" type="Button"
                 value="Cancel"/>
          <input id="ThingEditBtn" class="" type="Button" value="Edit"/>
       </div>
       <div id="qSendDiv" class="hidden">
-         <textarea id="msginpt" rows="2" cols="22"></textarea><br/>
+         <textarea id="msginpt" rows="2" cols="22"
+                   onfocus="onMsgInptFocus.call(this)"
+                   onblur="onMsgInptBlur.call(this)"></textarea><br/>
          <input id="msgBtn" type="Button" value="Query"/>
       </div>
       <div id="replyDiv" class="hidden">
@@ -1014,8 +1020,7 @@
    </div-->
       <br/>
       <button id="loadBottom" value="load more ...">load more...</button>
-      <br/><br/><br/><br/><br/><br/><br/>
-   <div id="chin" class="hidden"><br/><br/><br/><br/></div>
+   <div id="chin">
 <div id="SVGS" hidden>
    <svg id="SpiralSVG" class="fixedSize" viewBox="0 0 288 288"
         xmlns="http://www.w3.org/2000/svg"

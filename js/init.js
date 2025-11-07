@@ -27,6 +27,7 @@ var userData = {};
 var LocatingULog;
 var lstThn, lstThnDtls, Chin;
 var Header,Htable;
+var jsonCType = [["content-type", "application/json"]];
 var hideLogDiv = function (elm) {
    elm.classList.remove("blink");
    elm.classList.add("hidden");
@@ -43,6 +44,7 @@ var ferrylog = function (msg, timeout=15000) {
    nl.innerHTML=msg;
    Log.insertAdjacentElement("beforeEnd", nl);
    nl.classList.add("blink");
+   nl.classList.add("hilit");
    if (!blinker) {
       blink();
    }
@@ -229,7 +231,7 @@ var viewportHandler = function() {
    //let bottom = (window.innerHeight-event.target.height+Log.iypos);
    //Log.style.bottom=(bottom<Log.iypos?Log.iypos:bottom)+"px";
    //ferrylog(bottom+" "+Log.children.length);
-   Header.style.bottom=window.innerHeight-viewport.height+"px";
+   Header.style.bottom=window.innerHeight-viewport.height+mmToPxls(10)+"px";
    mbox.style.maxHeight=
       viewport.height-Htable.offsetHeight-mmToPxls(10+5)+"px";
    if (Header.offsetHeight>viewport.height) {
@@ -360,7 +362,9 @@ var sendOwl = function () {
          }
       }
    }, 1000);      
-   var url = "owl";
+   let url = window.location.search;
+   url+=url.length?"&":"?";
+   url+="req=owl";
    var f={};
    var cnt={};
    var md,reply;
@@ -518,7 +522,7 @@ var sendOwl = function () {
          showOwl=true;
       }
    };
-   f.reqHeaders=[["content-type", "text/json"]];
+   f.reqHeaders=jsonCType;
    shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
 }
 var lastViewPortHeight = 0;
@@ -549,16 +553,17 @@ var loadMore = function () {
    if (this.id == "loadBottom") {
       bottom = true;
    }
-   var url = "pts";
+   let url = window.location.search;
+   url+=url.length?"&":"?";
+   url+="req=pts";
    var f={};
    var cnt = {};
-   cnt={};
    cnt.search=Things.classList.contains("search");
    cnt.dir=bottom?1:-1;
    cnt.ni=-1;
    f.content=JSON.stringify(cnt);
    f.postExpdtn=onMoreThings;
-   f.reqHeaders=[["content-type", "text/json"]];
+   f.reqHeaders=jsonCType;
    shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
    
 }
@@ -649,7 +654,41 @@ var gglSnHandler = function (res) {
       signup(resPld);
    }
 }
+function hasHardwareAcceleration() {
+   try {
+      const canvas = document.createElement('canvas');
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      return !!(gl && gl instanceof WebGLRenderingContext);
+   } catch (e) {
+      return false;
+   }
+}
+var last = performance.now();
+var frames = 0;
+var noBlur = false;
+function monitorFPS() {
+   frames++;
+   const now = performance.now();
+   if (now - last >= 2000) { // 2 seconds
+      const fps = (frames * 1000) / (now - last);
+      if (fps < 20) {
+         document.body.classList.add('noBlur');
+         noBlur=true;
+      }
+      frames = 0;
+      last = now;
+   }
+   if (!noBlur)
+      requestAnimationFrame(monitorFPS);
+}
+
 var init = function () {
+   if (!hasHardwareAcceleration()) {
+      document.body.classList.add('noBlur');
+      noBlur=true;
+   } else {
+      requestAnimationFrame(monitorFPS);
+   }
    makeDynamic();
    isApple=/iPad|iPhone|iPod/.test(navigator.userAgent);
    inps=document.getElementsByTagName("input");
@@ -669,7 +708,7 @@ var init = function () {
    Logo=document.getElementById('logo');
    LogoDiv=document.getElementById('logoDiv');
    LogoTd=document.getElementById('logoTd');
-   LogoTd.setAttribute("title",location.origin);
+   LogoTd.setAttribute("title",window.location.origin);
    LogoDiv.remove();
    document.body.insertAdjacentElement('afterBegin',LogoDiv);
    Chin=document.getElementById('chin');
@@ -793,8 +832,7 @@ var init = function () {
    }
    User = document.getElementById('user');
    User.onclick = function () {
-      location.href=location.origin+"/"+User.innerHTML+"?"+
-         new Date().getTime();
+      location.href=User.innerHTML+"?t="+new Date().getTime();
    }
    TgtUsrLgHldr=document.getElementById("tgtUsrLgHldr");
    addEvent(Username, 'keydown', usrnmEvent);
@@ -844,17 +882,24 @@ var init = function () {
          setCookie("bid", "", 7);
       }
       Location.classList.add("hidden");
-      var url = "cookie"+window.location.search;
+      let url = new URL(window.location.href);
+      url.searchParams.set("req", "cookie");
       var f={};
       if (location.pathname!="/") {
          tgtUsr=location.pathname.substr(1);
       }
       f.pstr = Location.value;
       ferrylog("Location: " + f.pstr);
-      f.content="{bid:\""+browserID+"\",geoposition:["+f.pstr+"]";
-      f.content+=!window.tgtUsr?"}":",path:\""+tgtUsr+"\"}";
+      let cnt = {}
+      if (browserID) {
+         cnt.bid=browserID;
+      }
+      cnt.geoposition=f.pstr.split(",");
+      if (window.tgtUsr)
+         cnt.path=tgtUsr;
+      f.content=JSON.stringify(cnt);
       f.postExpdtn=onBID;
-      f.reqHeaders=[["content-type", "text/json"]];
+      f.reqHeaders=jsonCType;
       shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
       LocationPin.classList.remove('empty');
    }
@@ -870,7 +915,7 @@ var init = function () {
          }
       }
    }
-   if (window.location.search.indexOf("?user=")==0) {
+   if (window.tgtUsr && window.location.search.indexOf("?thing=")==0) {
       cookieShuttle();
    }
    updateLocation();
@@ -886,7 +931,7 @@ var init = function () {
    });
    google.accounts.id.renderButton(
       GglSnB,
-      { theme: "outline", size: "small" }  // customization attributes
+      { theme: "outline", size: "medium" }  // customization attributes
    );
 };
 var sendMsg = function () {
@@ -1074,7 +1119,7 @@ var onBID = function (feed) {
       Footer.classList.remove("if");
       Logo.classList.add("small");
       Logo.onclick = function () {
-         location.href=location.origin+"?"+ new Date().getTime();
+         location.href=window.location.origin+"?t="+ new Date().getTime();
       }
       LocationPin.classList.remove("hidden");
       LocTHide = function () {
@@ -1095,6 +1140,11 @@ var onBID = function (feed) {
       signin(feed);
    } else {
       updateThings(res);
+      if (res.things.length<20) {
+         LoadBottom.innerHTML="no more!";
+         LoadBottom.onclick=null;
+         LoadBottom.disable=true;
+      }
    }
    if (Logo.onclick==gotoHome) {
       ferrylog("click logo to view all things around U",50000);
@@ -1107,20 +1157,27 @@ var onBID = function (feed) {
    LocationDDiv.classList.remove("hidden");
    if (window.tgtUsr) {
       TgtUsrLgHldr.innerHTML= tgtUsr;
+      TgtUsrLgHldr.onclick = function () {
+         window.location.href='/'+tgtUsr;
+      }
       TgtUsrLgHldr.classList.remove("hidden");
    }
    delete shuttle;
 }
 var hideBlink = function () {
    let blinkElms = document.getElementsByClassName("blink");
-   for (let i=0; i<blinkElms.length; ++i) 
+   for (let i=0; i<blinkElms.length; ++i) {
       blinkElms[i].classList.add("dim");
+      blinkElms[i].classList.remove("hilit");
+   }
    blinker=setTimeout(showBlink,300);
 }
 var showBlink = function () {
    let blinkElms = document.getElementsByClassName("blink");
-   for (let i=0; i<blinkElms.length; ++i) 
+   for (let i=0; i<blinkElms.length; ++i) {
       blinkElms[i].classList.remove("dim");
+      blinkElms[i].classList.add("hilit");
+   }
    blinker=setTimeout(hideBlink,3000);
 }
 var blink = function () {
@@ -1198,12 +1255,12 @@ var hideThingDetails = function (event) {
 var showThingDetails = function (show) {
    if (show!==true && lstThn.classList.contains("active")) {
       lstThn.classList.remove("active");
-      Chin.classList.add("hidden");
+      Chin.classList.remove("big");
       return;
    }
    if (show===false) {
       lstThn.classList.remove("active");
-      Chin.classList.add("hidden");
+      Chin.classList.remove("big");
       return;
    }
    lstThn.classList.remove("active");
@@ -1213,8 +1270,12 @@ var showThingDetails = function (show) {
        !lstThn.classList.contains("mine")) {
       popQueryBtn.call(lstThn);
    }
-   Chin.classList.remove("hidden");
-   lstThn.scrollIntoView({behavior: "smooth", block: "start"});
+   Chin.classList.add("big");
+   let shUrB = getElementInsideContainer(lstThn,"showURLBtn");
+   showURL.call(shUrB);
+   showURL.call(this, event)
+   let scrl = {behavior: "smooth", top: lstThn.offsetTop-70};
+   scrollTo(scrl);
 }
 function hideKeyboard () {
    if ("virtualKeyboard" in navigator) {
@@ -1458,6 +1519,24 @@ var updateThings = function (res) {
       if (thing.details) {
          dtls.innerHTML=thing.details;
       }
+      var dtlsDiv;
+      if (thing.details) {
+         dtls.innerHTML=thing.details;
+      }
+      let lm = getElementInsideContainer(thingN, "lastModed");
+      if (thing.lastModed) {
+         const time = new Date(thing.lastModed*1000);
+         lm.innerHTML=time.toLocaleString(undefined, {
+            year: '2-digit',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+         });
+      } else {
+         lm.innerHTML="-";
+      }
       var rmsgs=thing.rmsgs;
       var itms;
       if (!Inbox.things[thing.id]) {
@@ -1599,10 +1678,24 @@ var updateThings = function (res) {
    } else {
       OwlOnPerch.classList.add("nonews");
    }
-   if (window.location.search.indexOf("?user=")==0) {
-      let pBtn=getElementInsideContainer(Things.children[0],"eImg");
-      pBtn.click();
-      Logo.onclick = gotoHome;
+   if (window.tgtUsr && window.location.search.indexOf("?thing=")==0) {
+      let thn = Things.children[0];
+      let pBtn=getElementInsideContainer(thn,"eImg");
+      let inf=getElementInsideContainer(thn,"thingInfo");
+      let usr=getElementInsideContainer(inf,"ThingUsr");
+      let usrnm=usr.innerHTML;
+      usr.innerHTML="<a href=\""+window.location.origin+"/"+usrnm+
+         "\">"+usrnm+"</a>";
+      inf.classList.remove("hidden");
+      let imgsHldr = getElementInsideContainer(thn,"ImgsHldr");
+      imgsHldr.onclick=null;
+      showThingDetails.call(imgsHldr,true);
+      let thnBtm = getElementInsideContainer(thn,"thnBtm");
+      let thnDtls = getElementInsideContainer(thn,"ThingDetails");
+      thnBtm.style.position="relative";
+      thnDtls.classList.remove("hidden");
+      //pBtn.click();
+      loadBottom.classList.add("hidden");
    }
 }
 
@@ -1631,7 +1724,9 @@ var authenticateUser = function (ggl) {
    if ((event.keyCode==13 && this.value !== this.plcHldr) ||
        this === SubmitBtn || ggl!==event) { //13==enter
       hideKeyboard();
-      var url = "signin";
+      let url = window.location.search;
+      url+=url.length?"&":"?";
+      url+="req=signIn";
       var f={};
       var pstr = Location.value;
       ferrylog("Location: " + pstr);
@@ -1648,7 +1743,7 @@ var authenticateUser = function (ggl) {
       f.cntnt = cntnt;
       f.content=JSON.stringify(cntnt);
       f.postExpdtn=signin;
-      f.reqHeaders=[["content-type", "text/json"]];
+      f.reqHeaders=jsonCType;
       Password.shuttle = new core.shuttle(url,f.content,f.postExpdtn,f);
    }
 }
@@ -1663,34 +1758,45 @@ var updateSearchedThings = function (feed) {
    hideThings();
    Things.classList.add("search");
    updateThings(res);
+   if (res.things.length<20){
+      LoadBottom.innerHTML="no more!";
+      LoadBottom.onclick=null;
+   }
    document.body.scrollIntoView({behavior: "smooth", block: "start"});
+   delete SearchTool.shuttle;
 }
 
 var search = function () {
    window.searchCount=0;
-   var pstr = Location.value;
-   var url = "search"+window.location.search;
-   var f={};
-   f.content = "{bid:\"" + browserID +"\"";
-   f.content += ",search:\"";
    if (mouth.value==mouth.plcHldr) {
       showAllThings();
       event.preventDefault();
       return;
    }
-   f.content+= mouth.value;
-   f.content+="\",geoposition:["+pstr+"]}";
+   var pstr = Location.value;
+   let url = window.location.search;
+   url+=url.length?"&":"?";
+   url+="req=search";
+   var f={};
+   let cnt = {};
+   cnt.bid=browserID;
+   cnt.search=mouth.value;
+   cnt.geoposition=pstr.split(",");
+   f.content=JSON.stringify(cnt);
    f.postExpdtn=updateSearchedThings;
-   f.reqHeaders=[["Content-type", "text/json"]];
+   f.reqHeaders=jsonCType;
    SearchTool.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
    event.preventDefault();
 }
 var lock = function () {
-   var url = "signOut";
+   let url = window.location.search;
+   url+=url.length?"&":"?";
+   url+="req=signOut";
    var f={};
-   f.content="";
+   let cnt={};
+   f.content=JSON.stringify(cnt);
    f.postExpdtn=signOut;
-   f.reqHeaders=[["content-type", "text/json"]];
+   f.reqHeaders=jsonCType;
    Unlock.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
 }
 var signOutUi = function () {
@@ -1741,9 +1847,13 @@ var togglesignup = function () {
    if (SignUp.checked || Recover.checked) {
       Username.onkeydown=null;
       Username.oninput=null;
-      if (GglSn.checked)
+      if (GglSn.checked) {
          EmailL.classList.add("hidden");
-      else
+         google.accounts.id.renderButton(
+            GglSnB,
+            { theme: "outline", size: "medium", text: "signup_with" }
+         );
+      } else
          EmailL.classList.remove("hidden");
       if (!Email.value.length) {
          gglSnD.classList.remove("hidden");
@@ -1753,11 +1863,14 @@ var togglesignup = function () {
       }
       Username.onkeydown=null;
       InUp.innerHTML="up";
-      var url = "captcha";
+      let url = window.location.search;
+      url+=url.length?"&":"?";
+      url+="req=captcha";
       var f={};
-      f.content="";
+      let cnt={};
+      f.content=JSON.stringify(cnt);
       f.postExpdtn=onCaptcha;
-      f.reqHeaders=[["content-type", "text/json"]];
+      f.reqHeaders=jsonCType;
       shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
       Signupdiv.classList.remove("hidden");
       PasswordL.classList.add("hidden");
@@ -1792,6 +1905,10 @@ var togglesignup = function () {
          SubmitBtn.classList.add("hidden");
          PasswordL.classList.add("hidden");
          UsernameL.classList.add("hidden");
+         google.accounts.id.renderButton(
+            GglSnB,
+            { theme: "outline", size: "medium", text: "signin_with" }
+         );
       } else {
          SubmitBtn.classList.remove("hidden");
          if (Username.value.length)
@@ -1806,7 +1923,9 @@ var signup = function (resPld) {
    if (event.keyCode==13 && this.value !== this.plcHldr ||
        this === SubmitBtn || resPld!==event) { //13==enter
       hideKeyboard();
-      var url = "signup";
+      let url = window.location.search;
+      url+=url.length?"&":"?";
+      url+="req=signUp";
       var f={};
       Username.value=Username.value.trim();
       if (resPld!==event) {
@@ -1814,8 +1933,6 @@ var signup = function (resPld) {
             Username.focus();
             return;
          }
-      } else {
-         Username.token=null;
       }
       let token = Username.token;
       if (SignUp.checked && !validUsername(Username.value)) {
@@ -1850,7 +1967,8 @@ var signup = function (resPld) {
       f.cntnt=cntnt
       f.content=JSON.stringify(cntnt);
       f.postExpdtn=actMail;
-      f.reqHeaders=[["content-type", "text/json"]];
+      f.reqHeaders=jsonCType;
+      SubmitBtn.disabled=true;
       Passwords2.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
    }
 }
@@ -1867,6 +1985,7 @@ var actMail = function (feed) {
    } else {
       togglesignup();
    }
+   SubmitBtn.disabled=false;
    delete Passwords2.shuttle;
 }
 var getCookie = function (cname) {
@@ -1957,8 +2076,9 @@ var addDummyImgs = function (thing) {
 var showURL = function (event) {
    var thing = this.parentElement;
    var tusr=getElementInsideContainer(thing, "ThingUsr");
-   let ln = window.origin+"?user="+tusr.innerText+"&thing="+thing.thingId;
-   ferrylog("<a href=\""+ln+"\">"+ln+"</a>");
+   let ln = window.origin+"/"+tusr.innerText+"?thing="+thing.thingId;
+   let ts = new Date().getTime();
+   ferrylog("<a href=\""+ln+"&"+ts+"\">"+ln+"</a>");
 }
 var lastCnclEdtBtn;
 var editThing = function (newThing) {
@@ -2002,9 +2122,11 @@ var editThing = function (newThing) {
    this.onclick=updateThing;
    lastCnclEdtBtn=cnclEdtBtn;
    this.classList.remove("hidden");
+   Header.classList.add("hidden");
 }
 
 var updateThing = function() {
+   Header.classList.remove("hidden");
    lastCnclEdtBtn=null;
    UserActions.classList.remove("hidden");
    var cncl = this.value=="Cancel";
@@ -2012,7 +2134,9 @@ var updateThing = function() {
    if (cncl) {
       edtBtn = this.nextElementSibling;
    }
-   var url = "updateThing";
+   let url = window.location.search;
+   url+=url.length?"&":"?";
+   url+="req=updateThing";
    var f={};
    var content = {};
    content.things=[];
@@ -2054,7 +2178,7 @@ var updateThing = function() {
    content.things.push(thing);
    f.user=content;
    f.content=JSON.stringify(content);
-   f.reqHeaders=[["Content-type", "text/json"]];
+   f.reqHeaders=jsonCType;
    f.postExpdtn = function (feed) {
       var res=JSON.parse(feed.responseText);
       if (!signOk(res)) {
@@ -2075,7 +2199,9 @@ var updateThing = function() {
 var sendFileData = function(data, chunkSize, l) {
    var totalKB=Math.ceil(data.length/1000);
    var opts = {method: 'POST'};
-   var curl = '/upload?chunkSize=' + chunkSize;
+   let curl = window.location.search;
+   curl += curl.length?"&":"?";
+   curl += 'req=upload&chunkSize=' + chunkSize;
    curl += '&totalSize=' + data.length;
    curl += "&picId=" + l.picId + '&thingId=';
    var sendChunk = function(offset) {
@@ -2121,7 +2247,7 @@ var sendFileData = function(data, chunkSize, l) {
    sendChunk(0);
 };
 
-function getElementInsideContainer(container, childID) {
+function getElementInsideContainer (container, childID) {
    var elms = container.children;
    for (var i = 0; i < elms.length; i++) {
       var elm=elms[i];
@@ -2148,6 +2274,16 @@ function validUsername (name) {
    if (!(name.length && name.length <= 24)) {
       ferrylog("Username length should be >0 && <=24");
       return false;
+   }
+   if (name=="upload" || name=="tmp" || name=="files") {
+      ferrylog("this username is not allowed");
+      return false;
+   } else if (name=="index.html"||name=="robots.txt"||name=="sitemap.xml") {
+      ferrylog("this username is not allowed")
+   } else if (name=="img" || name=="js" || name=="css" || name=="fnt") {
+      ferrylog("this username is not allowed");
+   } else if (name=="config.txo") {
+      ferrylog("this username is not allowed");
    }
    return true;
 }
@@ -2250,4 +2386,16 @@ var validThingDetails = function (name) {
       return false;
    }
    return (name.length <= 256);
+}
+var onThnDtlsTaFocus = function (event) {
+   Header.classList.add("hidden");
+}
+var onThnDtlsTaBlur = function (event) {
+   Header.classList.remove("hidden");
+}
+var onMsgInptFocus = function (event) {
+   Header.classList.add("hidden");
+}
+var onMsgInptBlur = function (event) {
+   Header.classList.remove("hidden");
 }
