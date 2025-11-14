@@ -233,7 +233,7 @@ var viewportHandler = function() {
    //ferrylog(bottom+" "+Log.children.length);
    Header.style.bottom=window.innerHeight-viewport.height+mmToPxls(10)+"px";
    mbox.style.maxHeight=
-      viewport.height-Htable.offsetHeight-mmToPxls(10+5)+"px";
+      viewport.height-Htable.offsetHeight-mmToPxls(20)+"px";
    if (Header.offsetHeight>viewport.height) {
       Header.style.maxHeight=viewport.height+"px";
       Header.style.overflow="auto";
@@ -311,7 +311,15 @@ var updateLocation = function (show) {
    var options = {
       enableHighAccuracy:true
    }
-   if (navigator.geolocation) {
+   let gp = urlQuery.get("gp");
+   if (gp) {
+      gp=gp.split(",");
+      let pos = {};
+      pos.coords={};
+      pos.coords.latitude=Number(gp[0]);
+      pos.coords.longitude=Number(gp[1]);
+      setTimeout(onPosition,0,pos);
+   } else if (navigator.geolocation) {
       var options = {
          enableHighAccuracy:false
       }
@@ -332,7 +340,7 @@ var updateLocation = function (show) {
       pxlHtMm=50/Logo.getBoundingClientRect().height;
       mbox.style.maxHeight=
          window.visualViewport.height-Htable.offsetHeight-
-         mmToPxls(10+5)+"px";
+         mmToPxls(20)+"px";
       window.visualViewport.addEventListener("resize", viewportHandler);
    }
 }
@@ -377,7 +385,7 @@ var sendOwl = function () {
    for (var i=0; i<mds.length; ++i) {
       md = mds[i];
       var thing = md.parentElement.parentElement.parentElement.parentElement;
-      var tusr = getElementInsideContainer(thing, "ThingUsr").innerHTML;
+      var tusr = thing.user;
       if (!cnt.Qs)
          cnt["Qs"]={};
       if (!cnt.Qs[tusr])
@@ -426,16 +434,16 @@ var sendOwl = function () {
          return;
       }
       if (res.status==1) {
-         for (var md of mds) {
+         for (let md of mds) {
             var thing =
                 md.parentElement.parentElement.parentElement.parentElement;
-            var tusr = getElementInsideContainer(thing, "ThingUsr").innerHTML;
+            var tusr = thing.user;
             var mid=res.Qs[tusr][thing.thingId];
             md.children[0].innerHTML=mid;
             md.classList.remove("inQ");
             md.imd.classList.remove("inQ");
          }
-         for (var md of rmds) {
+         for (let md of rmds) {
             md=md.imd?md.imd:md;
             md.classList.remove("inQ");
             if (md.rmd) {
@@ -445,7 +453,7 @@ var sendOwl = function () {
             }
             --Inbox.news;
          }
-         for (var rep of replies) {
+         for (let rep of replies) {
             rep.classList.remove("inQ");
             rep.imd.classList.remove("inQ");
          }
@@ -483,7 +491,7 @@ var sendOwl = function () {
          }
          var rnews = res.rnews;
          if (!rnews) rnews=[];
-         for (var smsg of rnews) {
+         for (let smsg of rnews) {
             var tusr = smsg[0];
             var things=UserThings[tusr];
             var tid = smsg[1];
@@ -691,6 +699,7 @@ var init = function () {
    }
    makeDynamic();
    isApple=/iPad|iPhone|iPod/.test(navigator.userAgent);
+   window.urlQuery = new URLSearchParams(window.location.search);
    inps=document.getElementsByTagName("input");
    for (let i=0;i<inps.length;++i) {
       inps[i].addEventListener(
@@ -888,6 +897,12 @@ var init = function () {
       if (location.pathname!="/") {
          tgtUsr=location.pathname.substr(1);
       }
+      if (location.search) {
+         const thing = urlQuery.get("thing");
+         if (thing) {
+            window.tgtThing = thing;
+         }
+      }
       f.pstr = Location.value;
       ferrylog("Location: " + f.pstr);
       let cnt = {}
@@ -935,8 +950,7 @@ var init = function () {
    );
 };
 var sendMsg = function () {
-   var thing=this.parentElement.parentElement.parentElement;
-   var tusr= getElementInsideContainer(thing, "ThingUsr");
+   var thing=this.parentElement.parentElement.parentElement.parentElement;
    var mdiv = getElementInsideContainer(thing, "msgdiv");
    var msgd = getElementInsideContainer(mdiv, "msgs");
    var msginpt = getElementInsideContainer(mdiv, "msginpt");
@@ -959,7 +973,7 @@ var sendMsg = function () {
    md.classList.add('inQ');
    var imd = md.cloneNode(true);
    var to = imd.removeChild(imd.children[1]);
-   to.innerHTML=" :"+tusr.innerHTML;
+   to.innerHTML=" :"+thing.user;
    imd.insertAdjacentElement("beforeEnd",to);
    imd.md=md;
    Outbox.insertAdjacentElement("beforeEnd",imd);
@@ -1119,7 +1133,7 @@ var onBID = function (feed) {
       Footer.classList.remove("if");
       Logo.classList.add("small");
       Logo.onclick = function () {
-         location.href=window.location.origin+"?t="+ new Date().getTime();
+         location.href=window.location.origin;
       }
       LocationPin.classList.remove("hidden");
       LocTHide = function () {
@@ -1203,7 +1217,13 @@ var signin = function(feed) {
       User.innerHTML=res.name;
       User.setAttribute("title",location.origin+"/"+res.name);
       User.obj=res;
-      updateThings(res);
+      if (!window.tgtThing || !Things.children.length) {
+         updateThings(res);
+      } else {
+         let thn = Things.children[0];
+         let imgsHldr = getElementInsideContainer(thn,"ImgsHldr");
+         showThingDetails.call(imgsHldr,true);
+      }
       markUserThings();
       owlMail=setInterval(sendOwl, 30000);
       RecoverL.classList.add("hidden");
@@ -1271,8 +1291,8 @@ var showThingDetails = function (show) {
       popQueryBtn.call(lstThn);
    }
    Chin.classList.add("big");
-   let shUrB = getElementInsideContainer(lstThn,"showURLBtn");
-   showURL.call(shUrB);
+   // let shUrB = getElementInsideContainer(lstThn,"showURLBtn");
+   // showURL.call(shUrB);
    showURL.call(this, event)
    let scrl = {behavior: "smooth", top: lstThn.offsetTop-70};
    scrollTo(scrl);
@@ -1678,25 +1698,25 @@ var updateThings = function (res) {
    } else {
       OwlOnPerch.classList.add("nonews");
    }
-   if (window.tgtUsr && window.location.search.indexOf("?thing=")==0) {
+   if (window.tgtUsr && urlQuery.get("thing")) {
       let thn = Things.children[0];
-      let pBtn=getElementInsideContainer(thn,"eImg");
       let inf=getElementInsideContainer(thn,"thingInfo");
-      let usr=getElementInsideContainer(inf,"ThingUsr");
-      let usrnm=usr.innerHTML;
+      let usr=getElementInsideContainer(thn,"ThingUsr");
+      let usrnm=thn.user;
       usr.innerHTML="<a href=\""+window.location.origin+"/"+usrnm+
          "\">"+usrnm+"</a>";
       inf.classList.remove("hidden");
       let imgsHldr = getElementInsideContainer(thn,"ImgsHldr");
       imgsHldr.onclick=null;
+      Things.onclick=null;
       showThingDetails.call(imgsHldr,true);
       let thnBtm = getElementInsideContainer(thn,"thnBtm");
       let thnDtls = getElementInsideContainer(thn,"ThingDetails");
       thnBtm.style.position="relative";
       thnDtls.classList.remove("hidden");
-      //pBtn.click();
       loadBottom.classList.add("hidden");
    }
+
 }
 
 var unlock = function(){
@@ -2073,12 +2093,18 @@ var addDummyImgs = function (thing) {
       imgs.children[i-1].insertAdjacentElement('afterEnd', imgHldr);
    }
 }
-var showURL = function (event) {
+var showURL = function () {
    var thing = this.parentElement;
-   var tusr=getElementInsideContainer(thing, "ThingUsr");
-   let ln = window.origin+"/"+tusr.innerText+"?thing="+thing.thingId;
-   let ts = new Date().getTime();
-   ferrylog("<a href=\""+ln+"&"+ts+"\">"+ln+"</a>");
+   let ln = window.origin+"/"+thing.user+"?thing="+thing.thingId;
+   let fl = ferrylog(
+      "<a href=\""+ln+"\" onclick=\"return false;\"\">"+ln+"</a>");
+   fl.firstElementChild.onclick=function(){
+      event.preventDefault();
+      event.cancelBubble=true;
+      event.stopPropagation();
+      window.location.href=ln+"&gp="+Location.value;
+      return false;
+   }
 }
 var lastCnclEdtBtn;
 var editThing = function (newThing) {

@@ -35,7 +35,7 @@
          content="black-translucent"/-->
    <meta name="apple-mobile-web-app-title" content="FerryFair"/>
    <script type="text/javascript" src="js/core.js?5"></script>
-   <script type="text/javascript" src="js/init.js?144"></script>
+   <script type="text/javascript" src="js/init.js?156"></script>
    <script src="https://accounts.google.com/gsi/client" async></script>
    <link type="text/css" href="css/main.css?47" rel="stylesheet"/>
    <link type="text/css" href="css/main-dark.css" rel="stylesheet"/>
@@ -959,8 +959,8 @@
          <div id="thingInfo" class="hidden">
             <label id="ThingUsrL">Usr:</label>
             <span id="ThingUsr"></span>
-            <label id="ThingIdL">ID: </label>
-            <span id="ThingId"></span><br/>
+            <nobr><label id="ThingIdL">ID: <span id="ThingId"></span></label>
+            </nobr><br/>
          </div>
          <div id="lastModedD" class="hidden editHide">
             <span id="lastModed"></span>
@@ -993,7 +993,9 @@
       <div id="replyDiv" class="hidden">
          <div id="reply" class="reply hidden inQ">
             <span>-></span><span></span></div>
-         <textarea id="replyBox" rows="2" cols="22"></textarea>
+            <textarea id="replyBox" rows="2" cols="22"
+                      onfocus="onMsgInptFocus.call(this)"
+                      onblur="onMsgInptBlur.call(this)"></textarea>
          <input id="replyBtn" type="Button" value="Reply"/>
       </div>
    </div></template>
