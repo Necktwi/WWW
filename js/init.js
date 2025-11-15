@@ -220,12 +220,21 @@ var incImg = function (reverse) {
       img.classList.add("plusSize");
    }
 }
-
+var hasSoftKbd = false;
+let initialHeight = window.visualViewport ?
+    window.visualViewport.height : window.innerHeight;
 var viewportHandler = function() {
+   if (!hasSoftKbd) {
+      const viewportHeight = window.visualViewport ?
+            window.visualViewport.height : window.innerHeight;
+      const ratio = viewportHeight / initialHeight;
+      if (ratio<0.75)
+         hasSoftKbd = true;
+      ferrylog("hasSoftKbd: " + hasSoftKbd);
+   }
    if (isApple) {
       return;
    }
-   var viewport = event.target;
    //var bottom =
    //    (CMPD*(window.innerHeight-event.target.height)+0.2).toString()+"cm";
    //let bottom = (window.innerHeight-event.target.height+Log.iypos);
@@ -1484,7 +1493,7 @@ var updateThings = function (res) {
          var pics = res.things[i].pics;
          if (pics && pics.length) {
             img.src="/upload/"+res.things[i].user+"/"+res.things[i].id+
-               "."+0+".jpg?"+pics[0].ts;
+               "."+0+".jpg?t="+pics[0].ts;
             for (var j=1; j<pics.length; ++j) {
                imgHldr = imgs.children[0].cloneNode(true);
                imgHldr.classList.add("hidden");
@@ -2420,8 +2429,10 @@ var onThnDtlsTaBlur = function (event) {
    Header.classList.remove("hidden");
 }
 var onMsgInptFocus = function (event) {
-   Header.classList.add("hidden");
+   if (hasSoftKbd)
+      Header.classList.add("hidden");
 }
 var onMsgInptBlur = function (event) {
-   Header.classList.remove("hidden");
+   if (hasSoftKbd)
+      Header.classList.remove("hidden");
 }

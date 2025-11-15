@@ -32,6 +32,10 @@
    top: -0.06cm;
    font-size: 6mm;
    cursor: pointer;
+   max-width: 10ch;
+   display: inline-block;
+   overflow: hidden;
+   text-overflow: ellipsis;
 }
 * {
    font-family: NSR;
