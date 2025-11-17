@@ -130,6 +130,7 @@ header input {
    font-family: AB;
    font-size: 8mm;
    cursor: pointer;
+   margin-left: 2mm;
 }
 footer.if {
    position: fixed;
@@ -358,8 +359,8 @@ inptTxtBx.typing {
 }
 
 #mouthPad {
-   padding-left:6px;
-   padding-right:4px;
+   padding-left:2px;
+   padding-right:0px;
    display:inline-block;
    top:-0.7cm;
    position:relative;
@@ -388,10 +389,9 @@ inptTxtBx.typing {
    fill: #77ff77;
 }
 #Things {
-   padding: 1mm;
 }
 #Thing {
-   margin: 2mm;
+   padding: 2mm;
    border-radius: 1mm;
 }
 #Thing input[type=button] {
@@ -537,7 +537,7 @@ svg.fixedSize {
 }
 #ThingImg {
    display:block;
-   max-width:98vw;
+   max-width:90vw;
 }
 #Thing input {
    font-size: 4mm;

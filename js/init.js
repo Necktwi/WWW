@@ -850,7 +850,7 @@ var init = function () {
    }
    User = document.getElementById('user');
    User.onclick = function () {
-      location.href=User.innerHTML+"?t="+new Date().getTime();
+      location.href=User.innerHTML+"?gp="+Location.value;
    }
    TgtUsrLgHldr=document.getElementById("tgtUsrLgHldr");
    addEvent(Username, 'keydown', usrnmEvent);
