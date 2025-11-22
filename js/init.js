@@ -19,7 +19,7 @@ var chusPicBtn, chusPicBtnL, ThingDetailsDiv, CnclEdtBtn;
 var Thing, Things, UserThings, UserActions, AddThing, ChoosePic, ReplyBtn;
 var SVGS, ReplyBox, ReplyDiv, Msginpt, QSendDiv, MsgBtn;
 var searchPlcHldr = 'Search things near U';
-var locPlcHldr = "E.g. 12.3456,-78.9012";
+var locPlcHldr = "📍E.g. 12.3456,-78.9012";
 var caretPos=0;
 const MaxImgsPerThing=3;
 var browserID,isApple,blinker;
@@ -29,17 +29,27 @@ var lstThn, lstThnDtls, Chin;
 var Header,Htable;
 var jsonCType = [["content-type", "application/json"]];
 var hideLogDiv = function (elm) {
+   clearTimeout(elm.tOut);
    elm.classList.remove("blink");
+   elm.classList.remove("hilit");
+   elm.classList.remove("dim");
    elm.classList.add("hidden");
    if (document.getElementsByClassName("blink").length==0) {
       clearTimeout(blinker);
       blinker=null;
    }
 }
-var ferrylog = function (msg, timeout=15000) {
-   if (Log.children.length) {
-      Log.lastElementChild.classList.add("hidden");
+var updateFL = function (nl, msg) {
+   clearTimeout(nl.tOut);
+   nl.innerHTML=msg;
+   nl.classList.remove("hidden");
+   nl.classList.add("blink");
+   if (!blinker) {
+      blink();
    }
+   nl.tOut = setTimeout(hideLogDiv, 15000, nl);
+}
+var ferrylog = function (msg, timeout=15000) {
    var nl=document.createElement("div");
    nl.innerHTML=msg;
    Log.insertAdjacentElement("beforeEnd", nl);
@@ -48,7 +58,7 @@ var ferrylog = function (msg, timeout=15000) {
    if (!blinker) {
       blink();
    }
-   setTimeout(hideLogDiv, timeout, nl);
+   nl.tOut = setTimeout(hideLogDiv, timeout, nl);
    return nl;
 }
 
@@ -230,7 +240,7 @@ var viewportHandler = function() {
       const ratio = viewportHeight / initialHeight;
       if (ratio<0.75)
          hasSoftKbd = true;
-      ferrylog("hasSoftKbd: " + hasSoftKbd);
+      //ferrylog("hasSoftKbd: " + hasSoftKbd);
    }
    if (isApple) {
       return;
@@ -284,6 +294,7 @@ var updateLocation = function (show) {
       LocationDiv.onmouseleave = null;
    }
    var onPosition = function (position) {
+      hideLogDiv(LocatingULog);
       if (Location.dont) {
          return;
       }
@@ -301,6 +312,7 @@ var updateLocation = function (show) {
       setTimeout(updateLocation, 60000);
    }
    var onPosErr = function (posErr) {
+      hideLogDiv(LocatingULog);
       if (Location.dont || !Location.classList.contains("hidden")) {
          return;
       }
@@ -311,10 +323,10 @@ var updateLocation = function (show) {
          if (LocatingULog) 
             hideLogDiv(LocatingULog);
          ferrylog("U denied locating you! Enter ur preferred "+
-                  "Latitude,Longitude above.");
+                  "Latitude,Longitude");
          return;
       }
-      ferrylog(posErr.message+"<br/>Give Latitude,Longitude above");
+      ferrylog(posErr.message+"<br/>Give Latitude,Longitude");
       setTimeout(updateLocation, 60000);
    }
    var options = {
@@ -328,6 +340,9 @@ var updateLocation = function (show) {
       pos.coords.latitude=Number(gp[0]);
       pos.coords.longitude=Number(gp[1]);
       setTimeout(onPosition,0,pos);
+      const url = new URL(window.location.href);
+      url.searchParams.delete("gp");
+      history.replaceState({}, "", url)
    } else if (navigator.geolocation) {
       var options = {
          enableHighAccuracy:false
@@ -336,7 +351,7 @@ var updateLocation = function (show) {
       if (!browserID) {
          if (LocatingULog) 
             hideLogDiv(LocatingULog);
-         LocatingULog=ferrylog("LocatingU!", 100000);
+         LocatingULog= ferrylog("LocatingU!", 100000);
       }
    } else {
       let err={};
@@ -749,6 +764,10 @@ var init = function () {
    Location.value=locPlcHldr;
    LocationDiv=document.getElementById('LocationDiv');
    LocationDDiv=document.getElementById('LocationDDiv');
+   Location.onblur = function () {
+      Location.classList.add("hidden");
+      LocTxt.classList.remove("hidden");
+   }
    ReplyDiv=document.getElementById('replyDiv');
    ReplyBtn=document.getElementById('replyBtn');
    ReplyBox=document.getElementById('replyBox');
@@ -763,7 +782,7 @@ var init = function () {
       if (!this.dont) {
          this.dont=true;
          ferrylog("Ok, not locating you. Enter preferred location in "+
-                  "XX.XXXX,YY.YYYY format");
+                  "YY.YYYY,XX.XXXX format");
          LocationPin.onclick=cookieShuttle;
       }
       if (event.keyCode==13) {
@@ -1173,7 +1192,6 @@ var onBID = function (feed) {
       ferrylog("click logo to view all things around U",50000);
    }
    Location.classList.add("hidden");
-   Location.onclick=updateLocation;
    LocTxt.innerHTML=Location.value;
    LocTxt.classList.remove("hidden");
    LocationPin.onclick = showBoxUpdtLoc;
@@ -2239,13 +2257,14 @@ var sendFileData = function(data, chunkSize, l) {
    curl += 'req=upload&chunkSize=' + chunkSize;
    curl += '&totalSize=' + data.length;
    curl += "&picId=" + l.picId + '&thingId=';
+   let fl = ferrylog("Uploading");
    var sendChunk = function(offset) {
       var chunk = data.subarray(offset, offset + chunkSize) || '';
       let url = curl + l.thingId+'&offset=' + offset;
       var ok;
       var sentKB=Math.ceil((offset+chunk.length)/1000);
       var percent=Math.floor(sentKB*100/totalKB);
-      ferrylog('Uploading '+sentKB+'/'+totalKB+'KB'+'|'+percent+'%');
+      updateFL(fl,'Uploading '+sentKB+'/'+totalKB+'KB'+'|'+percent+'%');
       opts.body=chunk;
       fetch(url, opts)
          .then(function(res) {

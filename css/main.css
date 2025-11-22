@@ -435,8 +435,8 @@ inptTxtBx.typing {
 #ThingEditBtn {
    display: none;
    position: absolute;
-   top: 1mm;
-   right: 1mm;
+   top: 2mm;
+   right: 2mm;
 }
 #Thing.mine #ThingEditBtn {
    display:block;
@@ -566,26 +566,18 @@ svg.fixedSize {
 
 #ThingLocationPin, #LocationPin {
    display: inline-block;
-   width: 0.5cm;
-   height: 0.48cm;
-   position: relative;
-   background-image: url('/img/images/myIconSet.png');
-   background-position: -0.8cm -2.39cm;
-   background-size: 15.5cm;
-   filter: brightness(0) invert(1);
+   /* width: 0.5cm; */
+   /* height: 0.48cm; */
+   /* background-image: url('/img/images/myIconSet.png'); */
+   /* background-position: -0.8cm -2.39cm; */
+   /* background-size: 15.5cm; */
+   /* filter: brightness(0) invert(1); */
    hover:pointer;
 }
-#LocationPin.hidden {
-   position: absolute;
-   width: 0px;
-   height: 0px;
-   display: none;
-   padding: 0px;
-   border: 0px;
-   margin: 0px;
-}
 
-#ThingLocationPin {
+#ThingLocationPin #pin {
+   position: relative;
+   top: -0.8mm;
    left: 0.8mm;
 }
 #LocationDiv {
@@ -604,9 +596,9 @@ svg.fixedSize {
    backdrop-filter: none;
    -webkit-backdrop-filter: none;
 }
-#LocationPin {
-   top: 1.5mm;
-}
+/* #LocationPin { */
+/*    top: 1.5mm; */
+/* } */
 #LocTxt {
    font-size: 4mm;
    position:relative;
@@ -616,8 +608,15 @@ svg.fixedSize {
    cursor: pointer;
 }
 
-#ThingLocationPin.empty, #LocationPin.empty {
-   background-position: -4.75cm -3.18cm
+#ThingLocationPin #tin, #LocationPin #tin{
+   display: none;
+}
+#ThingLocationPin.empty #pin, #LocationPin.empty #pin{
+   /* background-position: -4.75cm -3.18cm */
+   display: none;
+}
+#ThingLocationPin.empty #tin, #LocationPin.empty #tin{
+   display: revert;
 }
 #LocationDDiv #LocationBox {
    width: 45mm;
@@ -721,13 +720,13 @@ footer {
    transition: width 2s, height 2s, transform 2s linear;
    transform-style: preserve-3d;
 }
-@keyframes blink {
-	0% { opacity:1 } 75% { opacity:1 } 76% { opacity:0 } 100% { opacity:0 }
-}
+/* @keyframes blink { */
+/* 	0% { opacity:1 } 75% { opacity:1 } 76% { opacity:0 } 100% { opacity:0 } */
+/* } */
 
-blink, .blink-css {
-	animation:blink 0.75s ease-in infinite alternate!important;
-}
+/* blink, .blink-css { */
+/* 	animation:blink 0.75s ease-in infinite alternate!important; */
+/* } */
 .middle {
    position: relative;
    display: block;

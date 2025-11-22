@@ -35,9 +35,9 @@
          content="black-translucent"/-->
    <meta name="apple-mobile-web-app-title" content="FerryFair"/>
    <script type="text/javascript" src="js/core.js?5"></script>
-   <script type="text/javascript" src="js/init.js?168"></script>
+   <script type="text/javascript" src="js/init.js?183"></script>
    <script src="https://accounts.google.com/gsi/client" async></script>
-   <link type="text/css" href="css/main.css?57" rel="stylesheet"/>
+   <link type="text/css" href="css/main.css?69" rel="stylesheet"/>
    <link type="text/css" href="css/main-dark.css" rel="stylesheet"/>
    <link type="text/css" href="css/svg.css?1" rel="stylesheet"/>
 </head>
@@ -68,7 +68,8 @@
          <input id="LocationBox" class="labeled hidden"/>
          <span class="hidden"> :location</span>
          <span id="LocTxt" class="hidden"></span>
-         <div id="LocationPin" class="empty hidden"></div>
+         <span id="LocationPin" class="empty hidden">
+            <span id="pin">📍</span><span id="tin">⦾</span></span>
       </div>
    </div>
    <div id="loadTop"></div>
@@ -529,11 +530,10 @@
 </svg>
       </div></td>
       <td style="vertical-align: top; padding-top: 0.12cm">
-      <span id="LockBlock" class="">
+      <span id="LockBlock" class="" onclick="unlock()">
       <svg id="lock" height="24" viewBox="0 0 24 24" width="24"
            xmlns="http://www.w3.org/2000/svg"
-           xmlns:xlink="http://www.w3.org/1999/xlink"
-           onclick="unlock()">
+           xmlns:xlink="http://www.w3.org/1999/xlink">
          <title>SignIn</title>
          <path
             id="lock"
@@ -948,7 +948,8 @@
          </div>
          </div>
          <label id="ThingLocationL" class="removable">Location: </label>
-         <span id="ThingLocationPin"></span>
+         <span id="ThingLocationPin">
+            <span id="pin">📍</span><span id="tin">⦾</span></span>
          <span id="ThingLocation" class="hidden"></span>
          <input id="ThingLocationBox" class="removable" type="text"/>
          <label id="ThingNameL" class="removable"><br/>Name: </label>
