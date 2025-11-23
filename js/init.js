@@ -1255,6 +1255,11 @@ var signin = function(feed) {
       owlMail=setInterval(sendOwl, 30000);
       RecoverL.classList.add("hidden");
       ferrylog("SignedIn!");
+      if (res.name=="gowtham") {
+         if (!res.notify) {
+            subscribe();
+         }
+      }
    } else {
       if (feed.cntnt.gid) {
          let passTry = "<br/>Try signing with password;<br/>"+
@@ -2454,4 +2459,41 @@ var onMsgInptFocus = function (event) {
 var onMsgInptBlur = function (event) {
    if (hasSoftKbd)
       Header.classList.remove("hidden");
+}
+async function subscribe() {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        ferrylog('Push messaging is not supported');
+        return;
+    }
+
+    try {
+        const registration = await navigator.serviceWorker.register('service-worker.js');
+        console.log('Service Worker registered');
+
+        await navigator.serviceWorker.ready;
+        console.log('Service Worker ready');
+
+        const response = await fetch('/vapid-public-key');
+        const vapidPublicKey = await response.text();
+        const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
+
+        const subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: convertedVapidKey
+        });
+
+        console.log('Push subscription successful:', subscription);
+
+        await fetch('/?req=notify', {
+            method: 'POST',
+            body: JSON.stringify(subscription),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        ferrylog('Subscription sent to server');
+    } catch (error) {
+        ferrylog('Failed to subscribe to push notifications: ' + error);
+    }
 }
