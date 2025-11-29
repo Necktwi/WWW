@@ -29,7 +29,8 @@ var lstThn, lstThnDtls, Chin;
 var Header,Htable;
 var jsonCType = [["content-type", "application/json"]];
 var hideLogDiv = function (elm) {
-   clearTimeout(elm.tOut);
+   if (elm.tOut)
+      clearTimeout(elm.tOut);
    elm.classList.remove("blink");
    elm.classList.remove("hilit");
    elm.classList.remove("dim");
@@ -197,8 +198,8 @@ var onInput = function () {
 }
 var getLocation = function () {
    var locateBtn = event.target;
-   var locationBox = getElementInsideContainer(locateBtn.parentElement,
-                                               "ThingLocationBox");
+   let thn = locateBtn.parentElement.parentElement;
+   var locationBox = getElementInsideContainer(thn, "ThingLocationBox");
    locationBox.value = Location.value;
 }
 
@@ -2460,40 +2461,42 @@ var onMsgInptBlur = function (event) {
    if (hasSoftKbd)
       Header.classList.remove("hidden");
 }
-async function subscribe() {
-    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-        ferrylog('Push messaging is not supported');
-        return;
-    }
 
-    try {
-        const registration = await navigator.serviceWorker.register('service-worker.js');
-        console.log('Service Worker registered');
+async function subscribe () {
+   if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+      ferrylog('Push messaging is not supported');
+      return;
+   }
 
-        await navigator.serviceWorker.ready;
-        console.log('Service Worker ready');
+   try {
+      const registration = await navigator.serviceWorker.register(
+         'js/service-worker.js');
+      console.log('Service Worker registered');
 
-        const response = await fetch('/vapid-public-key');
-        const vapidPublicKey = await response.text();
-        const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
+      await navigator.serviceWorker.ready;
+      console.log('Service Worker ready');
 
-        const subscription = await registration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: convertedVapidKey
-        });
+      const response = await fetch('/vapid-public-key');
+      const vapidPublicKey = await response.text();
+      const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
 
-        console.log('Push subscription successful:', subscription);
+      const subscription = await registration.pushManager.subscribe({
+         userVisibleOnly: true,
+         applicationServerKey: convertedVapidKey
+      });
 
-        await fetch('/?req=notify', {
-            method: 'POST',
-            body: JSON.stringify(subscription),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+      console.log('Push subscription successful:', subscription);
 
-        ferrylog('Subscription sent to server');
-    } catch (error) {
-        ferrylog('Failed to subscribe to push notifications: ' + error);
-    }
+      await fetch('/?req=notify', {
+         method: 'POST',
+         body: JSON.stringify(subscription),
+         headers: {
+            'Content-Type': 'application/json'
+         }
+      });
+
+      ferrylog('Subscription sent to server');
+   } catch (error) {
+      ferrylog('Failed to subscribe to push notifications: ' + error);
+   }
 }
