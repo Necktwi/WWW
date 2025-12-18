@@ -197,8 +197,8 @@ var onInput = function () {
    console.log("onInput: "+event.target.value);
 }
 var getLocation = function () {
-   var locateBtn = event.target;
-   let thn = locateBtn.parentElement.parentElement;
+   var locateBtn = event.currentTarget;
+   let thn = locateBtn.parentElement;
    var locationBox = getElementInsideContainer(thn, "ThingLocationBox");
    locationBox.value = Location.value;
 }
@@ -371,7 +371,7 @@ var updateLocation = function (show) {
 }
 
 var openMap = function () {
-   window.open(event.target.url,'map');
+   window.open(event.currentTarget.url,'map');
 }
 var toggleMbox = function () {
    if (Mbox.classList.contains("hidden")) {
