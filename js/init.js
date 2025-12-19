@@ -251,6 +251,7 @@ var viewportHandler = function() {
    //let bottom = (window.innerHeight-event.target.height+Log.iypos);
    //Log.style.bottom=(bottom<Log.iypos?Log.iypos:bottom)+"px";
    //ferrylog(bottom+" "+Log.children.length);
+   let viewport = window.visualViewport;
    Header.style.bottom=window.innerHeight-viewport.height+mmToPxls(10)+"px";
    mbox.style.maxHeight=
       viewport.height-Htable.offsetHeight-mmToPxls(20)+"px";
@@ -295,7 +296,8 @@ var updateLocation = function (show) {
       LocationDiv.onmouseleave = null;
    }
    var onPosition = function (position) {
-      hideLogDiv(LocatingULog);
+      if (LocatingULog)
+         hideLogDiv(LocatingULog);
       if (Location.dont) {
          return;
       }
@@ -1900,12 +1902,10 @@ var togglesignup = function () {
    if (SignUp.checked || Recover.checked) {
       Username.onkeydown=null;
       Username.oninput=null;
+      google.accounts.id.renderButton(
+         GglSnB, { theme: "outline", size: "medium", text: "signup_with" });
       if (GglSn.checked) {
          EmailL.classList.add("hidden");
-         google.accounts.id.renderButton(
-            GglSnB,
-            { theme: "outline", size: "medium", text: "signup_with" }
-         );
       } else
          EmailL.classList.remove("hidden");
       if (!Email.value.length) {
@@ -1944,6 +1944,18 @@ var togglesignup = function () {
          Gmail.classList.add("hidden");
          gglSnB.classList.remove("hidden");
       }
+      if (GglSn.checked) {
+         SubmitBtn.classList.add("hidden");
+         PasswordL.classList.add("hidden");
+         UsernameL.classList.add("hidden");
+         Username.value="";
+      } else {
+         SubmitBtn.classList.remove("hidden");
+         if (Username.value.length)
+            PasswordL.classList.remove("hidden");
+         UsernameL.classList.remove("hidden");
+         Password.focus();
+      }
       if (Username.value.length==0) {
          gglSnD.classList.remove("hidden");
       } else {
@@ -1954,21 +1966,8 @@ var togglesignup = function () {
       Signupdiv.classList.add("hidden");
       removeEvent(SubmitBtn, "click", signup);
       addEvent(SubmitBtn, "click", authenticateUser);
-      if (GglSn.checked) {
-         SubmitBtn.classList.add("hidden");
-         PasswordL.classList.add("hidden");
-         UsernameL.classList.add("hidden");
-         google.accounts.id.renderButton(
-            GglSnB,
-            { theme: "outline", size: "medium", text: "signin_with" }
-         );
-      } else {
-         SubmitBtn.classList.remove("hidden");
-         if (Username.value.length)
-            PasswordL.classList.remove("hidden");
-         UsernameL.classList.remove("hidden");
-         Password.focus();
-      }
+      google.accounts.id.renderButton(
+         GglSnB, { theme: "outline", size: "medium", text: "signin_with" });
    }
 }
 
