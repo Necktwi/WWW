@@ -1,3 +1,8 @@
+window.oopPromise= fetch('img/OwlOnPerch.svg').then(r=> r.text());
+window.lockPromise= fetch('img/Lock.svg').then(r=> r.text());
+window.unlockPromise= fetch('img/Unlock.svg').then(r=> r.text());
+window.addThnPromise= fetch('img/AddThing.svg').then(r=> r.text());
+window.svgsPromise= fetch('img/placeHldr.svg').then(r=> r.text());
 var Footer,Logo,LogoDiv,LogoTd,Mbox,Inbox,Outbox,OwlOnPerch,owlMail;
 var LocationPin,LocationDDiv,LocationDiv,Location,LocTxt,LocTTimeout,LocTHide;
 var SearchTool,SearchToolOpacity=1,SearchBar,LoadTop,LoadBottom;
@@ -17,18 +22,18 @@ var Unlock, Log, ThingRemovables=[], imageCompressor;
 var ThingLocationL, ThingLocationBox, ThingNameL, ThingNameBox;
 var chusPicBtn, chusPicBtnL, ThingDetailsDiv, CnclEdtBtn;
 var Thing, Things, UserThings, UserActions, AddThing, ChoosePic, ReplyBtn;
-var SVGS, ReplyBox, ReplyDiv, Msginpt, QSendDiv, MsgBtn;
-var searchPlcHldr = 'Search things near U';
-var locPlcHldr = "📍E.g. 12.3456,-78.9012";
+var SVGS, ReplyBox, ReplyDiv, Msginpt, QSendDiv, MsgBtn, AddThingSVG;
+var searchPlcHldr= 'Search things near U';
+var locPlcHldr= "📍E.g. 12.3456,-78.9012";
 var caretPos=0;
 const MaxImgsPerThing=3;
 var browserID,isApple,blinker;
-var userData = {};
+var userData= {};
 var LocatingULog;
 var lstThn, lstThnDtls, Chin;
 var Header,Htable;
-var jsonCType = [["content-type", "application/json"]];
-var hideLogDiv = function (elm) {
+var jsonCType= [["content-type", "application/json"]];
+var hideLogDiv= function (elm) {
    if (elm.tOut)
       clearTimeout(elm.tOut);
    elm.classList.remove("blink");
@@ -40,7 +45,7 @@ var hideLogDiv = function (elm) {
       blinker=null;
    }
 }
-var updateFL = function (nl, msg) {
+var updateFL= function (nl, msg) {
    clearTimeout(nl.tOut);
    nl.innerHTML=msg;
    nl.classList.remove("hidden");
@@ -48,9 +53,9 @@ var updateFL = function (nl, msg) {
    if (!blinker) {
       blink();
    }
-   nl.tOut = setTimeout(hideLogDiv, 15000, nl);
+   nl.tOut= setTimeout(hideLogDiv, 15000, nl);
 }
-var ferrylog = function (msg, timeout=15000) {
+var ferrylog= function (msg, timeout=15000) {
    var nl=document.createElement("div");
    nl.innerHTML=msg;
    Log.insertAdjacentElement("beforeEnd", nl);
@@ -59,11 +64,11 @@ var ferrylog = function (msg, timeout=15000) {
    if (!blinker) {
       blink();
    }
-   nl.tOut = setTimeout(hideLogDiv, timeout, nl);
+   nl.tOut= setTimeout(hideLogDiv, timeout, nl);
    return nl;
 }
 
-var toggleLog = function () {
+var toggleLog= function () {
    if (Log.classList.contains("visible")) {
       Log.classList.remove("visible");
       Log.lastElementChild.classList.add("hidden");
@@ -71,34 +76,34 @@ var toggleLog = function () {
       Log.classList.add("visible");
    }
 }
-var Rotate = function () {
-   var props =
+var Rotate= function () {
+   var props=
        'transform WebkitTransform MozTransform OTransform msTransform'.
-       split(' '), prop, el = document.createElement('div');
-   for (var i = 0, l = props.length; i < l; i++) {
+       split(' '), prop, el= document.createElement('div');
+   for (var i= 0, l= props.length; i < l; i++) {
       if (typeof el.style[props[i]] !== "undefined") {
-         prop = props[i];
+         prop= props[i];
          break;
       }
    }
-   var xAngle = 0, yAngle = 0;
+   var xAngle= 0, yAngle= 0;
    setInterval(function(){
       yAngle+=180;
-      Logo.style[prop] = "rotateX("+xAngle+"deg) rotateY("+yAngle+"deg)";
+      Logo.style[prop]= "rotateX("+xAngle+"deg) rotateY("+yAngle+"deg)";
    }, 2000);
 };
-var addEvent = function (elem, type, fn) {
+var addEvent= function (elem, type, fn) {
    if (elem.addEventListener) elem.addEventListener(type, fn, false);
    else if (elem.attachEvent) elem.attachEvent('on' + type, fn);
 };
-var removeEvent = function (elem, type, fn) {
+var removeEvent= function (elem, type, fn) {
    if (elem.removeEventListener) elem.removeEventListener(type, fn, false);
    else if (elem.dettachEvent) elem.dettachEvent('on' + type, fn);
 };
-var setCaretPos = function (elem, caretPos) {
+var setCaretPos= function (elem, caretPos) {
    if(elem != null) {
       if (elem.createTextRange) {
-         var range = elem.createTextRange();
+         var range= elem.createTextRange();
          range.move('character', caretPos);
          range.select();
       } else {
@@ -110,8 +115,8 @@ var setCaretPos = function (elem, caretPos) {
       }
    }
 };
-var inputOnFocus = function () {
-   if (this.value === this.plcHldr) {
+var inputOnFocus= function () {
+   if (this.value=== this.plcHldr) {
       setCaretPos(this,0);
       this.classList.remove("typing");
       //this.style.color="rgb(192,192,192)";
@@ -123,29 +128,29 @@ var inputOnFocus = function () {
    }
 };
 
-var showPlaceHolder = function () {
+var showPlaceHolder= function () {
    this.type='text';
-   this.value = this.plcHldr;
+   this.value= this.plcHldr;
    //this.style.color="rgb(192,192,192)";
    this.classList.remove("typing");
    setCaretPos(this,0);
 };
-var inputOnBlur = function () {
-   if (this.value === '') {
+var inputOnBlur= function () {
+   if (this.value=== '') {
       this.classList.remove("typing");
       showPlaceHolder.call(this);
    }
 };
-var isPrintable = function (keycode) {
+var isPrintable= function (keycode) {
    return (keycode > 47 && keycode < 58)   || // number keys
       (keycode > 64 && keycode < 91)       || // letter keys
       (keycode > 95 && keycode < 112)      || // numpad keys
       (keycode > 185 && keycode < 193)     || // ;=,-./` (in order)
       (keycode > 218 && keycode < 223);       // [\]' (in order)
 }
-var showAllThings = function () {
+var showAllThings= function () {
    for (let i=0;i<Things.children.length;++i) {
-      let thing = Things.children[i];
+      let thing= Things.children[i];
       if (thing.thingId!=-1) {
          if (window.tgtUsr && thing.user!=window.tgtUsr)
             continue;
@@ -156,10 +161,10 @@ var showAllThings = function () {
       document.body.scrollIntoView({behavior: "smooth", block: "start"});
    },100)
 }
-var inputOnKeyDown = function () {
+var inputOnKeyDown= function () {
    //console.log("onKeyDown: "+this.value + ", " + event.keyCode);
-   if ((event.keyCode == 8 || event.keyCode == 46 || event.keyCode == 229 ||
-        event.inputType === 'deleteContentBackward') &&
+   if ((event.keyCode== 8 || event.keyCode== 46 || event.keyCode== 229 ||
+        event.inputType=== 'deleteContentBackward') &&
        this.value.length<=1) {
       // Backspace
       showPlaceHolder.call(this);
@@ -167,7 +172,7 @@ var inputOnKeyDown = function () {
          showAllThings();
          Things.classList.remove("search");
       }
-   } else if(this.value === this.plcHldr) {
+   } else if(this.value=== this.plcHldr) {
       if (event.data !== null || isPrintable(event.keyCode)) {
          this.value=event.data;
          this.classList.add("typing");
@@ -182,76 +187,76 @@ var inputOnKeyDown = function () {
    event.preventDefault();
    return false;
 };
-var onBeforeInput = function () {
+var onBeforeInput= function () {
    console.log("beforeInput: " + this.value);
-   if (this.value === this.plcHldr) {
+   if (this.value=== this.plcHldr) {
       this.value='';
       this.classList.add("typing");
       if(this.ctype==='password')this.type='password';
    }
 }
-var onKeyPress = function () {
+var onKeyPress= function () {
    console.log("keyPress: "+event.target.value);
 }
-var onInput = function () {
+var onInput= function () {
    console.log("onInput: "+event.target.value);
 }
-var getLocation = function () {
-   var locateBtn = event.currentTarget;
-   let thn = locateBtn.parentElement;
-   var locationBox = getElementInsideContainer(thn, "ThingLocationBox");
-   locationBox.value = Location.value;
+var getLocation= function () {
+   var locateBtn= event.currentTarget;
+   let thn= locateBtn.parentElement;
+   var locationBox= getElementInsideContainer(thn, "ThingLocationBox");
+   locationBox.value= Location.value;
 }
 
-var nxtImg = function (reverse) {
+var nxtImg= function (reverse) {
    event.cancelBubble=true;
-   var nxtBtn = event.target;
-   var imgs = nxtBtn.parentElement.parentElement.firstElementChild;
-   var thing = imgs.parentElement.parentElement;
-   var imgHldr = imgs.children[imgs.cid];
-   imgs.cid = reverse?(imgs.cid?imgs.cid-1:imgs.children.length-1):
+   var nxtBtn= event.target;
+   var imgs= nxtBtn.parentElement.parentElement.firstElementChild;
+   var thing= imgs.parentElement.parentElement;
+   var imgHldr= imgs.children[imgs.cid];
+   imgs.cid= reverse?(imgs.cid?imgs.cid-1:imgs.children.length-1):
       (imgs.cid+1)%imgs.children.length;
    imgHldr.classList.add("hidden");
-   imgHldr = imgs.children[imgs.cid];
+   imgHldr= imgs.children[imgs.cid];
    imgHldr.classList.remove("hidden");
    if (thing.classList.contains("editMode")) {
       chusPicBtnL.picId=imgs.cid;
    }
 }
 
-var incImg = function (reverse) {
-   var incBtn = event.target;
-   var imgs = incBtn.parentElement.parentElement.firstElementChild;
-   var thing = imgs.parentElement.parentElement;
-   var imgHldr = imgs.children[imgs.cid];
-   var img = imgHldr.children[0];
+var incImg= function (reverse) {
+   var incBtn= event.target;
+   var imgs= incBtn.parentElement.parentElement.firstElementChild;
+   var thing= imgs.parentElement.parentElement;
+   var imgHldr= imgs.children[imgs.cid];
+   var img= imgHldr.children[0];
    if (img.classList.contains("plusSize")) {
       img.classList.remove("plusSize");
    } else {
       img.classList.add("plusSize");
    }
 }
-var hasSoftKbd = false;
-let initialHeight = window.visualViewport ?
+var hasSoftKbd= false;
+let initialHeight= window.visualViewport ?
     window.visualViewport.height : window.innerHeight;
-var viewportHandler = function() {
+var viewportHandler= function() {
    if (!hasSoftKbd) {
-      const viewportHeight = window.visualViewport ?
+      const viewportHeight= window.visualViewport ?
             window.visualViewport.height : window.innerHeight;
-      const ratio = viewportHeight / initialHeight;
+      const ratio= viewportHeight / initialHeight;
       if (ratio<0.75)
-         hasSoftKbd = true;
+         hasSoftKbd= true;
       //ferrylog("hasSoftKbd: " + hasSoftKbd);
    }
    if (isApple) {
       return;
    }
-   //var bottom =
+   //var bottom=
    //    (CMPD*(window.innerHeight-event.target.height)+0.2).toString()+"cm";
-   //let bottom = (window.innerHeight-event.target.height+Log.iypos);
+   //let bottom= (window.innerHeight-event.target.height+Log.iypos);
    //Log.style.bottom=(bottom<Log.iypos?Log.iypos:bottom)+"px";
    //ferrylog(bottom+" "+Log.children.length);
-   let viewport = window.visualViewport;
+   let viewport= window.visualViewport;
    Header.style.bottom=window.innerHeight-viewport.height+mmToPxls(10)+"px";
    mbox.style.maxHeight=
       viewport.height-Htable.offsetHeight-mmToPxls(20)+"px";
@@ -263,39 +268,39 @@ var viewportHandler = function() {
    }
 }
 
-var showBoxUpdtLoc = function() {
+var showBoxUpdtLoc= function() {
    Location.dont=false;
    updateLocation.call(this, true);
 };
 
-var LocDShow = function () {
+var LocDShow= function () {
    clearTimeout(LocTTimeout);
    LocTxt.classList.remove("hidden");
 }
 
-var LocDHide = function () {
+var LocDHide= function () {
    setTimeout(LocTHide,7000);
 }
 
-var mmToPxls = function (mm) {
+var mmToPxls= function (mm) {
    return mm/pxlHtMm;
 }
-var updateLocation = function (show) {
+var updateLocation= function (show) {
    if (show) {
       if (!Location.classList.contains("hidden")) {
          Location.classList.add("hidden");
          LocTxt.classList.remove("hidden");
-         LocTTimeout = setTimeout(LocTHide,7000);
-         LocationDiv.onmouseenter = LocDShow;
-         LocationDiv.onmouseleave = LocDHide;
+         LocTTimeout= setTimeout(LocTHide,7000);
+         LocationDiv.onmouseenter= LocDShow;
+         LocationDiv.onmouseleave= LocDHide;
          return;
       }
       LocTxt.classList.add("hidden");
       Location.classList.remove("hidden");
-      LocationDiv.onmouseenter = null;
-      LocationDiv.onmouseleave = null;
+      LocationDiv.onmouseenter= null;
+      LocationDiv.onmouseleave= null;
    }
-   var onPosition = function (position) {
+   var onPosition= function (position) {
       if (LocatingULog)
          hideLogDiv(LocatingULog);
       if (Location.dont) {
@@ -310,11 +315,11 @@ var updateLocation = function (show) {
       if (Location.classList.contains("hidden")) {
          LocTxt.classList.remove("hidden");
          clearTimeout(LocTTimeout);
-         LocTTimeout = setTimeout(LocTHide, 7000);         
+         LocTTimeout= setTimeout(LocTHide, 7000);         
       }
       setTimeout(updateLocation, 60000);
    }
-   var onPosErr = function (posErr) {
+   var onPosErr= function (posErr) {
       hideLogDiv(LocatingULog);
       if (Location.dont || !Location.classList.contains("hidden")) {
          return;
@@ -322,7 +327,7 @@ var updateLocation = function (show) {
       if (!browserID) {
          Logo.onclick.call(Logo);
       }
-      if (posErr.code == posErr.PERMISSION_DENIED) {
+      if (posErr.code== posErr.PERMISSION_DENIED) {
          if (LocatingULog) 
             hideLogDiv(LocatingULog);
          ferrylog("U denied locating you! Enter ur preferred "+
@@ -332,22 +337,22 @@ var updateLocation = function (show) {
       ferrylog(posErr.message+"<br/>Give Latitude,Longitude");
       setTimeout(updateLocation, 60000);
    }
-   var options = {
+   var options= {
       enableHighAccuracy:true
    }
-   let gp = urlQuery.get("gp");
+   let gp= urlQuery.get("gp");
    if (gp) {
       gp=gp.split(",");
-      let pos = {};
+      let pos= {};
       pos.coords={};
       pos.coords.latitude=Number(gp[0]);
       pos.coords.longitude=Number(gp[1]);
       setTimeout(onPosition,0,pos);
-      const url = new URL(window.location.href);
+      const url= new URL(window.location.href);
       url.searchParams.delete("gp");
       history.replaceState({}, "", url)
    } else if (navigator.geolocation) {
-      var options = {
+      var options= {
          enableHighAccuracy:false
       }
       navigator.geolocation.getCurrentPosition(onPosition,onPosErr,options);
@@ -372,17 +377,17 @@ var updateLocation = function (show) {
    }
 }
 
-var openMap = function () {
+var openMap= function () {
    window.open(event.currentTarget.url,'map');
 }
-var toggleMbox = function () {
+var toggleMbox= function () {
    if (Mbox.classList.contains("hidden")) {
       Mbox.classList.remove("hidden");
    } else {
       Mbox.classList.add("hidden");      
    }
 }
-var sendOwl = function () {
+var sendOwl= function () {
    var showOwl=false;
    OwlOnPerch.classList.add("owlSent");
    setTimeout(function () {
@@ -397,7 +402,7 @@ var sendOwl = function () {
          }
       }
    }, 1000);      
-   let url = window.location.search;
+   let url= window.location.search;
    url+=url.length?"&":"?";
    url+="req=owl";
    var f={};
@@ -410,9 +415,9 @@ var sendOwl = function () {
    var replies=Inbox.replies;
    Inbox.replies=[];
    for (var i=0; i<mds.length; ++i) {
-      md = mds[i];
-      var thing = md.parentElement.parentElement.parentElement.parentElement;
-      var tusr = thing.user;
+      md= mds[i];
+      var thing= md.parentElement.parentElement.parentElement.parentElement;
+      var tusr= thing.user;
       if (!cnt.Qs)
          cnt["Qs"]={};
       if (!cnt.Qs[tusr])
@@ -420,7 +425,7 @@ var sendOwl = function () {
       cnt.Qs[tusr][thing.thingId]=md.children[2].innerHTML;
    }
    for (var i=0; i<rmds.length; ++i) {
-      md = rmds[i];
+      md= rmds[i];
       var imd=md.imd?md.imd:md;
       if (imd.rmd) {
          md=imd.rmd;
@@ -443,11 +448,11 @@ var sendOwl = function () {
       }
    }
    for (var i=0; i<replies.length; ++i) {
-      reply = replies[i];
-      var thing =
+      reply= replies[i];
+      var thing=
           reply.parentElement.parentElement.parentElement.parentElement.
           parentElement;
-      var mid = reply.parentElement.firstElementChild.innerHTML
+      var mid= reply.parentElement.firstElementChild.innerHTML
       if (!cnt.Reps)
          cnt["Reps"]={};
       if (!cnt.Reps[thing.thingId])
@@ -455,16 +460,16 @@ var sendOwl = function () {
       cnt.Reps[thing.thingId][mid]=reply.lastElementChild.innerHTML;
    }
    f.content=JSON.stringify(cnt);
-   f.postExpdtn = function (feed) {
-      var res = JSON.parse(feed.responseText);
+   f.postExpdtn= function (feed) {
+      var res= JSON.parse(feed.responseText);
       if (!signOk(res)) {
          return;
       }
       if (res.status==1) {
          for (let md of mds) {
-            var thing =
+            var thing=
                 md.parentElement.parentElement.parentElement.parentElement;
-            var tusr = thing.user;
+            var tusr= thing.user;
             var mid=res.Qs[tusr][thing.thingId];
             md.children[0].innerHTML=mid;
             md.classList.remove("inQ");
@@ -485,18 +490,18 @@ var sendOwl = function () {
             rep.imd.classList.remove("inQ");
          }
          for (const stid in res["news"]) {
-            var tthing = res["news"][stid]
-            var tid = parseInt(stid);
-            var things = UserThings[User.innerHTML];
-            var thing = things[tid];
-            var msgd = getElementInsideContainer(thing, "msgs");
-            md = msgd.firstElementChild;
+            var tthing= res["news"][stid]
+            var tid= parseInt(stid);
+            var things= UserThings[User.innerHTML];
+            var thing= things[tid];
+            var msgd= getElementInsideContainer(thing, "msgs");
+            md= msgd.firstElementChild;
             var itms=Inbox.things[tid];
             for (const smid in tthing) {
                if (!isNaN(parseInt(md.firstElementChild.innerHTML))) {
-                  md = md.cloneNode(true);
+                  md= md.cloneNode(true);
                }
-               var msg = tthing[smid];
+               var msg= tthing[smid];
                md.children[0].innerHTML=msg["id"];
                md.children[1].innerHTML=msg["user"]+": ";
                md.children[2].innerHTML=msg["msg"];
@@ -505,7 +510,7 @@ var sendOwl = function () {
                }
                msgd.insertAdjacentElement("beforeEnd", md);
                md.onclick=markAsRead;
-               var imd = md.cloneNode(true);
+               var imd= md.cloneNode(true);
                Inbox.insertAdjacentElement("beforeEnd", imd);
                imd.classList.add("new");
                imd.md=md;
@@ -516,17 +521,17 @@ var sendOwl = function () {
                ++Inbox.news;
             }
          }
-         var rnews = res.rnews;
+         var rnews= res.rnews;
          if (!rnews) rnews=[];
          for (let smsg of rnews) {
-            var tusr = smsg[0];
+            var tusr= smsg[0];
             var things=UserThings[tusr];
-            var tid = smsg[1];
-            var thing = things[tid];
-            var msgd = getElementInsideContainer(thing, "msgs");
+            var tid= smsg[1];
+            var thing= things[tid];
+            var msgd= getElementInsideContainer(thing, "msgs");
             for (var i=0; i<msgd.children.length; ++i) {
-               var md = msgd.children[i];
-               var mid = parseInt(md.children[0].innerHTML);
+               var md= msgd.children[i];
+               var mid= parseInt(md.children[0].innerHTML);
                if (mid!=smsg[2]) {
                   continue;
                }
@@ -558,24 +563,24 @@ var sendOwl = function () {
       }
    };
    f.reqHeaders=jsonCType;
-   shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
+   window.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
 }
-var lastViewPortHeight = 0;
-var blurInput = function () {
+var lastViewPortHeight= 0;
+var blurInput= function () {
    window.removeEventListener('scroll', blurInput);
    if (lastViewPortHeight-window.visualViewport.height>40) {
       document.activeElement.blur();
    }
 }
-var makeDynamic = function () {
-   var dElms = document.getElementsByTagName("template");
+var makeDynamic= function () {
+   var dElms= document.getElementsByTagName("template");
    while (dElms.length) {
-      let dElm = dElms[0];
+      let dElm= dElms[0];
       dElm.outerHTML=dElm.innerHTML;
    }
 }
-var onMoreThings = function (feed) {
-   var res = JSON.parse(feed.responseText);
+var onMoreThings= function (feed) {
+   var res= JSON.parse(feed.responseText);
    if (res.things.length)
       updateThings(res);
    else {
@@ -583,35 +588,35 @@ var onMoreThings = function (feed) {
       LoadBottom.onclick=null;
    }
 }
-var loadMore = function () {
-   let bottom = false;
-   if (this.id == "loadBottom") {
-      bottom = true;
+var loadMore= function () {
+   let bottom= false;
+   if (this.id== "loadBottom") {
+      bottom= true;
    }
-   let url = window.location.search;
+   let url= window.location.search;
    url+=url.length?"&":"?";
    url+="req=pts";
    var f={};
-   var cnt = {};
+   var cnt= {};
    cnt.search=Things.classList.contains("search");
    cnt.dir=bottom?1:-1;
    cnt.ni=-1;
    f.content=JSON.stringify(cnt);
    f.postExpdtn=onMoreThings;
    f.reqHeaders=jsonCType;
-   shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
+   window.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
    
 }
 function decodeJwtResponse (token) {
-    let base64Url = token.split('.')[1];
-    let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    let jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+    let base64Url= token.split('.')[1];
+    let base64= base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    let jsonPayload= decodeURIComponent(atob(base64).split('').map(function(c) {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
     }).join(''));
     return JSON.parse(jsonPayload);
 }
-var userKeyDown = function () {
-   if (!this.keyboardDetermined && event.type === "keydown") {
+var userKeyDown= function () {
+   if (!this.keyboardDetermined && event.type=== "keydown") {
       if (event.keyCode==229 && !event.code) {
          this.onkeydown=null;
          this.keyboardDetermined=true;
@@ -622,8 +627,8 @@ var userKeyDown = function () {
       this.keyboardDetermined=true;
    }
    if (this.value.length<=2) { //46=delete
-      if(!(event.keyCode == 8 || event.keyCode == 46 || event.keyCode == 229 ||
-         event.inputType === 'deleteContentBackward')) {
+      if(!(event.keyCode== 8 || event.keyCode== 46 || event.keyCode== 229 ||
+         event.inputType=== 'deleteContentBackward')) {
          GglSnD.classList.add("hidden");
          PasswordL.classList.remove("hidden");
       } else {
@@ -632,8 +637,8 @@ var userKeyDown = function () {
       }
    }
 }
-var emailKeyDown = function () {
-   if (!this.keyboardDetermined && event.type === "keydown") {
+var emailKeyDown= function () {
+   if (!this.keyboardDetermined && event.type=== "keydown") {
       if (event.keyCode==229 && !event.code) {
          this.onkeydown=null;
          this.keyboardDetermined=true;
@@ -644,8 +649,8 @@ var emailKeyDown = function () {
       this.keyboardDetermined=true;
    }
    if (this.value.length<=2) { //46=delete
-      if (!(event.keyCode == 8 || event.keyCode == 46 || event.keyCode == 229 ||
-            event.inputType === 'deleteContentBackward')) {
+      if (!(event.keyCode== 8 || event.keyCode== 46 || event.keyCode== 229 ||
+            event.inputType=== 'deleteContentBackward')) {
          GglSnD.classList.add("hidden");
          PassBlk.classList.remove("hidden");
       } else {
@@ -654,7 +659,7 @@ var emailKeyDown = function () {
       }
    }
 }
-var hideUserSignIn = function () {
+var hideUserSignIn= function () {
    Gmail.classList.add("hidden");
    if (this.checked) {
       Recover.classList.add("hidden");
@@ -677,8 +682,8 @@ var hideUserSignIn = function () {
       }
    }
 }
-var gglSnHandler = function (res) {
-   const resPld = decodeJwtResponse(res.credential);
+var gglSnHandler= function (res) {
+   const resPld= decodeJwtResponse(res.credential);
    Username.token=res.credential;
    Gmail.innerHTML=resPld.email;
    gglSnB.classList.add("hidden");
@@ -691,33 +696,33 @@ var gglSnHandler = function (res) {
 }
 function hasHardwareAcceleration() {
    try {
-      const canvas = document.createElement('canvas');
-      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      const canvas= document.createElement('canvas');
+      const gl= canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
       return !!(gl && gl instanceof WebGLRenderingContext);
    } catch (e) {
       return false;
    }
 }
-var last = performance.now();
-var frames = 0;
-var noBlur = false;
+var last= performance.now();
+var frames= 0;
+var noBlur= false;
 function monitorFPS() {
    frames++;
-   const now = performance.now();
+   const now= performance.now();
    if (now - last >= 2000) { // 2 seconds
-      const fps = (frames * 1000) / (now - last);
+      const fps= (frames * 1000) / (now - last);
       if (fps < 20) {
          document.body.classList.add('noBlur');
          noBlur=true;
       }
-      frames = 0;
-      last = now;
+      frames= 0;
+      last= now;
    }
    if (!noBlur)
       requestAnimationFrame(monitorFPS);
 }
 
-var init = function () {
+window.init= async function () {
    if (!hasHardwareAcceleration()) {
       document.body.classList.add('noBlur');
       noBlur=true;
@@ -726,7 +731,7 @@ var init = function () {
    }
    makeDynamic();
    isApple=/iPad|iPhone|iPod/.test(navigator.userAgent);
-   window.urlQuery = new URLSearchParams(window.location.search);
+   window.urlQuery= new URLSearchParams(window.location.search);
    inps=document.getElementsByTagName("input");
    for (let i=0;i<inps.length;++i) {
       inps[i].addEventListener(
@@ -740,7 +745,7 @@ var init = function () {
    Htable=Header.firstElementChild;
    LoadTop=document.getElementById('loadTop');
    LoadBottom=document.getElementById('loadBottom');
-   LoadBottom.onclick = loadMore;
+   LoadBottom.onclick= loadMore;
    Logo=document.getElementById('logo');
    LogoDiv=document.getElementById('logoDiv');
    LogoTd=document.getElementById('logoTd');
@@ -756,7 +761,11 @@ var init = function () {
    Inbox.rmds=[];
    Inbox.news=0;
    Inbox.replies=[]
-   OwlOnPerch=document.getElementById('owlOnPerch');
+   OwlOnPerch= document.getElementById('owlOnPerch');
+   let svg= await window.oopPromise;
+   OwlOnPerch.outerHTML= svg;
+   window.oopPromise= undefined;
+
    OwlOnPerch.onclick=toggleMbox;
    LogoDiv.parentElement.style.display="block";
    SearchTool=document.getElementById('searchTool');
@@ -767,7 +776,7 @@ var init = function () {
    Location.value=locPlcHldr;
    LocationDiv=document.getElementById('LocationDiv');
    LocationDDiv=document.getElementById('LocationDDiv');
-   Location.onblur = function () {
+   Location.onblur= function () {
       Location.classList.add("hidden");
       LocTxt.classList.remove("hidden");
    }
@@ -806,18 +815,21 @@ var init = function () {
    Mouth.plcHldr=searchPlcHldr;
    Mouth.value=Mouth.plcHldr;
    addEvent(MouthPad, 'submit', search);
-   Lock=document.getElementById("lock");
-   CMPD=0.8/Lock.getBoundingClientRect().width;
-   Desc=document.getElementById("Desc");
-   LockBlock=document.getElementById("LockBlock");
-   Username=document.getElementById("username");
-   UsernameL=document.getElementById("UsernameL");
-   Password=document.getElementById("password");
-   PasswordL=document.getElementById("PasswordL");
-   Credentials=document.getElementById("Credentials");
-   NonRecovery=document.getElementById("NonRecovery");
-   //Username.plcHldr = 'Username:';
-   //Password.plcHldr = 'Password:';
+   LockBlock= document.getElementById("LockBlock");
+   Lock= document.getElementById("lock");
+   svg= await window.lockPromise;
+   Lock.outerHTML= svg;
+   CMPD= 0.8/Lock.getBoundingClientRect().width;
+   Desc= document.getElementById("Desc");
+   
+   Username= document.getElementById("username");
+   UsernameL= document.getElementById("UsernameL");
+   Password= document.getElementById("password");
+   PasswordL= document.getElementById("PasswordL");
+   Credentials= document.getElementById("Credentials");
+   NonRecovery= document.getElementById("NonRecovery");
+   //Username.plcHldr= 'Username:';
+   //Password.plcHldr= 'Password:';
    Password.type='password';
    //Password.value=Password.plcHldr;
    Signupdiv=document.getElementById("signupdiv");
@@ -837,8 +849,8 @@ var init = function () {
    SignIn.checked=true;
    Email=document.getElementById("email");
    EmailL=document.getElementById("EmailL");
-   Email.onkeydown = emailKeyDown;
-   Email.oninput = emailKeyDown;
+   Email.onkeydown= emailKeyDown;
+   Email.oninput= emailKeyDown;
    Passwords1=document.getElementById("passwords1");
    Passwords2=document.getElementById("passwords2");
    Password1L=document.getElementById("Password1L");
@@ -859,7 +871,7 @@ var init = function () {
    NonRecovery=document.getElementById("NonRecovery");
    var inputs=document.getElementsByClassName("labeled");
    for (var i=0; i<inputs.length; ++i) {
-      var elm = inputs[i];
+      var elm= inputs[i];
       if(elm.type!="text")continue;
       elm.classList.add("inptTxtBx");
       addEvent(elm, 'focus', inputOnFocus);
@@ -870,8 +882,8 @@ var init = function () {
       //addEvent(elm, 'input', onInput);
       addEvent(elm, 'beforeinput', inputOnKeyDown);
    }
-   User = document.getElementById('user');
-   User.onclick = function () {
+   User= document.getElementById('user');
+   User.onclick= function () {
       location.href=User.innerHTML+"?gp="+Location.value;
    }
    TgtUsrLgHldr=document.getElementById("tgtUsrLgHldr");
@@ -879,64 +891,77 @@ var init = function () {
    addEvent(Password, 'keydown', authenticateUser);
    addEvent(SearchTool, 'click', search);
    addEvent(SubmitBtn, 'click', authenticateUser);
-   Unlock = document.getElementById('unlock');
-   Usermenu = document.getElementById('usermenu');
-   Things = document.getElementById('Things');
-   Consent = document.getElementById('Consent');
-   ConsentL = document.getElementById('ConsentL');
-   Thing = getElementInsideContainer(Things, "Thing");
-   lstThn = Thing;
-   UserThings = {};
-   let ctrs = Thing.getElementsByClassName("removable");
-   chusPicBtnL = getElementInsideContainer(Thing, "chusPicBtnL");
-   chusPicBtn = getElementInsideContainer(Thing, "chusPicBtn");
-   ThingLocationL = getElementInsideContainer(Thing, "ThingLocationL");
-   ThingLocationBox = getElementInsideContainer(Thing, "ThingLocationBox");
-   ThingNameL = getElementInsideContainer(Thing, "ThingNameL");
-   ThingNameBox = getElementInsideContainer(Thing, "ThingNameBox");
-   ThingDetailsDiv = getElementInsideContainer(Thing, "ThingDetailsDiv");
-   cnclEdtBtn = getElementInsideContainer(Thing, "cnclEdtBtn");
+   Unlock= document.getElementById('unlock');
+   svg= await window.unlockPromise;
+   Unlock.outerHTML= svg;
+   window.lockPromise= undefined;
+   window.unlockPromise= undefined;
+   Usermenu= document.getElementById('usermenu');
+   Things= document.getElementById('Things');
+   Consent= document.getElementById('Consent');
+   ConsentL= document.getElementById('ConsentL');
+   Thing= getElementInsideContainer(Things, "Thing");
+   lstThn= Thing;
+   UserThings= {};
+   let ctrs= Thing.getElementsByClassName("removable");
+   chusPicBtnL= getElementInsideContainer(Thing, "chusPicBtnL");
+   chusPicBtn= getElementInsideContainer(Thing, "chusPicBtn");
+   ThingLocationL= getElementInsideContainer(Thing, "ThingLocationL");
+   ThingLocationBox= getElementInsideContainer(Thing, "ThingLocationBox");
+   ThingNameL= getElementInsideContainer(Thing, "ThingNameL");
+   ThingNameBox= getElementInsideContainer(Thing, "ThingNameBox");
+   ThingDetailsDiv= getElementInsideContainer(Thing, "ThingDetailsDiv");
+   cnclEdtBtn= getElementInsideContainer(Thing, "cnclEdtBtn");
    cnclEdtBtn.onclick=updateThing;
    chusPicBtn.onclick=openfileprompt;
    chusPicBtn.cid=0;
    for (let i=0; i<ctrs.length; ++i) {
       ThingRemovables.push(ctrs[i]);
-      let r = ThingRemovables[i];
-      r.pid = r.previousElementSibling.id;
+      let r= ThingRemovables[i];
+      r.pid= r.previousElementSibling.id;
    }
    for (let i=0; i<ThingRemovables.length; ++i) {
-      let r = ThingRemovables[i];
+      let r= ThingRemovables[i];
       r.remove();
    }
    Thing.remove();
    addEvent(Passwords2, 'keydown', signup);
    addEvent(Captcha, 'keydown', signup);
-   UserActions=document.getElementById("UserActions");
-   AddThing=document.getElementById("AddThing");
-   AddThing.plcHldr="Add a thing to the fair";
-   SVGS=document.getElementById("SVGS");
-   SVGS.remove();
-   window.cookieShuttle = function () {
+   UserActions= document.getElementById("UserActions");
+   AddThing= document.getElementById("AddThing");
+   AddThing.plcHldr= "Add a thing to the fair";
+   
+   AddThingSVG= document.getElementById("AddThingSVG");
+   svg= await window.addThnPromise;
+   AddThingSVG.outerHTML= svg;
+   window.addThnPromise= undefined;
+
+   SVGS= document.getElementById("SVGS");
+   svg= await window.svgsPromise;
+   SVGS.outerHTML= svg;
+   window.svgsPromise= undefined;
+   //SVGS.remove();
+   window.cookieShuttle= function () {
       hideKeyboard();
       if (location.protocol!="https:") {
          setCookie("bid", "", 7);
       }
       Location.classList.add("hidden");
-      let url = new URL(window.location.href);
+      let url= new URL(window.location.href);
       url.searchParams.set("req", "cookie");
       var f={};
       if (location.pathname!="/") {
          tgtUsr=location.pathname.substr(1);
       }
       if (location.search) {
-         const thing = urlQuery.get("thing");
+         const thing= urlQuery.get("thing");
          if (thing) {
-            window.tgtThing = thing;
+            window.tgtThing= thing;
          }
       }
-      f.pstr = Location.value;
+      f.pstr= Location.value;
       ferrylog("Location: " + f.pstr);
-      let cnt = {}
+      let cnt= {}
       if (browserID) {
          cnt.bid=browserID;
       }
@@ -946,14 +971,14 @@ var init = function () {
       f.content=JSON.stringify(cnt);
       f.postExpdtn=onBID;
       f.reqHeaders=jsonCType;
-      shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
+      window.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
       LocationPin.classList.remove('empty');
    }
-   LocationPin.onclick = showBoxUpdtLoc;
-   Logo.onclick = function () {
+   LocationPin.onclick= showBoxUpdtLoc;
+   Logo.onclick= function () {
       LocationPin.classList.remove("hidden");
       showBoxUpdtLoc.call(LocationPin);
-      Logo.onclick = function () {
+      Logo.onclick= function () {
          if (LocationDDiv.classList.contains("hidden")) {
             LocationDDiv.classList.remove("hidden");
          } else {
@@ -965,8 +990,8 @@ var init = function () {
       cookieShuttle();
    }
    updateLocation();
-   // window.onresize = function () {
-   //    Log.style.bottom = "0.2cm";
+   // window.onresize= function () {
+   //    Log.style.bottom= "0.2cm";
    // };
    document.body.classList.remove("hidden");
    ffGglId="91088616070-phsro3v29up7pts7od1e8snkee0ak774";
@@ -980,18 +1005,19 @@ var init = function () {
       { theme: "outline", size: "medium" }  // customization attributes
    );
 };
-var sendMsg = function () {
+document.addEventListener('DOMContentLoaded', init);
+var sendMsg= function () {
    var thing=this.parentElement.parentElement.parentElement.parentElement;
-   var mdiv = getElementInsideContainer(thing, "msgdiv");
-   var msgd = getElementInsideContainer(mdiv, "msgs");
-   var msginpt = getElementInsideContainer(mdiv, "msginpt");
-   var md = msgd.firstElementChild;
-   var ld = md.firstElementChild;
-   var id = parseInt(ld.innerHTML);
+   var mdiv= getElementInsideContainer(thing, "msgdiv");
+   var msgd= getElementInsideContainer(mdiv, "msgs");
+   var msginpt= getElementInsideContainer(mdiv, "msginpt");
+   var md= msgd.firstElementChild;
+   var ld= md.firstElementChild;
+   var id= parseInt(ld.innerHTML);
    var mid=1;
    if (!isNaN(id)) {
       mid= parseInt(msgd.lastElementChild.firstElementChild.innerHTML);
-      md = msgd.children[0].cloneNode(true);
+      md= msgd.children[0].cloneNode(true);
       if (md.children.length==4) {
          md.removeChild(md.lastElementChild);
       }
@@ -1002,8 +1028,8 @@ var sendMsg = function () {
    msginpt.value="";
    msgd.insertAdjacentElement("beforeEnd", md);
    md.classList.add('inQ');
-   var imd = md.cloneNode(true);
-   var to = imd.removeChild(imd.children[1]);
+   var imd= md.cloneNode(true);
+   var to= imd.removeChild(imd.children[1]);
    to.innerHTML=" :"+thing.user;
    imd.insertAdjacentElement("beforeEnd",to);
    imd.md=md;
@@ -1014,38 +1040,38 @@ var sendMsg = function () {
    Inbox.mds.push(md);
    ferrylog("Ur query will b sent by next owl!");
 }
-var gotoHome = function () {
+var gotoHome= function () {
    window.location.href=window.location.origin;
 }
-var proceedCompressedImage = function (compressedSrc) {
+var proceedCompressedImage= function (compressedSrc) {
    sendFileData(new Uint8Array(compressedSrc), 2048, l);
 }
 
 function resizeMe (img, qf, gotBlob, thumbNail) {  
-   var canvas = document.createElement('canvas');
-   var width = img.width;
-   var height = img.height;
-   let lMaxWidth = thumbNail?mmToPxls(60):mmToPxls(150);
-   let lMaxHeight = lMaxWidth;
+   var canvas= document.createElement('canvas');
+   var width= img.width;
+   var height= img.height;
+   let lMaxWidth= thumbNail?mmToPxls(60):mmToPxls(150);
+   let lMaxHeight= lMaxWidth;
   // calculate the width and height, constraining the proportions
   if (width > height) {
     if (width > lMaxWidth) {
       //height *= lMaxWidth / width;
-      height = Math.round(height *= lMaxWidth / width);
-      width = lMaxWidth;
+      height= Math.round(height *= lMaxWidth / width);
+      width= lMaxWidth;
     }
   } else {
     if (height > lMaxHeight) {
       //width *= lMaxHeight / height;
-      width = Math.round(width *= lMaxHeight / height);
-      height = lMaxHeight;
+      width= Math.round(width *= lMaxHeight / height);
+      height= lMaxHeight;
     }
   }
   // resize the canvas and draw the image data into it
-  canvas.width = width;
-  canvas.height = height;
+  canvas.width= width;
+  canvas.height= height;
   //document.body.appendChild(canvas);
-  var ctx = canvas.getContext("2d");
+  var ctx= canvas.getContext("2d");
   ctx.drawImage(img, 0, 0, width, height);
   // do the actual resized preview
   // get the data from canvas as 70% JPG (can be also PNG, etc.)
@@ -1054,48 +1080,48 @@ function resizeMe (img, qf, gotBlob, thumbNail) {
 
 function selectFiles (ev) {
    if (!ev.target.files[0]) return;
-   var btn = ev.target;
-   var f = btn.files[0], r = new FileReader();
-   var l = btn.previousElementSibling;
+   var btn= ev.target;
+   var f= btn.files[0], r= new FileReader();
+   var l= btn.previousElementSibling;
    r.readAsArrayBuffer(f);
-   var imgsHldr = this.parentElement;
-   var thisThing = imgsHldr.parentElement;
-   var imgs = imgsHldr.children[0];
-   var imgHldr = imgs.children[imgs.cid];
-   var img = imgHldr.firstElementChild;
+   var imgsHldr= this.parentElement;
+   var thisThing= imgsHldr.parentElement;
+   var imgs= imgsHldr.children[0];
+   var imgHldr= imgs.children[imgs.cid];
+   var img= imgHldr.firstElementChild;
    if (!l.teb) {
-      var teb = getElementInsideContainer(thisThing, "ThingEditBtn");
+      var teb= getElementInsideContainer(thisThing, "ThingEditBtn");
       teb.disabled=true;
       l.teb=teb;
    }
-   r.onload = function () {
-      //ev.target.value = '';
-      l.postChunk = function() {
+   r.onload= function () {
+      //ev.target.value= '';
+      l.postChunk= function() {
          var jso=JSON.parse(this.text);
          this.thingId=jso["thingId"];
       }
-      l.postUpload = function () {
+      l.postUpload= function () {
          var jso=JSON.parse(this.text);
          this.thingId=jso["thingId"];
          thisThing.thingId=this.thingId;
-         var tid = getElementInsideContainer(thisThing, "ThingId");
+         var tid= getElementInsideContainer(thisThing, "ThingId");
          tid.innerHTML=this.thingId.toString();
          this.teb.disabled=false;
       }
       var limg=r.result;
       var image;
-      var blob = new Blob([limg]); // create blob...
-      window.URL = window.URL || window.webkitURL;
-      var blobURL = window.URL.createObjectURL(blob); // and get it's URL
-      var ontblob = function (ab) {
+      var blob= new Blob([limg]); // create blob...
+      window.URL= window.URL || window.webkitURL;
+      var blobURL= window.URL.createObjectURL(blob); // and get it's URL
+      var ontblob= function (ab) {
          img.remove();
          imgHldr.classList.remove("dummy");
-         img = document.createElement('img');
+         img= document.createElement('img');
          imgHldr.insertAdjacentElement('beforeEnd', img);
          img.classList.add("fixedSize");
          img.setAttribute("loading","lazy");
          addDummyImgs(thisThing);
-         img.onload = function () {
+         img.onload= function () {
             ferrylog("thumbLoaded");
             if (f.size>2000000) {
                ferrylog("File size exceeded 2MB! Compressing");
@@ -1120,10 +1146,10 @@ function selectFiles (ev) {
       }
       
       // helper Image object
-      image = new Image();
-      image.onload = function () {
+      image= new Image();
+      image.onload= function () {
          ferrylog("imageLoaded");
-         var resized = resizeMe(image,0.7,(tblob)=>{
+         var resized= resizeMe(image,0.7,(tblob)=>{
             ferrylog("gotThumbBlob: "+tblob.size);
             if (tblob.bytes) {
                tblob.bytes().then((tbytes)=>{
@@ -1138,11 +1164,11 @@ function selectFiles (ev) {
             }
          },true);
       }
-      image.src = blobURL;
+      image.src= blobURL;
    };
 }
 
-var about = function () {
+var about= function () {
    if (Log.classList.contains('about')) {
       Log.classList.remove('about');
    } else {
@@ -1150,8 +1176,8 @@ var about = function () {
    }
 }
 
-var onBID = function (feed) {
-   var res = JSON.parse(feed.responseText);
+var onBID= function (feed) {
+   var res= JSON.parse(feed.responseText);
    if (res.bid) {
       setCookie("bid", res.bid, 7);
       window.bidLoc=feed.pstr.split(',');
@@ -1163,16 +1189,16 @@ var onBID = function (feed) {
       LocationDDiv.classList.remove("if");
       Footer.classList.remove("if");
       Logo.classList.add("small");
-      Logo.onclick = function () {
+      Logo.onclick= function () {
          location.href=window.location.origin;
       }
       LocationPin.classList.remove("hidden");
-      LocTHide = function () {
+      LocTHide= function () {
          LocTxt.classList.add("hidden");
       };
-      LocTTimeout = setTimeout(LocTHide,7000);
-      LocationDiv.onmouseenter = LocDShow;
-      LocationDiv.onmouseleave = LocDHide;
+      LocTTimeout= setTimeout(LocTHide,7000);
+      LocationDiv.onmouseenter= LocDShow;
+      LocationDiv.onmouseleave= LocDHide;
       addEvent(OwlOnPerch, 'mouseenter', function () {
          LocTxt.classList.add("hidden");
       });
@@ -1197,51 +1223,51 @@ var onBID = function (feed) {
    Location.classList.add("hidden");
    LocTxt.innerHTML=Location.value;
    LocTxt.classList.remove("hidden");
-   LocationPin.onclick = showBoxUpdtLoc;
+   LocationPin.onclick= showBoxUpdtLoc;
    LocationDDiv.classList.remove("hidden");
    if (window.tgtUsr) {
       TgtUsrLgHldr.innerHTML= tgtUsr;
-      TgtUsrLgHldr.onclick = function () {
+      TgtUsrLgHldr.onclick= function () {
          window.location.href='/'+tgtUsr;
       }
       TgtUsrLgHldr.classList.remove("hidden");
    }
-   delete shuttle;
+   delete window.shuttle;
 }
-var hideBlink = function () {
-   let blinkElms = document.getElementsByClassName("blink");
+var hideBlink= function () {
+   let blinkElms= document.getElementsByClassName("blink");
    for (let i=0; i<blinkElms.length; ++i) {
       blinkElms[i].classList.add("dim");
       blinkElms[i].classList.remove("hilit");
    }
    blinker=setTimeout(showBlink,300);
 }
-var showBlink = function () {
-   let blinkElms = document.getElementsByClassName("blink");
+var showBlink= function () {
+   let blinkElms= document.getElementsByClassName("blink");
    for (let i=0; i<blinkElms.length; ++i) {
       blinkElms[i].classList.remove("dim");
       blinkElms[i].classList.add("hilit");
    }
    blinker=setTimeout(hideBlink,3000);
 }
-var blink = function () {
+var blink= function () {
    blinker=setTimeout(hideBlink,3000)
 }
-var onCaptcha = function(feed){
-   var res = JSON.parse(feed.responseText);
+var onCaptcha= function(feed){
+   var res= JSON.parse(feed.responseText);
    if (res.cap) {
       CaptchaImg.src="/tmp/"+browserID+".jpg?"+new Date().getTime();
    }
-   delete shuttle;
+   delete window.shuttle;
 }
-var markUserThings = function () {
-   var uts = UserThings[User.innerHTML];
+var markUserThings= function () {
+   var uts= UserThings[User.innerHTML];
    for (var tid in uts) {
       uts[tid].classList.add("mine");
    }
 }
-var signin = function(feed) {
-   var res = JSON.parse(feed.responseText);
+var signin= function(feed) {
+   var res= JSON.parse(feed.responseText);
    if (res.email) {
       document.body.classList.add("signed");
       User.innerHTML=res.name;
@@ -1250,8 +1276,8 @@ var signin = function(feed) {
       if (!window.tgtThing || !Things.children.length) {
          updateThings(res);
       } else {
-         let thn = Things.children[0];
-         let imgsHldr = getElementInsideContainer(thn,"ImgsHldr");
+         let thn= Things.children[0];
+         let imgsHldr= getElementInsideContainer(thn,"ImgsHldr");
          showThingDetails.call(imgsHldr,true);
       }
       markUserThings();
@@ -1265,10 +1291,10 @@ var signin = function(feed) {
       }
    } else {
       if (feed.cntnt.gid) {
-         let passTry = "<br/>Try signing with password;<br/>"+
+         let passTry= "<br/>Try signing with password;<br/>"+
              "if u don't have one, get it by resetting password";
          if (res.error) {
-            if (res.error == 3)
+            if (res.error== 3)
                ferrylog("Couldn't reach google! try again..."+passTry);
             else
                ferrylog("Google authentication failed!" + passTry);
@@ -1287,27 +1313,27 @@ var signin = function(feed) {
    }
    delete Password.shuttle;
 }
-var deleteThings = function () {
+var deleteThings= function () {
    Things.innerHTML="";
    delete UserThings;
-   UserThings = {};
+   UserThings= {};
 }
 
-var hideThings = function () {
+var hideThings= function () {
    for (var thing of Things.children) {
       thing.classList.add("hidden");
    }
 }
 
-var openfileprompt = function () {
+var openfileprompt= function () {
    this.nextElementSibling.click();
 }
-var hideThingDetails = function (event) {
+var hideThingDetails= function (event) {
    if (event.target==this) {
       showThingDetails(false);
    }
 }
-var showThingDetails = function (show) {
+var showThingDetails= function (show) {
    if (show!==true && lstThn.classList.contains("active")) {
       lstThn.classList.remove("active");
       Chin.classList.remove("big");
@@ -1319,17 +1345,17 @@ var showThingDetails = function (show) {
       return;
    }
    lstThn.classList.remove("active");
-   lstThn = this.parentElement;
+   lstThn= this.parentElement;
    lstThn.classList.add("active");
    if (document.body.classList.contains("signed") &&
        !lstThn.classList.contains("mine")) {
       popQueryBtn.call(lstThn);
    }
    Chin.classList.add("big");
-   // let shUrB = getElementInsideContainer(lstThn,"showURLBtn");
+   // let shUrB= getElementInsideContainer(lstThn,"showURLBtn");
    // showURL.call(shUrB);
    showURL.call(this, event)
-   let scrl = {behavior: "smooth", top: lstThn.offsetTop-70};
+   let scrl= {behavior: "smooth", top: lstThn.offsetTop-70};
    scrollTo(scrl);
 }
 function hideKeyboard () {
@@ -1351,7 +1377,7 @@ function hideKeyboard () {
    }, 100);
 }
 
-var replyQuery = function () {
+var replyQuery= function () {
    if (!ReplyBox.value.length) {
       return;
    }
@@ -1368,20 +1394,20 @@ var replyQuery = function () {
    ReplyDiv.remove();
    ferrylog("Ur reply will b sent by next owl!");
 }
-var popQueryBtn = function () {
+var popQueryBtn= function () {
    MsgBtn.onclick=null;
-   var p = QSendDiv.parentElement;
+   var p= QSendDiv.parentElement;
    if (p) {
       QSendDiv.remove();
    }
-   var md = getElementInsideContainer(this, "msgdiv");
+   var md= getElementInsideContainer(this, "msgdiv");
    md.insertAdjacentElement("beforeEnd", QSendDiv);
    MsgBtn.onclick=sendMsg;
 }
-var popReplyBtn = function () {
+var popReplyBtn= function () {
    this.onclick=null;
    ReplyBox.value="";
-   var p = ReplyDiv.parentElement;
+   var p= ReplyDiv.parentElement;
    if (p) {
       p.onclick=popReplyBtn;
       ReplyDiv.remove();
@@ -1389,7 +1415,7 @@ var popReplyBtn = function () {
    this.insertAdjacentElement("beforeEnd", ReplyDiv);
    ReplyBtn.onclick=replyQuery;
 }
-var markAsRead = function () {
+var markAsRead= function () {
    this.classList.remove("new");
    this.classList.add("inQ");
    this.imd.classList.remove("new");
@@ -1399,7 +1425,7 @@ var markAsRead = function () {
    }
    Inbox.rmds.push(this.imd);
 }
-var showThing = function () {
+var showThing= function () {
    Mbox.classList.add("hidden");
    var thing;
    if (this.md) {
@@ -1409,7 +1435,7 @@ var showThing = function () {
          parentElement;
    }
    showThingDetails.call(getElementInsideContainer(thing, "ThingName"), true);
-   md = this.md?this.md:this.rmd;
+   md= this.md?this.md:this.rmd;
    md.classList.add("highlight");
    setTimeout(function(){md.classList.remove("highlight")}, 3000);
    if (this.classList.contains("new")) {
@@ -1420,43 +1446,43 @@ var showThing = function () {
    }
    thing.scrollIntoView({behavior: "smooth", block: "start"});
 }
-const resizeObserver = new ResizeObserver(entries => {
+const resizeObserver= new ResizeObserver(entries=> {
    for (let entry of entries) {
       // Access the new size of the element using entry.contentRect
       //console.log('Element size changed:', entry.contentRect.width, entry.contentRect.height);
-      var thing = entry.target.parentElement.parentElement;
+      var thing= entry.target.parentElement.parentElement;
       thing.style.width=entry.target.offsetWidth+"px";
    }
 });
-var thingDist = function (thingN) {
+var thingDist= function (thingN) {
    if (thingN.loc) {
-      var xd = window.bidLoc[0]-thingN.loc[0];
-      var yd = window.bidLoc[1]-thingN.loc[1];
+      var xd= window.bidLoc[0]-thingN.loc[0];
+      var yd= window.bidLoc[1]-thingN.loc[1];
       return Math.pow(Math.pow(xd,2)+Math.pow(yd,2),0.5);
    }
    return 1000000.000;
 }
-var insertThing = function (thingN) {
-   thingN.d = thingDist(thingN);
+var insertThing= function (thingN) {
+   thingN.d= thingDist(thingN);
    
    if (!Things.children.length) {
       Things.appendChild(thingN);
       return;
    }
    
-   let start = 0;
-   let end = Things.children.length - 1;
-   let insertIndex = Things.children.length; // Default to append at end
+   let start= 0;
+   let end= Things.children.length - 1;
+   let insertIndex= Things.children.length; // Default to append at end
    
    while (start <= end) {
-      let mid = Math.floor((start + end) / 2);
-      let midThing = Things.children[mid];
+      let mid= Math.floor((start + end) / 2);
+      let midThing= Things.children[mid];
       
       if (midThing.d > thingN.d) {
-         insertIndex = mid;
-         end = mid - 1;
+         insertIndex= mid;
+         end= mid - 1;
       } else {
-         start = mid + 1;
+         start= mid + 1;
       }
    }
    
@@ -1466,22 +1492,22 @@ var insertThing = function (thingN) {
       Things.insertBefore(thingN, Things.children[insertIndex]);
    }
 }
-var updateThings = function (res) {
+var updateThings= function (res) {
    if (res.name) {
-      userData = res;
+      userData= res;
    }
-   Things.onclick=hideThingDetails;
-   var thingCount = res.things?res.things.length:0;
+   Things.onclick= hideThingDetails;
+   var thingCount= res.things?res.things.length:0;
    for (var i=0; i<thingCount; ++i) {
-      var thing=res.things[i];
-      var newThing=true;
+      var thing= res.things[i];
+      var newThing= true;
       if (!thing.user && !userData["name"])
          return;
       var un;
       if (!thing.user) {
-         un = userData["name"];
+         un= userData["name"];
       } else {
-         un = thing.user;
+         un= thing.user;
       }
       if (!UserThings[un]) {
          UserThings[un]={};
@@ -1493,7 +1519,7 @@ var updateThings = function (res) {
          UserThings[un][-1]=undefined;
          newThing=false;
       }
-      var thisThingUser = User.innerHTML==thing.user;
+      var thisThingUser= User.innerHTML==thing.user;
       var thingN=
           newThing?Thing.cloneNode(true):UserThings[un][thing.id];
       if (Object.keys(thing).length==2) {
@@ -1504,33 +1530,33 @@ var updateThings = function (res) {
       if (thing.id==-1) {
          thingN.classList.add("mine");
       }
-      var imgsHldr = thingN.children[0];
-      var imgs = imgsHldr.children[0];
-      imgs.cid = 0;
+      var imgsHldr= thingN.children[0];
+      var imgs= imgsHldr.children[0];
+      imgs.cid= 0;
       resizeObserver.observe(imgs);
-      var msgDiv = getElementInsideContainer(thingN, "msgdiv");
-      var msgd = getElementInsideContainer(msgDiv, "msgs");
-      var UserThingEditBtn =
+      var msgDiv= getElementInsideContainer(thingN, "msgdiv");
+      var msgd= getElementInsideContainer(msgDiv, "msgs");
+      var UserThingEditBtn=
           getElementInsideContainer(thingN, "ThingEditBtn");
       if (newThing) {
          imgsHldr.onclick=showThingDetails;
-         var imgHldr = imgs.children[0];
-         var img = imgHldr.children[0];
-         var pics = res.things[i].pics;
+         var imgHldr= imgs.children[0];
+         var img= imgHldr.children[0];
+         var pics= res.things[i].pics;
          if (pics && pics.length) {
             img.src="/upload/"+res.things[i].user+"/"+res.things[i].id+
                "."+0+".jpg?t="+pics[0].ts;
             for (var j=1; j<pics.length; ++j) {
-               imgHldr = imgs.children[0].cloneNode(true);
+               imgHldr= imgs.children[0].cloneNode(true);
                imgHldr.classList.add("hidden");
-               img = imgHldr.children[0];
+               img= imgHldr.children[0];
                img.src="/upload/"+res.things[i].user+"/"+res.things[i].id+
                   "."+j+".jpg?"+pics[j].ts;
                imgs.children[j-1].insertAdjacentElement(
                   'afterEnd', imgHldr);
             }
          } else {
-            var SVG = SVGS.children[0].cloneNode(true);
+            var SVG= SVGS.children[0].cloneNode(true);
             imgHldr.replaceChild(SVG, img);
             imgHldr.classList.add("dummy");
          }
@@ -1550,7 +1576,7 @@ var updateThings = function (res) {
          name.onclick=showThingDetails;
          name.classList.remove("hidden");
       }
-      var locPin = getElementInsideContainer(thingN, "ThingLocationPin");
+      var locPin= getElementInsideContainer(thingN, "ThingLocationPin");
       if (thing.location && thing.location.length) {
          var location=getElementInsideContainer(thingN, "ThingLocation");
          thingN.loc=thing.location;
@@ -1578,9 +1604,9 @@ var updateThings = function (res) {
       if (thing.details) {
          dtls.innerHTML=thing.details;
       }
-      let lm = getElementInsideContainer(thingN, "lastModed");
+      let lm= getElementInsideContainer(thingN, "lastModed");
       if (thing.lastModed) {
-         const time = new Date(thing.lastModed*1000);
+         const time= new Date(thing.lastModed*1000);
          lm.innerHTML=time.toLocaleString(undefined, {
             year: '2-digit',
             month: '2-digit',
@@ -1604,9 +1630,9 @@ var updateThings = function (res) {
             var rmsg=rmsgs[l];
             var md;
             if (l<msgd.children.length) {
-               md = msgd.children[m];
-               var ld = md.children[0];
-               var id = parseInt(ld.innerHTML);
+               md= msgd.children[m];
+               var ld= md.children[0];
+               var id= parseInt(ld.innerHTML);
                if (id<rmsg["id"]) {
                   --l;
                } else {
@@ -1615,7 +1641,7 @@ var updateThings = function (res) {
                   md.children[2].innerHTML=rmsg["msg"];
                }
             } else {
-               md = msgd.children[0].cloneNode(true);
+               md= msgd.children[0].cloneNode(true);
                md.classList.remove("new");
                md.children[0].innerHTML=rmsg["id"];
                md.children[1].innerHTML=rmsg["user"]+": ";
@@ -1626,7 +1652,7 @@ var updateThings = function (res) {
                msgd.insertAdjacentElement("beforeEnd", md);
             }
             if (thisThingUser && !itms.has(rmsg["id"])) {
-               var imd = md.cloneNode(true);
+               var imd= md.cloneNode(true);
                Inbox.insertAdjacentElement(
                   "beforeEnd", imd);
                if (rmsg["new"]) {
@@ -1672,32 +1698,32 @@ var updateThings = function (res) {
    if (res.smsgs) {
       for (var j=0; j<res.smsgs.length; ++j) {
          var smsg=res.smsgs[j];
-         var to = smsg[0];
-         var isR = 0;
+         var to= smsg[0];
+         var isR= 0;
          if (!to.length) {
-            to = User.innerHTML;
+            to= User.innerHTML;
             isR=1;
          }
          let toUser=UserThings[to];
          if (!toUser)
             continue;
-         var thn = toUser[smsg[1]];
+         var thn= toUser[smsg[1]];
          if (!thn)
             continue;
-         var msgDiv = getElementInsideContainer(thn, "msgdiv");
-         var msgd = getElementInsideContainer(msgDiv, "msgs");
+         var msgDiv= getElementInsideContainer(thn, "msgdiv");
+         var msgd= getElementInsideContainer(msgDiv, "msgs");
          for (var i=0; i<msgd.children.length; ++i) {
-            var md = msgd.children[i];
-            var mid = parseInt(md.children[0].innerHTML);
+            var md= msgd.children[i];
+            var mid= parseInt(md.children[0].innerHTML);
             if (mid!=smsg[2]) {
                continue;
             }
             if (isR) {
                md=md.lastElementChild;
             }
-            var smd = md.cloneNode(true);
+            var smd= md.cloneNode(true);
             if (!isR) {
-               var toelm = smd.removeChild(smd.children[1]);
+               var toelm= smd.removeChild(smd.children[1]);
                toelm.innerHTML=" :"+to;
                smd.insertAdjacentElement("beforeEnd",toelm);
                md.imd=smd;
@@ -1709,11 +1735,11 @@ var updateThings = function (res) {
             Outbox.insertAdjacentElement("beforeEnd",smd);
             smd.onclick=showThing;
             if (!isR && md.children.length==4) {
-               var reply = smd.removeChild(smd.children[2]);
+               var reply= smd.removeChild(smd.children[2]);
                reply.rmd=md.lastElementChild;
                md.lastElementChild.imd=reply;
                for (var m=0; m<res.reps.length; m+=2) {
-                  var k = res.reps[m];
+                  var k= res.reps[m];
                   if (j==k) {
                      reply.classList.add("new");
                      md.children[3].classList.add("new");
@@ -1734,19 +1760,19 @@ var updateThings = function (res) {
       OwlOnPerch.classList.add("nonews");
    }
    if (window.tgtUsr && urlQuery.get("thing")) {
-      let thn = Things.children[0];
+      let thn= Things.children[0];
       let inf=getElementInsideContainer(thn,"thingInfo");
       let usr=getElementInsideContainer(thn,"ThingUsr");
       let usrnm=thn.user;
       usr.innerHTML="<a href=\""+window.location.origin+"/"+usrnm+
          "\">"+usrnm+"</a>";
       inf.classList.remove("hidden");
-      let imgsHldr = getElementInsideContainer(thn,"ImgsHldr");
+      let imgsHldr= getElementInsideContainer(thn,"ImgsHldr");
       imgsHldr.onclick=null;
       Things.onclick=null;
       showThingDetails.call(imgsHldr,true);
-      let thnBtm = getElementInsideContainer(thn,"thnBtm");
-      let thnDtls = getElementInsideContainer(thn,"ThingDetails");
+      let thnBtm= getElementInsideContainer(thn,"thnBtm");
+      let thnDtls= getElementInsideContainer(thn,"ThingDetails");
       thnBtm.style.position="relative";
       thnDtls.classList.remove("hidden");
       loadBottom.classList.add("hidden");
@@ -1754,7 +1780,7 @@ var updateThings = function (res) {
 
 }
 
-var unlock = function(){
+var unlock= function(){
    if (location.protocol!="https:") {
       ferrylog("U r not using HTTPS; can't unlock!");
       return;
@@ -1765,46 +1791,46 @@ var unlock = function(){
    Username.focus();
 };
 
-var onKeyDown = function () {
+var onKeyDown= function () {
    
 }
 
-var usrnmEvent = function () {
+var usrnmEvent= function () {
    if (event.keyCode==13 && this.value !== this.plcHldr) { //13==enter
       Password.focus();
    }
 }
 
-var authenticateUser = function (ggl) {
+var authenticateUser= function (ggl) {
    if ((event.keyCode==13 && this.value !== this.plcHldr) ||
-       this === SubmitBtn || ggl!==event) { //13==enter
+       this=== SubmitBtn || ggl!==event) { //13==enter
       hideKeyboard();
-      let url = window.location.search;
+      let url= window.location.search;
       url+=url.length?"&":"?";
       url+="req=signIn";
       var f={};
-      var pstr = Location.value;
+      var pstr= Location.value;
       ferrylog("Location: " + pstr);
       let username;
-      let md5Pass = core.MD5(Password.value);
+      let md5Pass= core.MD5(Password.value);
       let cntnt={};
       if (ggl!==event) {
-         cntnt.gid = Username.token;
+         cntnt.gid= Username.token;
       } else {
-         cntnt.username = Username.value;
-         cntnt.password = md5Pass;
+         cntnt.username= Username.value;
+         cntnt.password= md5Pass;
       }
       //cntnt.geoposition=pstr.split(",");
-      f.cntnt = cntnt;
+      f.cntnt= cntnt;
       f.content=JSON.stringify(cntnt);
       f.postExpdtn=signin;
       f.reqHeaders=jsonCType;
-      Password.shuttle = new core.shuttle(url,f.content,f.postExpdtn,f);
+      Password.shuttle= new core.shuttle(url,f.content,f.postExpdtn,f);
    }
 }
 
-var updateSearchedThings = function (feed) {
-   var res = JSON.parse(feed.responseText);
+var updateSearchedThings= function (feed) {
+   var res= JSON.parse(feed.responseText);
    ferrylog(
       res.things.length+" thing"+(res.things.length==1?"":"s")+" found");
    res.search=true;
@@ -1821,19 +1847,19 @@ var updateSearchedThings = function (feed) {
    delete SearchTool.shuttle;
 }
 
-var search = function () {
+var search= function () {
    window.searchCount=0;
    if (mouth.value==mouth.plcHldr) {
       showAllThings();
       event.preventDefault();
       return;
    }
-   var pstr = Location.value;
-   let url = window.location.search;
+   var pstr= Location.value;
+   let url= window.location.search;
    url+=url.length?"&":"?";
    url+="req=search";
    var f={};
-   let cnt = {};
+   let cnt= {};
    cnt.bid=browserID;
    cnt.search=mouth.value;
    cnt.geoposition=pstr.split(",");
@@ -1843,8 +1869,8 @@ var search = function () {
    SearchTool.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
    event.preventDefault();
 }
-var lock = function () {
-   let url = window.location.search;
+var lock= function () {
+   let url= window.location.search;
    url+=url.length?"&":"?";
    url+="req=signOut";
    var f={};
@@ -1854,7 +1880,7 @@ var lock = function () {
    f.reqHeaders=jsonCType;
    Unlock.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
 }
-var signOutUi = function () {
+var signOutUi= function () {
    clearInterval(owlMail);
    if (UserThings[User.innerHTML] && UserThings[User.innerHTML][-1]) {
       UserThings[User.innerHTML][-1].remove();
@@ -1867,7 +1893,7 @@ var signOutUi = function () {
    Outbox.innerHTML="";
    Mbox.classList.add("hidden");
    document.body.classList.remove("signed");
-   var mine = document.getElementsByClassName("mine");
+   var mine= document.getElementsByClassName("mine");
    while (mine.length) {
       mine[0].classList.remove("mine");
    }
@@ -1878,8 +1904,8 @@ var signOutUi = function () {
    ferrylog("Bye!");
 }
 
-var signOut = function (feed) {
-   var res = JSON.parse(feed.responseText);
+var signOut= function (feed) {
+   var res= JSON.parse(feed.responseText);
    if (res.signOut===true) {
       signOutUi();
    } else {
@@ -1889,7 +1915,7 @@ var signOut = function (feed) {
    delete Unlock.shuttle;
 }
 
-var signOk = function (res) {
+var signOk= function (res) {
    if (res.signOut==true) {
       signOutUi();
       ferrylog("Ur account is signed in from another device. Signing out!");
@@ -1898,7 +1924,7 @@ var signOk = function (res) {
    return true;
 }
 
-var togglesignup = function () {
+var togglesignup= function () {
    if (SignUp.checked || Recover.checked) {
       Username.onkeydown=null;
       Username.oninput=null;
@@ -1916,7 +1942,7 @@ var togglesignup = function () {
       }
       Username.onkeydown=null;
       InUp.innerHTML="up";
-      let url = window.location.search;
+      let url= window.location.search;
       url+=url.length?"&":"?";
       url+="req=captcha";
       var f={};
@@ -1971,11 +1997,11 @@ var togglesignup = function () {
    }
 }
 
-var signup = function (resPld) {
+var signup= function (resPld) {
    if (event.keyCode==13 && this.value !== this.plcHldr ||
-       this === SubmitBtn || resPld!==event) { //13==enter
+       this=== SubmitBtn || resPld!==event) { //13==enter
       hideKeyboard();
-      let url = window.location.search;
+      let url= window.location.search;
       url+=url.length?"&":"?";
       url+="req=signUp";
       var f={};
@@ -1986,7 +2012,7 @@ var signup = function (resPld) {
             return;
          }
       }
-      let token = Username.token;
+      let token= Username.token;
       if (SignUp.checked && !validUsername(Username.value)) {
          return;
       } else if (!token) {
@@ -2004,16 +2030,16 @@ var signup = function (resPld) {
             return;
          }
       }
-      let cntnt = {};
+      let cntnt= {};
       if (!token) {
-         cntnt.email = Email.value;
-         cntnt.captcha = Captcha.value;
-         cntnt.password = core.MD5(Passwords2.value);
+         cntnt.email= Email.value;
+         cntnt.captcha= Captcha.value;
+         cntnt.password= core.MD5(Passwords2.value);
       } else {
          cntnt.gid=token;
       }
       if (!Recover.checked) {
-         cntnt.username = Username.value;
+         cntnt.username= Username.value;
       }
       cntnt.consent=Consent.checked;
       f.cntnt=cntnt
@@ -2025,10 +2051,10 @@ var signup = function (resPld) {
    }
 }
 
-var actMail = function (feed) {
-   var res = JSON.parse(feed.responseText);
+var actMail= function (feed) {
+   var res= JSON.parse(feed.responseText);
    ferrylog(res.msg);
-   if (res.actEmailSent == 2) {
+   if (res.actEmailSent== 2) {
       SignIn.checked=true;
       togglesignup();
       if (feed.cntnt.gid) {
@@ -2040,40 +2066,40 @@ var actMail = function (feed) {
    SubmitBtn.disabled=false;
    delete Passwords2.shuttle;
 }
-var getCookie = function (cname) {
-   let name = cname + "=";
-   let decodedCookie = decodeURIComponent(document.cookie);
-   let ca = decodedCookie.split(';');
-   for(let i = 0; i <ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) == ' ') {
-         c = c.substring(1);
+var getCookie= function (cname) {
+   let name= cname + "=";
+   let decodedCookie= decodeURIComponent(document.cookie);
+   let ca= decodedCookie.split(';');
+   for(let i= 0; i <ca.length; i++) {
+      let c= ca[i];
+      while (c.charAt(0)== ' ') {
+         c= c.substring(1);
       }
-      if (c.indexOf(name) == 0) {
+      if (c.indexOf(name)== 0) {
          return c.substring(name.length, c.length);
       }
    }
    return "";
 }
-var setCookie = function(cname, cvalue, exdays) {
-   const d = new Date();
+var setCookie= function(cname, cvalue, exdays) {
+   const d= new Date();
    d.setTime(d.getTime() + (exdays*24*60*60*1000));
-   let expires = "expires="+ d.toUTCString();
-   document.cookie = cname + "=" + cvalue + ";" + expires +
+   let expires= "expires="+ d.toUTCString();
+   document.cookie= cname + "=" + cvalue + ";" + expires +
       ";path=/;SameSite=Strict";
 };
-var makeid = function (length) {
-   var result     = '';
-   var characters =
+var makeid= function (length) {
+   var result    = '';
+   var characters=
        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-   var charactersLength = characters.length;
-   for ( var i = 0; i < length; i++ ) {
+   var charactersLength= characters.length;
+   for ( var i= 0; i < length; i++ ) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
    }
    return result;
 }
 
-var addThing = function () {
+var addThing= function () {
    Footer.scrollIntoView({behavior: "smooth", block: "start"});
    if (!userData["things"]) {
       userData["things"]=[];
@@ -2082,53 +2108,53 @@ var addThing = function () {
       UserThings[User.innerHTML][-1].classList.remove("hidden");
       return;
    }
-   userData["things"][userData["things"].length] = {
+   userData["things"][userData["things"].length]= {
       "id":-1,
       "location":"",
       "pics":[]
    };
    userData["things"]["user"]=User.innerHTML;
    updateThings(userData);
-   let thing = Things.children[0];
+   let thing= Things.children[0];
    editThing.call(getElementInsideContainer(
       thing, "ThingEditBtn"));
 }
-var addRemovables = function (thing) {
+var addRemovables= function (thing) {
    for (let i=0; i<ThingRemovables.length; ++i) {
-      let r = ThingRemovables[i];
-      let p = getElementInsideContainer(thing, r.pid);
+      let r= ThingRemovables[i];
+      let p= getElementInsideContainer(thing, r.pid);
       p.insertAdjacentElement('afterEnd', r);
    }
 }
-var removeRemovables = function (thing) {
+var removeRemovables= function (thing) {
    for (let i=0; i<ThingRemovables.length; ++i) {
       ThingRemovables[i].remove();
    }
 }
-var removeDummyImgs = function (thing) {
+var removeDummyImgs= function (thing) {
    var imgs=getElementInsideContainer(thing, "Imgs");
    var dummies=imgs.getElementsByClassName("dummy");
    if (imgs.children.length>1 && dummies.length) {
       dummies[0].remove();
    }
 }
-var addDummyImgs = function (thing) {
+var addDummyImgs= function (thing) {
    var imgs=getElementInsideContainer(thing, "Imgs");
    var i=imgs.children.length;
    if (i<MaxImgsPerThing && !imgs.children[0].classList.contains("dummy")) {
-      var imgHldr = imgs.children[0].cloneNode(true);
-      var img = imgHldr.children[0];
-      var thisSVG = SVGS.children[i].cloneNode(true);
+      var imgHldr= imgs.children[0].cloneNode(true);
+      var img= imgHldr.children[0];
+      var thisSVG= SVGS.children[i].cloneNode(true);
       imgHldr.replaceChild(thisSVG,img);
       imgHldr.classList.add("dummy");
       imgHldr.classList.add("hidden")
       imgs.children[i-1].insertAdjacentElement('afterEnd', imgHldr);
    }
 }
-var showURL = function () {
-   var thing = this.parentElement;
-   let ln = window.origin+"/"+thing.user+"?thing="+thing.thingId;
-   let fl = ferrylog(
+var showURL= function () {
+   var thing= this.parentElement;
+   let ln= window.origin+"/"+thing.user+"?thing="+thing.thingId;
+   let fl= ferrylog(
       "<a href=\""+ln+"\" onclick=\"return false;\"\">"+ln+"</a>");
    fl.firstElementChild.onclick=function(){
       event.preventDefault();
@@ -2139,17 +2165,17 @@ var showURL = function () {
    }
 }
 var lastCnclEdtBtn;
-var editThing = function (newThing) {
+var editThing= function (newThing) {
    if (lastCnclEdtBtn) {
       updateThing.call(lastCnclEdtBtn);
    }
    UserActions.classList.add("hidden");
    this.classList.remove("thngEdBtn");
-   var thisUserThing = this.parentElement;
+   var thisUserThing= this.parentElement;
    thisUserThing.classList.add("editMode");
-   var ThingLocation = getElementInsideContainer(
+   var ThingLocation= getElementInsideContainer(
       thisUserThing, "ThingLocation");
-   var ThingDetails = getElementInsideContainer(
+   var ThingDetails= getElementInsideContainer(
       thisUserThing, "ThingDetails");
    //ThingDetails.classList.add("hidden");
    //ThingName.classList.add("hidden");
@@ -2157,10 +2183,10 @@ var editThing = function (newThing) {
    //ThingNameB.classList.remove("hidden");
    //ThingNameL.classList.remove("hidden");
    //CnclEdtBtn.classList.remove("hidden");
-   var ThingName = getElementInsideContainer(thisUserThing, "ThingName");
-   var ThingLocPin = getElementInsideContainer(
+   var ThingName= getElementInsideContainer(thisUserThing, "ThingName");
+   var ThingLocPin= getElementInsideContainer(
       thisUserThing, "ThingLocationPin");
-   var imgs = getElementInsideContainer(thisUserThing, "Imgs");
+   var imgs= getElementInsideContainer(thisUserThing, "Imgs");
    var ImgsHldr=imgs.parentElement;
    ImgsHldr.onclick=null;
    ThingLocationBox.value=ThingLocation.innerText;
@@ -2183,24 +2209,24 @@ var editThing = function (newThing) {
    Header.classList.add("hidden");
 }
 
-var updateThing = function() {
+var updateThing= function() {
    Header.classList.remove("hidden");
    lastCnclEdtBtn=null;
    UserActions.classList.remove("hidden");
-   var cncl = this.value=="Cancel";
-   var edtBtn = this;
+   var cncl= this.value=="Cancel";
+   var edtBtn= this;
    if (cncl) {
-      edtBtn = this.nextElementSibling;
+      edtBtn= this.nextElementSibling;
    }
-   let url = window.location.search;
+   let url= window.location.search;
    url+=url.length?"&":"?";
    url+="req=updateThing";
    var f={};
-   var content = {};
+   var content= {};
    content.things=[];
-   var UserThing = this.parentElement;
+   var UserThing= this.parentElement;
    var imgs=getElementInsideContainer(UserThing, "Imgs");
-   var ThingLocPin = getElementInsideContainer(UserThing, "ThingLocationPin");
+   var ThingLocPin= getElementInsideContainer(UserThing, "ThingLocationPin");
    var ImgsHldr=imgs.parentElement;
    ImgsHldr.onclick=showThingDetails;
    if (!(cncl && UserThing.thingId==-1)) {
@@ -2226,18 +2252,18 @@ var updateThing = function() {
    }
    var thing={};thing.id=UserThing.thingId;
    thing.name=ThingNameBox.value;
-   var location = ThingLocationBox.value.split(',');
-   thing.location = [parseFloat(location[0]), parseFloat(location[1])];
-   var ThingDetailsTA = ThingDetailsDiv.children[1];
+   var location= ThingLocationBox.value.split(',');
+   thing.location= [parseFloat(location[0]), parseFloat(location[1])];
+   var ThingDetailsTA= ThingDetailsDiv.children[1];
    if (!validThingDetails(ThingDetailsTA.value)) {
       ferrylog("Invalid thing details.");
    }
-   thing.details = ThingDetailsTA.value;
+   thing.details= ThingDetailsTA.value;
    content.things.push(thing);
    f.user=content;
    f.content=JSON.stringify(content);
    f.reqHeaders=jsonCType;
-   f.postExpdtn = function (feed) {
+   f.postExpdtn= function (feed) {
       var res=JSON.parse(feed.responseText);
       if (!signOk(res)) {
          return;
@@ -2254,18 +2280,18 @@ var updateThing = function() {
 }
 
 // Send a large blob of data chunk by chunk
-var sendFileData = function(data, chunkSize, l) {
+var sendFileData= function(data, chunkSize, l) {
    var totalKB=Math.ceil(data.length/1000);
-   var opts = {method: 'POST'};
-   let curl = window.location.search;
+   var opts= {method: 'POST'};
+   let curl= window.location.search;
    curl += curl.length?"&":"?";
    curl += 'req=upload&chunkSize=' + chunkSize;
    curl += '&totalSize=' + data.length;
    curl += "&picId=" + l.picId + '&thingId=';
-   let fl = ferrylog("Uploading");
-   var sendChunk = function(offset) {
-      var chunk = data.subarray(offset, offset + chunkSize) || '';
-      let url = curl + l.thingId+'&offset=' + offset;
+   let fl= ferrylog("Uploading");
+   var sendChunk= function(offset) {
+      var chunk= data.subarray(offset, offset + chunkSize) || '';
+      let url= curl + l.thingId+'&offset=' + offset;
       var ok;
       var sentKB=Math.ceil((offset+chunk.length)/1000);
       var percent=Math.floor(sentKB*100/totalKB);
@@ -2273,7 +2299,7 @@ var sendFileData = function(data, chunkSize, l) {
       opts.body=chunk;
       fetch(url, opts)
          .then(function(res) {
-            ok = res.ok;
+            ok= res.ok;
             return res.text();
          })
          .then(function(text) {
@@ -2307,13 +2333,13 @@ var sendFileData = function(data, chunkSize, l) {
 };
 
 function getElementInsideContainer (container, childID) {
-   var elms = container.children;
-   for (var i = 0; i < elms.length; i++) {
+   var elms= container.children;
+   for (var i= 0; i < elms.length; i++) {
       var elm=elms[i];
-      if (elm.id === childID) {
+      if (elm.id=== childID) {
          return elm;
       }
-      var child = getElementInsideContainer(elm, childID);
+      var child= getElementInsideContainer(elm, childID);
       if (child) {
          return child;
       }
@@ -2390,8 +2416,8 @@ function validPassword (name) {
    return (name.length && name.length <= 24);
 }
 
-var validThingName = function (name) {
-   var numstart = false;
+var validThingName= function (name) {
+   var numstart= false;
    for (var i=0; i<name.length;++i) {
       if (name.charAt(i)==' ') {
          if (i+1<name.length) {
@@ -2433,7 +2459,7 @@ var validThingName = function (name) {
    return true;
 }
 
-var validThingDetails = function (name) {
+var validThingDetails= function (name) {
    for (var i=0; i<name.length;++i) {
       if (!((name.charAt(i)>=" ".charAt(0) &&
              name.charAt(i)<="~".charAt(0)) ||
@@ -2446,17 +2472,17 @@ var validThingDetails = function (name) {
    }
    return (name.length <= 256);
 }
-var onThnDtlsTaFocus = function (event) {
+var onThnDtlsTaFocus= function (event) {
    Header.classList.add("hidden");
 }
-var onThnDtlsTaBlur = function (event) {
+var onThnDtlsTaBlur= function (event) {
    Header.classList.remove("hidden");
 }
-var onMsgInptFocus = function (event) {
+var onMsgInptFocus= function (event) {
    if (hasSoftKbd)
       Header.classList.add("hidden");
 }
-var onMsgInptBlur = function (event) {
+var onMsgInptBlur= function (event) {
    if (hasSoftKbd)
       Header.classList.remove("hidden");
 }
@@ -2468,18 +2494,18 @@ async function subscribe () {
    }
 
    try {
-      const registration = await navigator.serviceWorker.register(
+      const registration= await navigator.serviceWorker.register(
          'js/service-worker.js');
       console.log('Service Worker registered');
 
       await navigator.serviceWorker.ready;
       console.log('Service Worker ready');
 
-      const response = await fetch('/vapid-public-key');
-      const vapidPublicKey = await response.text();
-      const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
+      const response= await fetch('/vapid-public-key');
+      const vapidPublicKey= await response.text();
+      const convertedVapidKey= urlBase64ToUint8Array(vapidPublicKey);
 
-      const subscription = await registration.pushManager.subscribe({
+      const subscription= await registration.pushManager.subscribe({
          userVisibleOnly: true,
          applicationServerKey: convertedVapidKey
       });

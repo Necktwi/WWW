@@ -2,13 +2,13 @@
     @author: Gowtham Kudupudi
 -->
 <!DOCTYPE html>
-<html lang="en" style="background-color: black"><head>
-   <title>FerryFair | Hyper fast spatial search</Title>
+<html lang="en" style="background-color: black;color: white;"><head>
+   <title>FerryFair | Hyper fast spatial search</title>
    <link rel='icon' href='img/favicon2.ico' type='image/x-icon'/>
    <link rel='icon' href='img/favicon64.ico' type='image/x-icon' size="64x64"/>
    <link rel='apple-touch-icon' href='img/favicon192.ico' type='image/x-icon'/>
    <meta name='msapplication-TileImage' content='img/favicon192.ico'
-         type='image/x-icon'/>
+         type='image/x-icon' class="js"/>
    <meta name="description"
          content="Super quickly search for things U need among billions
                   of things around U! Add things to the fair to ferry!"/>
@@ -16,7 +16,7 @@
          content="fast,spatial,search,algorithm,things,near,around,items,
                   goods,ferry fair,quad tree,quadtree"/>
    <meta name="author" content="Gowtham Kudupudi"/>
-   <meta name="viewport"
+   <meta name="viewport" class="js"
          content="width=device-width,initial-scale=1,
                   maximum-scale=1,user-scalable=no,
                   interactive-widget=resizes-content"/>
@@ -26,23 +26,24 @@
    <meta http-equiv="Content-Security-Policy-Report-Only" content=
          "script-src https://accounts.google.com/gsi/client;
           frame-src https://accounts.google.com/gsi/;
-          connect-src https://accounts.google.com/gsi/;"
+          connect-src https://accounts.google.com/gsi/;" class="js"/>
    <meta name="google-signin-client_id" content=
       "91088616070-phsro3v29up7pts7od1e8snkee0ak774.apps.googleusercontent.com"
-         />
-   <!--meta name="apple-mobile-web-app-capable" content="yes"/>
-   <meta name="apple-mobile-web-app-status-bar-style"
-         content="black-translucent"/-->
+         class="js"/>
    <meta name="apple-mobile-web-app-title" content="FerryFair"/>
-   <script type="text/javascript" src="js/core.js?5"></script>
-   <script type="text/javascript" src="js/init.js?189"></script>
-   <script src="https://accounts.google.com/gsi/client" async></script>
-   <link type="text/css" href="css/main.css?69" rel="stylesheet"/>
-   <link type="text/css" href="css/main-dark.css" rel="stylesheet"/>
-   <link type="text/css" href="css/svg.css?1" rel="stylesheet"/>
+   <script type="text/javascript" src="js/core.js?5" class="js"></script>
+   <script type="text/javascript" src="js/init.js?207" class="js"></script>
+   <script src="https://accounts.google.com/gsi/client" class="js" async>
+   </script>
+   <link type="text/css" href="css/main.css?69" rel="stylesheet" class="js"/>
+   <link type="text/css" href="css/main-dark.css" rel="stylesheet" class="js"/>
+   <link type="text/css" href="css/svg.css?1" rel="stylesheet" class="js"/>
+   <style>
+     a {color: #8888ff;}
+   </style>
 </head>
-<body onload="init()" class="dark hidden">
-   <script>0</script>
+<body onload="" class="dark hidden">
+   <script class="js">0</script>
    <footer onclick="about()" class="if">
       <div id="cr">© FerryFair <span id="beta">β</span>
       </div>
@@ -51,872 +52,146 @@
             href="mailto:jack@ferryfair.com">jack@ferryfair.com</a>
       </address>
    </footer>
-   <div id="Log" class="if">
+   <div id="Log" class="if js">
       <div id="about" class="hidden">
          <a class="plain" href="https://github.com/gowthamkudupudi/ferryfair">
             Super fast spatial search!</a><br/>
          <a class="plain" href="https://github.com/gowthamkudupudi/FFJSON">
             Backed by FFJSON</a><br/>
          <a href="files/md.html?files/HowTo.md">HowTo</a>
-         <!--template><p id="jack" class="hidden">
-            <a class="plain" href="files/notes/" class="hidden">- Gowtham Kudupudi</a></p></template-->
       </div>
    </div>
-   <img src="img/FerryFair2.png?2" class="hidden"/>
+   <pre style="color: yellow;" class="hidden"><code>
+         88             
+      : 8@8X8           
+   88S888S8 888         
+   888S8%@88@88         
+   88X88@S8@@X          
+  ;  888888:.  ;;;;;;   
+  ;           ;;;;  ;;; 
+  ;;          ;;;;   ;; 
+   ;;                ;; 
+     ;;             ;;  
+      ;;;;        ;;;   
+           8;;;;;       
+   </code></pre>
    <div id="LocationDDiv" class="if">
       <div id="LocationDiv">
          <input id="LocationBox" class="labeled hidden"/>
          <span class="hidden"> :location</span>
-         <span id="LocTxt" class="hidden"></span>
-         <span id="LocationPin" class="empty hidden">
+         <span id="LocTxt" class="hidden js"></span>
+         <span id="LocationPin" class="empty hidden js">
             <span id="pin">📍</span><span id="tin">⦾</span></span>
       </div>
    </div>
    <div id="loadTop"></div>
    <header class="">
-      <template><div id="mbox" class="hidden">
-         <div id="inboxL">Inbox:</div>
-         <div id="inbox" class=""></div>
-         <div id="outboxL">Outbox:</div>
-         <div id="outbox" class=""></div>
-      </div>
-      <table id="htable"><tr><td id="logoTd" style="vertical-align: top;">
-               <div id="logoDiv" class="if">
-      <svg xmlns="http://www.w3.org/2000/svg"
-           xmlns:xlink="http://www.w3.org/1999/xlink" id="logo" class=""
-           viewBox="0 0 288 446.208" style="">
-         <style>
-           .back {
-              stroke:#888888;
-           }
-           .front {
-              stroke:#000000;
-           }
-           .far {
-              fill-opacity:0.7;
-           }
-           .dark .back {
-              stroke:#888888;
-           }
-           .dark .front {
-              stroke:#ffffff;
-           }
-           #Hull {
-              stroke-width: 3;
-           }
-           #Ferry {
-              stroke: #888888;
-           }
-           .dark #Ferry {
-              fill-opacity:0.5;
-           }
-           #Waves {
-              stroke-width: 3;
-              stroke: #4444ff;
-              fill: #4444ff;
-              fill-opacity: 0.3;
-           }
-           .small #Ferry, .dark .small #Ferry, .small #Waves,
-           .dark .small #Waves {
-              fill-opacity: 1;
-           }
-           .small #Ferry #Hull {
-              stroke-width: 8;
-           }
-           .small #Waves {
-              fill:#8888ff
-           }
-         </style>
-         <g id="Ferry" transform="matrix(1 0 0 1 0 24)"
-            style="">
-            <g><g transform="matrix(0.724861, 0, 0, 0.724861, -197.491806,
-                             -594.726929)"
-                  id="icosohedron"
-                  style="stroke-miterlimit: 4;
-                         stroke-dasharray: none; fill: red;">
-            <path id="path5139-8-1-9-4-6-0-4-0" class="far"
-                  d="m 412.76277,893.14547 38.68576,37.33417 4.12655,-63.3926
-                     z"/>
-            <path id="path5139-8-1-2-7-1-4-9-3"
-               d="m 392.07599,844.94512 63.50718,22.51274 -33.73058,
-                  -22.1426 z"/>
-            <path id="path5139-8-1-9-3-9-0-8-8-5-8-5-0-0-7"
-               d="m 420.05517,973.05652 31.4578,-42.79982 17.74537,
-                  -16.45948 z"/>
-            <path id="path5139-8-1-9-3-9-0-8-8-0-4-9-9-2-8"
-               d="m 419.90031,972.76971 -27.50705,-24.76073 59.77719,
-                  -17.8221 z"/>
-            <path id="path5139-8-1-9-3-5-4-1-0-8"
-               d="m 469.36678,913.41319 -18.06932,17.43102 4.30513,
-                  -64.19617 z"/>
-            <path id="path5139-8-1-0-9-9-1-6" class="far"
-               d="m 392.0349,844.83293 20.9179,48.94131 42.78727,
-                  -26.87474 z"/>
-            <path id="path5139-8-1-9-3-9-3-0-6-9-0"
-               d="m 355.58119,897.60205 -7.1686,49.30641 -3.03932,
-                  -76.12039 z"/>
-            <path id="path5139-8-1-9-3-9-0-8-8-6-9-2-6-4" class="far"
-               d="m 392.04303,948.80577 21.10373,-55.59512 38.61134,
-                  37.31013 z"/>
-            <path id="path5139-8-1-9-3-9-0-8-1-1-5-2-6" class="far"
-               d="m 355.31049,897.58233 58.14609,-4.35661 -20.79709,
-                  55.42429 z"/>
-            <path id="path5139-8-1-9-3-9-0-8-8-0-9-0-7-4-1-7"
-               d="m 419.85391,972.77714 -70.74697,-26.36193 43.87583,
-                  1.89871 z"/>
-            <path id="path5139-8-1-9-3-9-0-6-7-4-2-6"
-               d="m 355.6609,897.57172 36.62532,50.86849 -43.99538,
-                  -1.68571 z"/>
-            <path id="path5139-8-3-1-9-0-0" class="far"
-               d="m 391.78612,845.0142 -36.36162,52.65625 57.67566,
-                  -4.06224 z"/>
-            <path id="path5139-2-1-9-7-9"
-               d="m 391.87501,845.04077 -46.60715,25.40179 10.08928,
-                  27.41071 z"/>
-            <path
-               d="m 451.59155,930.58914 17.61454,-17.34892 m -49.15812,
-                  59.45694 31.54358,-42.10802 m -59.22019,17.95905
-                  -43.82979,-2.02411 m 43.82979,2.02411 27.67661,
-                  24.14897 m -7.00005,-79.23384 38.54363,37.12582
-                  m -96.26438,-32.92736 37.04419,50.88641 m 59.22019,
-                  -17.95905 -59.22019,17.95905 m 63.18977,-81.47511
-                  -3.96958,63.51606 m -106.15437,-60.32123 9.88999,
-                  27.39387 m 0,0 -6.7856,48.8623 m 64.50635,-53.06076
-                  -20.67656,55.08487 m 63.18977,-81.47511 -42.51321,
-                  26.39024 m -21.35097,-48.39916 -36.36978,52.59762
-                  m 57.72075,-4.19846 -57.72075,4.19846 m 36.36978,
-                  -52.59762 63.86418,22.00892 m -63.86418,-22.00892
-                  21.35097,48.39916"
-               class="back"/>
-            <path id="path5139-8-1-9-3-9-0-9-8-8-3-6-9-6-1-5" class="back"
-               d="m 391.76605,844.76362 29.46107,0.62187 -75.48055,
-                  24.87249 z"/>
-            <path id="path5139-8-1-9-3-9-0-9-15-7-0-1-9" class="back"
-               d="M 421.48667,845.37616 391.97388,921.86154 345.24187,
-                  870.4311 Z"/>
-            <path id="path5139-8-1-9-3-9-0-9-8-5-7-5-9-7" class="back"
-               d="m 421.89012,845.31702 47.41489,68.04067 -77.47281,
-                  8.59817 z"/>
-            <path id="path5139-8-1-9-3-9-0-9-4-4-6-0-0-8" class="back"
-               d="m 421.93828,845.37767 47.25032,67.74349 -13.45967,
-                  -46.41785z"/>
-            <path id="path5139-8-1-9-3-9-0-9-1-7-7-2-5-5" class="back"
-               d="m 345.57655,870.86673 46.75005,51.17176 -43.99538,
-                  24.70453 z"/>
-            <path id="path5139-8-1-9-3-9-0-9-8-8-6-3-9-6-3" class="back"
-               d="m 391.67794,921.07982 27.91276,51.6261 -71.04853,
-                  -26.1819 z"/>
-            <path id="path5139-8-1-9-3-9-0-9-8-0-5-6-4-7-3" class="back"
-               d="m 391.98736,921.9919 77.42889,-8.50651 -49.35252,
-                  59.475 z"/>
-            <path
-               class="front"
-               d="m 391.92159,921.92703 -43.59251,24.72018 m 0,0 71.78697,
-                  26.37363 m -74.78583,-102.58585 2.99886,76.21222
-                  m -2.99886,-76.21222 46.59137,51.49204 m 29.88591,
-                  -76.57818 -76.47728,25.08614 m 76.47728,-25.08614
-                  -30.11632,-0.4083 m 0,0 -46.36096,25.49444 m 76.47728,
-                  -25.08614 -29.88591,76.57818 m 77.40372,-8.49094
-                  -49.20926,59.58475 m -28.19446,-51.09381 28.19446,
-                  51.09381 m 1.69145,-127.67199 33.94141,21.49196 m 0,0
-                  13.5764,46.59528 m -77.40372,8.49094 77.40372,
-                  -8.49094 m -47.51781,-68.08724 47.51781,68.08724"
-               id="path4807-4-2-4-4-8-6-5-3-7-8"/>
-         </g>
-               <animateTransform
-                  attributeName="transform" begin="3.7s" dur="1.5s"
-                              type="rotate" additive="sum" repeatCount="1" calcMode="spline"
-            keySplines="0 .3 .8 1" values="0 128 208; 15 128 208"
-            fill="freeze"/>
-            <animateTransform attributeName="transform" begin="5.2s" dur="6s"
-            type="rotate" additive="sum" repeatCount="7"
-            calcMode="spline" keySplines=".5 0 .5 1; .5 0 .5 1"
-            values="0 128 208; -30 128 208; 0 128 208" fill="freeze"
-            keyTimes="0; 0.5; 1"/>
-         <animateTransform attributeName="transform" begin="5.7s" dur="6s"
-            type="translate" additive="sum" repeatCount="7"
-            calcMode="spline"
-            keySplines="0 0 1 1; .5 0 .5 1; .5 0 .5 1; 0 0 1 1"
-            values="0 0; 0 0; 0 8; 0 0; 0 0"
-            keyTimes="0; 0.05; 0.5; 0.95; 1"/>
-      </g>
-      <g>
-         <g id="dodecohedron"
-            transform="matrix(0.580215, 0, 0, 0.580215, -213.884125,
-            -639.163086)"
-            style="fill: orange;">
-            <path id="path4476-6-1-0-6-3-0-0-8-9-0-6"
-               d="m 624.42224,1456.4954 -3.95428,10.5138 56.0268,-7.8863
-                  22.65499,-13.9747 -33.04242,0.3892 z"/>
-            <path id="path4476-6-1-0-6-3-2-9-8-1-1-6"
-               d="m 689.16425,1380.3147 -26.00162,28.2079 2.81067,
-                  37.1431 33.35331,-0.6218 16.69102,-47.7177 z"/>
-            <path id="path4476-6-1-0-3-4-0-7-4"
-               d="m 671.30757,1329.2913 -6.04264,15.0962 24.035,
-                  35.8223 26.75828,17.3504 -7.2732,-30.3798 z"/>
-            <path id="path4476-6-1-0-6-6-3-7-8-6"
-               d="m 574.78171,1399.685 8.81357,25.4691 36.93567,42.1
-                  3.9667,-10.6971 -24.60363,-35.3516 z"/>
-            <path id="path4476-6-1-0-6-3-06-1-5-9-2" class="far"
-               d="m 625.77121,1394.4292 -26.20874,26.7638 24.78148,
-                  35.5015 41.41105,-11.1968 -2.37148,-36.8696 z"/>
-            <path id="path4476-6-1-2-4-8-1-8" class="far"
-               d="m 624.37138,1355.7349 1.17419,39.0258 37.79424,
-                  13.9055 25.89316,-28.1869 -23.84111,-36.0702 z"/>
-            <path id="path4476-6-6-9-7-5-9"
-               d="m 618.05221,1333.972 -25.05821,18.5071 31.29139,
-                  3.6462 41.00583,-11.61 6.12428,-15.3978 z"/>
-            <path id="path4476-1-2-0-4-6"
-               d="m 592.66847,1352.609 -18.16088,46.7437 25.25629,
-                  22.2703 26.03646,-26.9305 -1.33108,-38.746 z"/>
-            <path id="path4360-8-3-3-8-0-4-9-0" class="back"
-               d="m 689.28408,1380.2942 26.67182,17.1678
-                  m -16.92005,47.7284 -33.14311,0.4796 m -2.52539,
-                  -37.06 2.52539,37.06 m -41.48033,10.9653 41.48033,
-                  -10.9653 m 23.39134,-65.3758 -25.91673,28.3158
-                  m -42.77972,58.555 3.82478,-10.5297 m -31.48218,
-                  -104.1927 31.35685,3.4816 m 47.00365,-26.4375
-                  -5.93464,14.9786 m -41.06901,11.4589 1.37337,
-                  38.7392 m 0,0 -25.98052,26.6903 m -25.10271,
-                  -21.9754 25.10271,21.9753 m 0,0 24.73248,35.2817
-                  m 40.94368,-112.17 -41.06901,11.4589 m 39.08027,
-                  52.6858 -37.7069,-13.9467 m 39.69564,-50.198
-                  23.92799,35.8289"/>
-            <path id="path4476-6-1-6-7-6-8-2-7"
-               d="m 618.24652,1334.3323 -2.41496,47.2868 64.56921,
-                  23.4007 28.03603,-37.919 -37.27862,-37.8113 z"/>
-            <path id="path4476-6-1-6-1-9-8-0-5-0"
-               d="m 592.8398,1352.3553 -18.26445,47.3011 8.88454,
-                  25.421 32.45546,-43.3486 2.01756,-47.4769 z"/>
-            <path id="path4476-6-1-6-1-5-2-9-4-7-1"
-               d="m 583.70887,1424.763 36.73026,42.2766 56.06136,
-                  -8.1755 4.10805,-53.7026 -64.65251,-23.8331 z"/>
-            <path id="path4476-6-1-6-1-5-5-0-2-2-4-0"
-               d="m 676.46683,1458.6355 22.77569,-13.4482 16.55282,
-                  -47.9438 -7.29499,-29.883 -28.16841,37.669 z"/>
-            <path id="path4311-6-2-6-9-9-1" class="front"
-               d="m 620.4057,1467.0046 56.06347,-8.1444 m 0,0 22.72843,
-                  -13.8264 m -115.67895,-20.0113 36.88705,41.9821
-                  m 60.02446,-61.8719 c -0.50507,1.0102 -3.96099,
-                  53.7275 -3.96099,53.7275 m -101.84882,-59.3257
-                  8.8983,25.488 m 32.29556,-43.4595 64.61595,23.5697
-                  m 28.22114,-37.9414 7.21382,30.1128 m -16.66752,
-                  47.7297 16.66752,-47.7297 m -7.21382,-30.1128
-                  -28.22114,37.9414 m -64.61595,-23.5697 c -0.50508,
-                  1.0102 -32.29556,43.4595 -32.29556,43.4595
-                  m 87.65402,-95.7113 37.47863,37.8801 m -90.54517,
-                  -33.1681 53.06654,-4.712 m -78.38163,23.0778
-                  25.31509,-18.3658 m -2.29192,47.5398 2.29192,
-                  -47.5398 m -25.31509,18.3658 -18.17069,47.1455"/>
-         </g>
-         <animateTransform attributeName="transform" begin="3.5s" dur="1.5s"
-            type="rotate" additive="sum" repeatCount="1" calcMode="spline"
-            keySplines="0 .3 .8 1" values="0 128 208; 15 128 208"
-            fill="freeze"/>
-         <animateTransform attributeName="transform" begin="5s" dur="6s"
-            type="rotate" additive="sum" repeatCount="7"
-            calcMode="spline" keySplines=".5 0 .5 1; .5 0 .5 1"
-            values="0 128 208; -30 128 208; 0 128 208" fill="freeze"
-            keyTimes="0; 0.5; 1"/>
-         <animateTransform attributeName="transform" begin="5.5s" dur="6s"
-            type="translate" additive="sum" repeatCount="7"
-            calcMode="spline"
-            keySplines="0 0 1 1; .5 0 .5 1; .5 0 .5 1; 0 0 1 1"
-            values="0 0; 0 0; 0 8; 0 0; 0 0"
-            keyTimes="0; 0.05; 0.5; 0.95; 1"/>
-      </g>
-      <g>
-         <g transform="matrix(0.596337, 0, 0, 0.596337, -451.610565,
-            -176.858231)"
-            id="octahedron" style="fill: green;">
-            <path id="path4195-6-2-7-8-0"
-               d="m 862.14167,641.50561 -70.73415,74.75481 59.5656,
-                  -14.74248 z"/>
-            <path id="path4195-3-6-7-5-6-6-6"
-               d="m 850.42998,701.35279 -59.11886,14.8914 72.51805,
-                  61.87589 z"/>
-            <path id="path4195-3-7-5-4-1-2-4"
-               d="m 850.6474,701.2878 12.66193,76.43958 65.04109,
-                  -67.81271 z"/>
-            <path id="path4195-3-3-7-3-4-7"
-               d="m 862.67035,641.24392 -11.75517,60.5027 76.97948,
-                  8.59339 z"/>
-            <path
-               class="back"
-               d="m 791.72842,716.34301 59.20607,-14.67178 m 0,0
-                  12.45238,76.71624 m -0.59565,-137.14975 -11.85673,
-                  60.43351 m 0,0 77.00659,8.57532"/>
-            <path id="path4195-5-6-4-1-9-8"
-               d="m 862.66288,641.20778 -71.92546,75.6483 93.22015,
-                  14.44467 z"/>
-            <path id="path4195-5-3-2-3-5-3-5"
-               d="m 863.03059,640.96915 19.94334,90.0535 45.16561,
-                  -20.79972 z"/>
-            <path id="path4195-5-5-9-0-9-9-8"
-               d="m 882.71493,730.89425 -90.66851,-13.64447 71.31814,
-                  60.98642 z"/>
-            <path id="path4195-5-5-6-1-7-9-2-2"
-               d="m 927.96608,710.52673 -44.74305,20.95706 -19.96613,
-                  46.8396 z"/>
-            <path class="front"
-               d="m 791.25567,716.5635 71.95099,61.77284 m -0.34052,
-                  -137.5445 -71.61047,75.77166 z m 0,0 65.44745,
-                  69.3932 z m 0,0 20.55013,90.38984 z m 65.44745,
-                  69.3932 -65.10693,68.1513 z m 0,0 -44.89732,
-                  20.99664 z m -44.89732,20.99664 -20.20961,
-                  47.15466 z m -92.1606,-14.61818 92.1606,14.61818 z"
-               id="path4182-2-8-1-8-6"/>
-         </g>
-         <animateTransform attributeName="transform" begin="3.3s" dur="1.5s"
-            type="rotate" additive="sum" repeatCount="1" calcMode="spline"
-            keySplines="0 .3 .8 1" values="0 128 208; 15 128 208"
-            fill="freeze"/>
-         <animateTransform attributeName="transform" begin="4.8s" dur="6s"
-            type="rotate" additive="sum" repeatCount="7"
-            calcMode="spline" keySplines=".5 0 .5 1; .5 0 .5 1"
-            values="0 128 208; -30 128 208; 0 128 208" fill="freeze"
-            keyTimes="0; 0.5; 1"/>
-         <animateTransform attributeName="transform" begin="5.3s" dur="6s"
-            type="translate" additive="sum" repeatCount="7"
-            calcMode="spline"
-            keySplines="0 0 1 1; .5 0 .5 1; .5 0 .5 1; 0 0 1 1"
-            values="0 0; 0 0; 0 8; 0 0; 0 0"
-            keyTimes="0; 0.05; 0.5; 0.95; 1"/>
-      </g>
-      <g>
-         <g transform="matrix(0.449636, 0, 0, 0.449636, -302.660889,
-            53.350029)"
-            id="cube" style="fill: indigo;">
-            <path id="path4730-5-6-7-1-5-8-0"
-               d="m 986.08867,608.53284 -54.40858,26.26151 70.71731,
-                  28.96522 48.1212,-36.56886 z"/>
-            <path id="path4730-5-3-7-5-1-2"
-               d="m 985.3427,536.90661 0.49797,71.7965 64.94413,
-                  18.78089 5.1426,-82.38217 z"/>
-            <path id="path4730-6-2-2-9-9"
-               d="m 925.56752,547.59931 6.02985,87.33461 54.53538,
-                  -26.30411 -0.75327,-71.64812 z"/>
-            <path
-               d="m 985.94541,608.54666 64.55119,19.00067 m -64.55119,
-                  -19.00067 -0.62905,-71.61315 m -53.54781,97.624
-                  54.17686,-26.01085"/>
-            <path id="path4730-9-3-2-2-0-7-9"
-               d="m 985.10565,536.76443 -58.11757,10.83244 76.74762,
-                  13.50707 52.3751,-16.13808 z"/>
-            <path id="path4730-9-9-2-2-8-9"
-               d="m 925.55563,547.60672 6.02985,87.1244 70.72072,
-                  28.87322 1.2436,-102.65252 z"/>
-            <path id="path4730-9-3-7-3-6-8-2-4"
-               d="m 1055.8173,545.37828 -52.3687,15.69354 -0.7709,
-                  102.42316 47.9312,-36.1336 z"/>
-            <path class="front"
-               d="m 1056.2018,545.07263 -52.4185,16.00143 m -78.16787,
-                  -13.37394 78.16787,13.37394 m -18.4187,-24.19921
-                  -59.74917,10.82527 m 59.74917,-10.82527 70.8372,
-                  8.19778 m 0,0 -5.6228,82.24423 m 0,0 -48.123,
-                  36.54391 m 1.3273,-102.78671 -1.3273,102.78671
-                  m -70.79733,-29.19066 -6.04324,-86.96999
-                  m 76.84057,116.16065 -70.79733,-29.19066"
-               id="path4720-1-1-3-5-5"/>
-         </g>
-         <animateTransform attributeName="transform" begin="3.1s" dur="1.5s"
-            type="rotate" additive="sum" repeatCount="1" calcMode="spline"
-            keySplines="0 .3 .8 1" values="0 128 208; 15 128 208"
-            fill="freeze"/>
-         <animateTransform attributeName="transform" begin="4.6s" dur="6s"
-            type="rotate" additive="sum" repeatCount="7"
-            calcMode="spline" keySplines=".5 0 .5 1; .5 0 .5 1"
-            values="0 128 208; -30 128 208; 0 128 208" fill="freeze"
-            keyTimes="0; 0.5; 1"/>
-         <animateTransform attributeName="transform" begin="5.1s" dur="6s"
-            type="translate" additive="sum" repeatCount="7"
-            calcMode="spline"
-            keySplines="0 0 1 1; .5 0 .5 1; .5 0 .5 1; 0 0 1 1"
-            values="0 0; 0 0; 0 8; 0 0; 0 0"
-            keyTimes="0; 0.05; 0.5; 0.95; 1"/>
-      </g>
-      <g>
-         <g transform="matrix(0.248644, 0, 0, 0.248644, 48, 124)"
-            id="tetrahedron" style="fill: violet;">
-            <path id="path4657-4-7-4-1-4-7"
-               d="m 725.66112,537.72382 c 0,0 11.77469,79.53252 12.9086,
-                  79.53252 1.13391,0 47.54971,46.66496 47.54971,
-                  46.66496 z"/>
-            <path id="path4657-7-5-9-0-5-7"
-               d="m 738.41234,616.56319 c 0,0 -86.05722,33.14159
-                  -84.92331,33.14159 1.13391,0 132.77862,14.12323
-                  132.77862,14.12323 z"/>
-            <path id="path4657-9-5-4-9-2"
-               d="m 725.84424,537.73435 c 0,0 -73.62216,112.12667
-                  -72.48825,112.12667 1.13391,0 85.37722,-32.56949
-                  85.37722,-32.56949 z"/>
-            <path
-               d="m 738.61357,617.08953 46.90054,46.1511 m -46.90054,
-                  -46.1511 -12.85734,-79.14856 m -71.89075,
-                  111.50694 84.74809, -32.35838"
-               id="path4654-2-0-2-3-6"/>
-            <path id="path4657-6-2-4-2-5-4"
-               d="m 725.65429,537.59317 c 0,0 -73.03685,112.07856
-                  -71.90294,112.07856 1.13391,0 132.2249,13.93457
-                  132.2249,13.93457 z"/>
-            <path class="front"
-               d="m 653.42294,649.69104 132.68363,13.97371 m -60.32493,
-                  -126.11892 60.32493,126.11892 m -60.32493,
-                  -126.11892 -72.3587,112.14521"
-               id="path4647-8-8-2-7-5"/>
-      </g>
-      <animateTransform attributeName="transform" begin="3.2s" dur="1.5s"
-         type="rotate" additive="sum" repeatCount="1" calcMode="spline"
-         keySplines="0 .3 .8 1" values="0 128 208; 15 128 208"
-         fill="freeze"/>
-      <animateTransform attributeName="transform" begin="4.7s" dur="6s"
-         type="rotate" additive="sum" repeatCount="7"
-         calcMode="spline" keySplines=".5 0 .5 1; .5 0 .5 1"
-         values="0 128 208; -30 128 208; 0 128 208" fill="freeze"
-         keyTimes="0; 0.5; 1"/>
-      <animateTransform attributeName="transform" begin="5.2s" dur="6s"
-         type="translate" additive="sum" repeatCount="7"
-         calcMode="spline"
-         keySplines="0 0 1 1; .5 0 .5 1; .5 0 .5 1; 0 0 1 1"
-         values="0 0; 0 0; 0 8; 0 0; 0 0"
-         keyTimes="0; 0.05; 0.5; 0.95; 1"/>
-      </g>
-      <g>
-         <path id="Hull"
-            transform="matrix(0, 0.6, -0.6, 0, 262, 224)"
-            d="M 0 414.208 A 256 256 90 0 0 256 158.208 A 158.208 158.208
-               90 0 0 97.792 0 A 97.792 97.792 90 0 0 0 97.792 A 60.416
-               60.416 90 0 0 60.416 158.208 A 37.376 37.376 90 0 0
-               97.792 120.832 A 23.04 23.04 90 0 0 74.752 97.792 A
-               14.336 14.336 90 0 0 60.416 112.128 A 8.704 8.704 90 0 0
-               69.12 120.832 A 5.632 5.632 90 0 0 74.752 115.2 A 3.072
-               3.072 90 0 0 71.68 112.128 A 2.56 2.56 90 0 0 69.12
-               114.688 A 0.512 0.512 90 0 0 69.632 115.2"
-            style="stroke: yellow;fill: none;"/>
-         <animateTransform attributeName="transform" begin="3s" dur="1.5s"
-            type="rotate" additive="sum" repeatCount="1" calcMode="spline"
-            keySplines="0 .3 .8 1" values="0 128 208; 15 128 208"
-            fill="freeze"/>
-         <animateTransform attributeName="transform" begin="4.5s" dur="6s"
-            type="rotate" additive="sum" repeatCount="7"
-            calcMode="spline" keySplines=".5 0 .5 1; .5 0 .5 1"
-            values="0 128 208; -30 128 208; 0 128 208" fill="freeze"
-            keyTimes="0; 0.5; 1"/>
-         <animateTransform attributeName="transform" begin="5.0s" dur="6s"
-            type="translate" additive="sum" repeatCount="7"
-            calcMode="spline"
-            keySplines="0 0 1 1; .5 0 .5 1; .5 0 .5 1; 0 0 1 1"
-            values="0 0; 0 0; 0 8; 0 0; 0 0"
-            keyTimes="0; 0.05; 0.5; 0.95; 1"/>
-      </g>
-   </g>
-   <g transform="matrix(1 0 0 1 0 376)">
-      <path id="Waves"
-         d="M -64,0 c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 c 8,-8 8,-8 16,0 c 8,8
-            8,8 16,0 c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 c 8,-8 8,-8 16,0 c
-            8,8 8,8 16,0 c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 c 8,-8 8,-8 16,0
-            c 8,8 8,8 16,0 c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 c 8,-8 8,-8
-            16,0 c 8,8 8,8 16,0 c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 c 8,-8
-            8,-8 16,0 c 8,8 8,8 16,0 c 8,-8 8,-8 16,0 c 8,8 8,8 16,0
-            c 8,-8 8,-8 16,0 c 8,8 8,8 16,0 l 0 512 l -352 0 Z">
-         <animateTransform attributeName="transform" dur="4s" begin="0s"
-            type="scale" additive="sum" repeatCount="7"
-            calcMode="spline" keySplines=".5 0 .8 .2; .2 .8 .5 1"
-            values="1 1; 1 0.3; 1 1" keyTimes="0; 0.5; 1"/>
-         <animateMotion path="M 0 0 H 32" begin="3s" dur="2s"
-            repeatCount="7"/>
-      </path>
-   </g>
-</svg>
-      </div></td>
-      <td style="vertical-align: top; padding-top: 0.12cm">
-      <span id="LockBlock" class="" onclick="unlock()">
-      <svg id="lock" height="24" viewBox="0 0 24 24" width="24"
-           xmlns="http://www.w3.org/2000/svg"
-           xmlns:xlink="http://www.w3.org/1999/xlink">
-         <title>SignIn</title>
-         <path
-            id="lock"
-            style="stroke-opacity: 1"
-            d="M12 2C9.243 2 7 4.243 7 7v3H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12
-               a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1V7c0-2.757-2.243-5-5-5z
-               M9 7c0-1.654 1.346-3 3-3s3 1.346 3 3v3H9V7z
-               m4 10.723V20h-2v-2.277a1.993 1.993 0 0 1 .567-3.677
-               A2.001 2.001 0 0 1 14 16
-               a1.99 1.99 0 0 1-1 1.723z"/>
-      </svg>
-      <span id="Desc" class="">signin/signup<br/>
-      to add ur things to the fair</span></span>
-      <div id="Credentials" class="hidden">
-      <div id="gglSnD"><input id="gglSn" type="checkbox"/>
-         Sign <span id="inUp">in</span> with Google<div id="gglSnB" class="hidden"></div><div id="gmail" class="hidden"></div></div>
-      <div id="UsernameL" class="inlBlk">Username: <br/>
-         <input id="username" alt="Username" class="" autocorrect="off"
-                autocapitalize="off"/></div>
-      <div id="PasswordL" class="inlBlk hidden">Password: <br/>
-      <input id="password" alt="Password" class=""/></div>
-      <div id="signupdiv" class="hidden">
-         <div id="EmailL">Email: 
-            <input id="email" alt="Email" class="" autocorrect="off"
-                   autocapitalize="off"/></div>
-         <div id="passBlk" class="hidden">
-         <div id="Password1L">
-            <span id="NewL" class="hidden">New </span>Password: 
-         <input id="passwords1" alt="Password"/></div>
-         <div id="Password2L">Retype Password: 
-            <input id="passwords2" alt="Password" class=""/></div><br/>
-         <label id="CaptchaL">Captcha: </label><br/>
-         <input id="Captcha" alt="Captcha" autocorrect="off"
-                autocapitalize="off"/><br/>
-         <img id="CaptchaImg" src="">
+      <template><div id="mbox" class="hidden js">
+            <div id="inboxL">Inbox:</div>
+            <div id="inbox" class=""></div>
+            <div id="outboxL">Outbox:</div>
+            <div id="outbox" class=""></div>
          </div>
-         <div id="ConsentL">
-            <svg id="ConsentImg" class="hidden" viewBox="0 0 512 512"
-                 xmlns="http://www.w3.org/2000/svg">
-               <path
-                  d="M85.57,446.25H426.43a32,32,0,0,0,28.17-47.17L284.18,82.58
-                     c-12.09-22.44-44.27-22.44-56.36,0
-                     L57.4,399.08A32,32,0,0,0,85.57,446.25Z"
-                  style="fill:#ffff00;stroke:none;stroke-linecap:round;
-                         stroke-linejoin:round;stroke-width:32px"/>
-               <path
-                  d="M250.26,195.39l5.74,122,5.73-121.95a5.74,5.74,0,0,0-5.79-6
-                     h0A5.74,5.74,0,0,0,250.26,195.39Z"
-                  style="fill:none;stroke:#000000;stroke-linecap:round;
-                         stroke-linejoin:round;stroke-width:32px"/>
-               <path d="M256,397.25a20,20,0,1,1,20-20A20,20,0,0,1,256,397.25Z"
-                     style="fill:#000000;"/>
-            </svg>
-            <input id="Consent" alt="Consent" type="checkbox">
-            <a id="ConsentT"href="files/md.html?files/tnc.md">
-               I agree to terms and condition</a>
-         </div>
-      </div>
-      <input id="SubmitBtn" value="Submit" type="button"/>
-      <div class="inlBlk"><nobr><label id="SignInL">
-         <input id="SignIn" alt="SignIn" type="radio" value="0" checked
-                onclick="togglesignup()"/ name="accountIntx">
-      SignIn </label></nobr>
-      <nobr><label id="RecoverL" class="hidden">
-         <input id="Recover" alt="Recover" type="radio" value="2"
-                onclick="togglesignup()"/ name="accountIntx">
-      ResetPassword</label></nobr>
-      <nobr><input id="SignUp" alt="SignUp" type="radio" value="1"
-             onclick="togglesignup()"/ name="accountIntx">
-      <label id="SignUpL">SignUp </label></nobr></div>
-      </div>
-      <div id="usermenu" class="hidden">
-         <svg id="unlock" height="24" viewBox="0 0 24 24" width="24"
-              xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink"
-              onclick="lock()" aria-label="SignOut">
-            <title>SignOut</title>
-            <desc>SignOut</desc>
-            <path
-               id="unlock"
-               style="stroke-opacity: 1"
-               d="M18 10H9V7c0-1.654 1.346-3 3-3s3 1.346 3 3h2
-                  c0-2.757-2.243-5-5-5S7 4.243 7 7v3H6a2 2 0 0 0-2 2v8
-                  a2 2 0 0 0 2 2h12 a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2z
-                  m-7.939 5.499A2.002 2.002 0 0 1 14 16 a1.99 1.99 0 0 1-1 1.723
-                  V20h-2v-2.277a1.992 1.992 0 0 1-.939-2.224z"/>
-         </svg>
-         <span id="user"></span>
-      </div>
-      </td>
-      <td  title="Mailbox">
-        <svg
-           id="owlOnPerch" class="hidden nonews" version="1.1"
-           xmlns="http://www.w3.org/2000/svg"
-           xmlns:xlink="http://www.w3.org/1999/xlink"
-           viewBox="0 0 511.988 511.988"
-           xml:space="preserve"
-        >
-           <g transform="matrix(1.3 0 0 1.3 -76.8 -78)"><g class="owl">
-              <path
-                 style="fill:#434A54;"
-                 d="M366.867,149.324 c-5.891,0 -10.672,-4.766
-                    -10.672,-10.656 s4.781,-10.672 10.672,-10.672
-                    c16.781,0 23.312,-4.469 25.719,-7.141
-                    c1.562,-1.718 2.062,-3.515 2.062,-3.53
-                    c0,-5.891 4.781,-10.656 10.688,-10.656
-                    c5.875,0 10.656,4.766 10.656,10.656
-                    c0,1.578 -0.375,9.843 -7.562,17.812
-                    C399.961,144.557 385.961,149.324
-                    366.867,149.324z"
-              />
-              <path 
-                 style="fill:#434A54;"
-                 d="M145.122,127.995 c-11.554,0 -20.382,-2.234
-                    -24.866,-6.281 c-2.438,-2.202 -2.859,-4.296
-                    -2.93,-4.765 c0,-0.031 0.008,-0.062
-                    0.008,-0.078 c0,-5.891 -4.781,-10.672
-                    -10.672,-10.672 c-5.89,0 -10.664,4.781
-                    -10.664,10.672 c0,0.156 0.016,0.297
-                    0.023,0.453 h-0.023 c0,1.578 0.367,9.843
-                    7.555,17.812 c8.484,9.422 22.476,14.188
-                    41.569,14.188 c5.891,0 10.672,-4.766
-                    10.672,-10.656 s-4.781,-10.656
-                    -10.672,-10.656z M117.334,117.325 h-0.023
-                    c0,-0.109 0.016,-0.234 0.016,-0.344
-                    C117.342,117.2 117.334,117.325
-                    117.334,117.325z"
-              />
-           </g>
-           <path class="owl"
-              style="fill:#A85D5D;"
-              d="M255.995,63.998 c-76.459,0 -138.661,62.201
-                 -138.661,138.669 c0,17.906 5.039,42.093
-                 14.57,69.936 c8.781,25.641 20.773,52.921
-                 34.687,78.936 c14.227,26.578 29.188,49.39
-                 43.273,65.969 c17.437,20.515 32.522,30.483
-                 46.131,30.483 s28.687,-9.969 46.124,-30.483
-                 c14.094,-16.579 29.062,-39.391
-                 43.28,-65.969 c13.905,-26.015 25.905,-53.295
-                 34.687,-78.936 c9.531,-27.843 14.562,-52.029
-                 14.562,-69.936 C394.648,126.199
-                 332.462,63.998 255.995,63.998z"
-           />
-           <path id="perch" transform="matrix(0.8 0 0 1 48 0)"
-              style="fill:#FFD2A6;"
-              d="M501.334,362.663 H10.664 C4.774,362.663
-                 0,357.882 0,351.991 c0,-5.89 4.773,-10.671
-                 10.664,-10.671 h490.669 c5.874,0 10.655,4.781
-                 10.655,10.671 C511.989,357.882
-                 507.208,362.663 501.334,362.663z"
-           />
-           <g class="owl">
-              <path
-                 style="fill:#F6BB42;"
-                 d="M213.332,362.663 c-5.891,0 -10.672,-4.781
-                    -10.672,-10.672 V341.32 c0,-5.891
-                    4.781,-10.656 10.672,-10.656 c5.89,0
-                    10.664,4.766 10.664,10.656 V341.32
-                    c0,5.891 -4.773,10.672 -10.664,10.672z"
-              />
-              <path
-                 style="fill:#F6BB42;"
-                 d="M234.66,362.663 c-5.891,0 -10.664,-4.781
-                    -10.664,-10.672 V341.32 c0,-5.891
-                    4.773,-10.656 10.664,-10.656 c5.89,0
-                    10.671,4.766 10.671,10.656 V341.32
-                    c0,5.891 -4.781,10.672 -10.671,10.672z"
-              />
-              <path
-                 style="fill:#F6BB42;"
-                 d="M277.338,362.663 c-5.897,0 -10.679,-4.781
-                    -10.679,-10.672 V341.32 c0,-5.891
-                    4.781,-10.656 10.679,-10.656 c5.875,0
-                    10.656,4.766 10.656,10.656 V341.32
-                    c0,5.891 -4.781,10.672 -10.656,10.672z"
-              />
-              <path
-                 style="fill:#F6BB42;"
-                 d="M298.65,362.663 c-5.875,0 -10.656,-4.781
-                    -10.656,-10.672 V341.32 c0,-5.891
-                    4.781,-10.656 10.656,-10.656 c5.906,0
-                    10.688,4.766 10.688,10.656 V341.32
-                    c0,5.891 -4.782,10.672 -10.688,10.672z"
-              />
-           </g>
-           <g class="owl">
-              <path
-                 style="fill:#7F4545;"
-                 d="M387.914,159.947 c-18.047,-55.623
-                    -70.357,-95.95 -131.919,-95.95 c-61.295,0
-                    -113.419,39.983 -131.685,95.231 l0.148,0.766
-                    c35.375,-71.326 131.537,-42.67
-                    131.537,21.328 C255.995,117.34
-                    352.523,88.684 387.914,159.947z"
-              />
-              <path
-                 style="fill:#7F4545;"
-                 d="M255.995,383.99 c-5.89,0 -10.664,4.781
-                    -10.664,10.672 v51.391 c3.656,1.297
-                    7.211,1.938 10.664,1.938 s7.008,-0.641
-                    10.664,-1.938 v-51.391 c0,-5.891
-                    -4.774,-10.672 -10.664,-10.672z"
-              />
-           </g>
-           <path class="owl"
-              style="opacity:0.1;fill:#FFFFFF;enable-background:new ;"
-              d="M255.995,63.998 c-1.828,0 -3.656,0.031
-                 -5.468,0.109 c74.061,2.75 133.465,63.842
-                 133.465,138.56 c0,17.906 -5.031,42.093
-                 -14.578,69.936 c-8.766,25.641
-                 -20.765,52.921 -34.687,78.936
-                 c-14.218,26.578 -29.187,49.39
-                 -43.265,65.969 c-15.188,17.874
-                 -28.601,27.733 -40.803,29.983 c1.805,0.328
-                 3.586,0.5 5.335,0.5 c13.609,0 28.687,-9.969
-                 46.124,-30.483 c14.094,-16.579
-                 29.062,-39.391 43.28,-65.969
-                 c13.905,-26.015 25.905,-53.295
-                 34.687,-78.936 c9.531,-27.843
-                 14.562,-52.029 14.562,-69.936
-                 C394.648,126.199 332.462,63.998
-                 255.995,63.998z"
-           />
-           <g class="owl">
-              <path
-                 style="fill:#F6BB42;"
-                 d="M219.98,193.322 c0,15.094 -13.187,27.344
-                    -29.444,27.344 c-16.266,0 -29.445,-12.25
-                    -29.445,-27.344 s13.179,-27.328
-                    29.445,-27.328 c16.257,0 29.444,12.234
-                    29.444,27.328z"
-              />
-              <path
-                 style="fill:#F6BB42;"
-                 d="M344.649,191.214 c0,14.672 -12.297,26.562
-                    -27.452,26.562 c-15.156,0 -27.453,-11.891
-                    -27.453,-26.562 c0,-14.656 12.297,-26.547
-                    27.453,-26.547 c15.155,0 27.452,11.891
-                    27.452,26.547z"
-              />
-           </g>
-           <g class="owl">
-           <path
-              style="fill:#434A54;"
-              d="M191.997,181.322 c-5.891,0 -10.664,4.781
-                 -10.664,10.672 s4.773,10.672 10.664,10.672
-                 s10.664,-4.781 10.664,-10.672
-                 s-4.773,-10.672 -10.664,-10.672z"
-           />
-           <path
-              style="fill:#FFCE54;"
-              d="M191.997,149.324 c-23.523,0 -42.664,19.14
-                 -42.664,42.671 s19.14,42.671 42.664,42.671
-                 c23.523,0 42.663,-19.14 42.663,-42.671
-                 s-19.14,-42.671 -42.663,-42.671z
-                 M191.997,213.322 c-11.766,0 -21.336,-9.562
-                 -21.336,-21.328 s9.57,-21.328
-                 21.336,-21.328 c11.765,0 21.335,9.562
-                 21.335,21.328 s-9.57,21.328
-                 -21.335,21.328z"
-           />
-           <path
-              style="fill:#434A54;"
-              d="M319.994,181.322 c-5.891,0 -10.656,4.781
-                 -10.656,10.672 s4.766,10.672 10.656,10.672
-                 s10.656,-4.781 10.656,-10.672
-                 s-4.766,-10.672 -10.656,-10.672z"
-           />
-           <path
-              style="fill:#FFCE54;"
-              d="M319.994,149.324 c-23.531,0 -42.656,19.14
-                 -42.656,42.671 s19.125,42.671
-                 42.656,42.671 c23.53,0 42.654,-19.14
-                 42.654,-42.671 s-19.124,-42.671
-                 -42.654,-42.671z M319.994,213.322
-                 c-11.766,0 -21.344,-9.562 -21.344,-21.328
-                 s9.578,-21.328 21.344,-21.328 s21.343,9.562
-                 21.343,21.328 s-9.577,21.328
-                 -21.343,21.328z"
-           />
-           </g>
-           <g
-              id="envelop"
-              transform="matrix(4 0 0 4 128 182)"
-           >
-              <path
-                 fill="#000000"
-                 d="M60,8 H4 c-2.211,0 -4,1.789 -4,4 v40
-                    c0,2.211 1.789,4 4,4 h56 c2.211,0 4,-1.789
-                    4,-4 V12 c0,-2.211 -1.789,-4 -4,-4z M4,10
-                    h56 c1.104,0 2,0.896 2,2 v2.469 L32,36.754
-                    L2,14.469 V12 c0,-1.104 0.896,-2 2,-2z
-                    M60,54 H4 c-1.104,0 -2,-0.896 -2,-2 v-2.808
-                    l18.584,-13.381 c0.448,-0.322 0.55,-0.947
-                    0.228,-1.396 c-0.322,-0.447 -0.946,-0.549
-                    -1.396,-0.228 L2,46.729 V16.961
-                    l29.403,21.842 C31.581,38.935 31.79,39
-                    32,39 s0.419,-0.065 0.597,-0.197
-                    L62,16.961 v29.768 l-17.416,-12.54
-                    c-0.448,-0.322 -1.074,-0.221 -1.396,0.228
-                    c-0.322,0.448 -0.221,1.073 0.228,1.396
-                    L62,49.192 V52 c0,1.104 -0.896,2 -2,2z"
-              />
-              <g>
-                 <path
-                    fill="#F9EBB2"
-                    d="M60,10 H4 c-1.104,0 -2,0.896 -2,2
-                       v2.469 l30,22.285 l30,-22.285 V12
-                       c0,-1.104 -0.896,-2 -2,-2z"
-                 />
-                 <path
-                    fill="#F9EBB2"
-                    d="M32,39 c-0.21,0 -0.419,-0.065
-                       -0.597,-0.197 L2,16.961 v29.768
-                       l17.416,-12.54 c0.449,-0.321 1.073,-0.22
-                       1.396,0.228 c0.322,0.448 0.221,1.073
-                       -0.228,1.396 L2,49.192 V52 c0,1.104
-                       0.896,2 2,2 h56 c1.104,0 2,-0.896 2,-2
-                       v-2.808 L43.416,35.812 c-0.448,-0.322
-                       -0.55,-0.947 -0.228,-1.396 c0.321,-0.448
-                       0.947,-0.55 1.396,-0.228 L62,46.729
-                       V16.961 L32.597,38.803 C32.419,38.935
-                       32.21,39 32,39z"
-                 />
-              </g>
-              <path
-                 opacity="0.15"
-                 fill="#231F20"
-                 d="M32,39 c-0.21,0 -0.419,-0.065
-                    -0.597,-0.197 L2,16.961 v29.768
-                    l17.416,-12.54 c0.449,-0.321 1.073,-0.22
-                    1.396,0.228 c0.322,0.448 0.221,1.073
-                    -0.228,1.396 L2,49.192 V52 c0,1.104
-                    0.896,2 2,2 h56 c1.104,0 2,-0.896 2,-2
-                    v-2.808 L43.416,35.812 c-0.448,-0.322
-                    -0.55,-0.947 -0.228,-1.396 c0.321,-0.448
-                    0.947,-0.55 1.396,-0.228 L62,46.729
-                    V16.961 L32.597,38.803 C32.419,38.935
-                    32.21,39 32,39z"
-              />
-           </g>
-           <path
-              id="beak" class="owl"
-              style="fill:#000000;"
-              d="M255.995,234.665 c-5.89,0 -10.664,-4.781
-                 -10.664,-10.671 v-21.328 c0,-5.891
-                 4.773,-10.672 10.664,-10.672 c5.891,0
-                 10.664,4.781 10.664,10.672 v21.328
-                 c0,5.891 -4.773,10.671 -10.664,10.671z"
-           /></g>
-        </svg>
-      </td>
-      <td>
-         <div id="UserActions" class="hidden">
-            <button id="AddThing" onclick="addThing()"
-                    title="Add a thing to fair">
-               <svg viewBox="0 0 256 256" id="AddThingSVG"
-                    xmlns="http://www.w3.org/2000/svg">
-                  <path
-                     d="M220,128a4.0002,4.0002,0,0,1-4,4H132v84a4,4,0,0,1-8,0
-                        V132H40a4,4,0,0,1,0-8h84V40a4,4,0,0,1,8,0v84h84
-                        A4.0002,4.0002,0,0,1,220,128Z"/>
-               </svg>
-            </button>
-         </div>
-      </td></template>
+         <table id="htable"><tr>
+               <td id="logoTd" style="vertical-align: top;">
+                  <div id="logoDiv" class="if">
+                     <object data="img/logo.svg" id="logo" type="image/svg+xml"
+                             class="js">
+                     </object>
+               </div></td>
+               <td style="vertical-align: top; padding-top: 0.12cm">
+                  <span id="LockBlock" class="" onclick="unlock()">
+                     <span id="lock"></span>
+                     <span id="Desc" class="js">signin/signup<br/>
+                        to add ur things to the fair</span>
+                     <span class="hidden"><a href="?class=signin">signin</a>
+                        to add ur things to the fair</span></span>
+                  <div id="Credentials" class="hidden">
+                     <div id="gglSnD"><input id="gglSn" type="checkbox"/>
+                        Sign <span id="inUp">in</span> with Google
+                        <div id="gglSnB" class="hidden"></div>
+                        <div id="gmail" class="hidden"></div></div>
+                     <div id="UsernameL" class="inlBlk">Username: <br/>
+                        <input id="username" alt="Username" class="" autocorrect="off"
+                               autocapitalize="off"/></div>
+                     <div id="PasswordL" class="inlBlk hidden">Password: <br/>
+                        <input id="password" alt="Password" class=""/></div>
+                     <div id="signupdiv" class="hidden">
+                        <div id="EmailL">Email: 
+                           <input id="email" alt="Email" class=""
+                                  autocorrect="off"
+                                  autocapitalize="off"/></div>
+                        <div id="passBlk" class="hidden">
+                           <div id="Password1L">
+                              <span id="NewL" class="hidden">
+                                 New </span>Password: 
+                              <input id="passwords1" alt="Password"/></div>
+                           <div id="Password2L">Retype Password: 
+                              <input id="passwords2" alt="Password"
+                                     class=""/></div><br/>
+                           <label id="CaptchaL">Captcha: </label><br/>
+                           <input id="Captcha" alt="Captcha" autocorrect="off"
+                                  autocapitalize="off"/><br/>
+                           <img id="CaptchaImg" src="">
+                        </div>
+                        <div id="ConsentL">
+                           <input id="Consent" alt="Consent" type="checkbox">
+                           <a id="ConsentT"href="files/md.html?files/tnc.md">
+                              I agree to terms and condition</a>
+                        </div>
+                     </div>
+                     <input id="SubmitBtn" value="Submit" type="button"/>
+                     <div class="inlBlk">
+                        <nobr>
+                           <label id="SignInL">
+                              <input id="SignIn" alt="SignIn" type="radio"
+                                     value="0" checked
+                                     onclick="togglesignup()" name="accountIntx"/>
+                              SignIn </label></nobr>
+                        <nobr>
+                           <label id="RecoverL" class="hidden">
+                              <input id="Recover" alt="Recover" type="radio"
+                                     value="2" onclick="togglesignup()" name="accountIntx"/>
+                              ResetPassword</label></nobr>
+                        <nobr>
+                           <input id="SignUp" alt="SignUp" type="radio"
+                                  value="1"
+                                  onclick="togglesignup()" name="accountIntx"/>
+                           <label id="SignUpL">SignUp </label></nobr></div>
+                  </div>
+                  <div id="usermenu" class="hidden">
+                     <span id="unlock"></span>
+                     <span id="user"></span>
+                  </div>
+               </td>
+               <td  title="Mailbox">
+                  <span id="owlOnPerch"></span>
+               </td>
+               <td>
+                  <div id="UserActions" class="hidden">
+                     <button id="AddThing" onclick="addThing()"
+                             title="Add a thing to fair">
+                        <span id="AddThingSVG"></span>
+                     </button>
+                  </div>
+               </td>
       </tr></table></template>
       <div id="searchBar">
          <div id="lips"><form id="mouthPad">
-         <input id="mouth" name="search" type="text" class="labeled"/>
-         <svg id="searchTool" viewBox="0 0 42 66"
-                 xmlns="http://www.w3.org/2000/svg"
-                 xmlns:xlink="http://www.w3.org/1999/xlink">
-               <path
-                  id="mirror"
-                  d="M 21 41 A 20 20 0 0 1 21 1 A 20 20 0 1 1 21 41 L 21 45
-                     L 22 45 L 22 65 L 20 65 L 20 45 L 21 45 Z"
-                  style="stroke-width: 1;"/>
-               <path
-                  id="stock"
-                  d="M 21 7 A 20 40 45 0 1 33 21 A 20 20 0 0 0 21 7 Z"
-                  style="stroke-opacity: 1.0;"/>
-            </svg></form></div>
+               <input id="mouth" name="search" type="text" class="labeled"/>
+               <svg id="searchTool" viewBox="0 0 42 66"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink">
+                  <path
+                     id="mirror"
+                     d="M 21 41 A 20 20 0 0 1 21 1 A 20 20 0 1 1 21 41 L 21 45
+                        L 22 45 L 22 65 L 20 65 L 20 45 L 21 45 Z"
+                     style="stroke-width: 1;"/>
+                  <path
+                     id="stock"
+                     d="M 21 7 A 20 40 45 0 1 33 21 A 20 20 0 0 0 21 7 Z"
+                     style="stroke-opacity: 1.0;"/>
+         </svg></form></div>
       </div>
    </header>
    <div id="tgtUsrLgHldr"class="hidden">
@@ -928,178 +203,82 @@
              onchange="selectFiles.call(this, event);"/>
    </div>
    <template><div id="Things" class="hidden">
-      <div id="Thing" class="thing">
-         <div id="ImgsHldr"class="">
-         <div id='Imgs' class="">
-            <div id="ImgHldr" class="center">
-               <img id="ThingImg" class="fixedSize" loading="lazy"/>
-            </div>
-         </div>
-         <label id="chusPicBtnL" class="removable hidden">Browse...</label>
-         <input id="chusPicBtn" type="file" class="editBtn removable"
-                onchange="selectFiles.call(this, event);"/>
-         <div id="NxtBtnHldr">
-         <input id="pImg" type="button" value="<" class="imgNxtBtns"
-                onclick="nxtImg(1)"/>&nbsp &nbsp
-         <input id="nImg" type="button" value=">" class="imgNxtBtns"
-                onclick="nxtImg(0)"/>&nbsp &nbsp
-         <input id="eImg" type="button" value="+" class="imgNxtBtns"
-                onclick="incImg(0)"/>
-         </div>
-         </div>
-         <label id="ThingLocationL" class="removable">Location: </label>
-         <span id="ThingLocationPin">
-            <span id="pin">📍</span><span id="tin">⦾</span></span>
-         <span id="ThingLocation" class="hidden"></span>
-         <input id="ThingLocationBox" class="removable" type="text"/>
-         <label id="ThingNameL" class="removable"><br/>Name: </label>
-         <input id="ThingNameBox" class="removable" type="text"/>
-         <span id="ThingName" class="edtHide"></span>
-         <br/>
-         <div id="thnBtm">
-         <div id="thingInfo" class="hidden">
-            <label id="ThingUsrL">Usr:</label>
-            <span id="ThingUsr"></span>
-            <nobr><label id="ThingIdL">ID: <span id="ThingId"></span></label>
-            </nobr><br/>
-         </div>
-         <div id="lastModedD" class="hidden editHide">
-            <span id="lastModed"></span>
-         </div>
-         <div id="ThingDetailsDiv" class="removable">
-            <label id="ThingDetailsL">Details: <br/></label>
-            <textarea id="ThingDetailsTA" rows="3"></textarea>
-         </div>
-         <div id="ThingDetails" class="hidden edtHide"></div>
-         <div id="msgdiv" class="hidden">
-            <div id="msgs">
-               <div class="query">
-                  <span class="hidden"></span><span></span><span></span>
+         <div id="Thing" class="thing">
+            <div id="ImgsHldr"class="">
+               <div id='Imgs' class="">
+                  <div id="ImgHldr" class="center">
+                     <img id="ThingImg" class="fixedSize" loading="lazy"/>
+                  </div>
+               </div>
+               <label id="chusPicBtnL" class="removable hidden">
+                  Browse...</label>
+               <input id="chusPicBtn" type="file" class="editBtn removable"
+                      onchange="selectFiles.call(this, event);"/>
+               <div id="NxtBtnHldr">
+                  <input id="pImg" type="button" value="<" class="imgNxtBtns"
+                         onclick="nxtImg(1)"/>&nbsp &nbsp
+                  <input id="nImg" type="button" value=">" class="imgNxtBtns"
+                         onclick="nxtImg(0)"/>&nbsp &nbsp
+                  <input id="eImg" type="button" value="+" class="imgNxtBtns"
+                         onclick="incImg(0)"/>
                </div>
             </div>
+            <label id="ThingLocationL" class="removable">Location: </label>
+            <span id="ThingLocationPin">
+               <span id="pin">📍</span><span id="tin">⦾</span></span>
+            <span id="ThingLocation" class="hidden"></span>
+            <input id="ThingLocationBox" class="removable" type="text"/>
+            <label id="ThingNameL" class="removable"><br/>Name: </label>
+            <input id="ThingNameBox" class="removable" type="text"/>
+            <span id="ThingName" class="edtHide"></span>
+            <br/>
+            <div id="thnBtm">
+               <div id="thingInfo" class="hidden">
+                  <label id="ThingUsrL">Usr:</label>
+                  <span id="ThingUsr"></span>
+                  <nobr><label id="ThingIdL">ID:
+                        <span id="ThingId"></span></label>
+                  </nobr><br/>
+               </div>
+               <div id="lastModedD" class="hidden editHide">
+                  <span id="lastModed"></span>
+               </div>
+               <div id="ThingDetailsDiv" class="removable">
+                  <label id="ThingDetailsL">Details: <br/></label>
+                  <textarea id="ThingDetailsTA" rows="3"></textarea>
+               </div>
+               <div id="ThingDetails" class="hidden edtHide"></div>
+               <div id="msgdiv" class="hidden">
+                  <div id="msgs">
+                     <div class="query">
+                        <span class="hidden"></span><span></span><span></span>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <input id="showURLBtn" class="hidden" type="Button"
+                   value="^" onclick="showURL.call(this, event)"/>
+            <input id="cnclEdtBtn" class="removable" type="Button"
+                   value="Cancel"/>
+            <input id="ThingEditBtn" class="" type="Button" value="Edit"/>
          </div>
+         <div id="qSendDiv" class="hidden">
+            <textarea id="msginpt" rows="2" cols="22"
+                      onfocus="onMsgInptFocus.call(this)"
+                      onblur="onMsgInptBlur.call(this)"></textarea><br/>
+            <input id="msgBtn" type="Button" value="Query"/>
          </div>
-         <input id="showURLBtn" class="hidden" type="Button"
-                value="^" onclick="showURL.call(this, event)"/>
-         <input id="cnclEdtBtn" class="removable" type="Button"
-                value="Cancel"/>
-         <input id="ThingEditBtn" class="" type="Button" value="Edit"/>
-      </div>
-      <div id="qSendDiv" class="hidden">
-         <textarea id="msginpt" rows="2" cols="22"
-                   onfocus="onMsgInptFocus.call(this)"
-                   onblur="onMsgInptBlur.call(this)"></textarea><br/>
-         <input id="msgBtn" type="Button" value="Query"/>
-      </div>
-      <div id="replyDiv" class="hidden">
-         <div id="reply" class="reply hidden inQ">
-            <span>-></span><span></span></div>
+         <div id="replyDiv" class="hidden">
+            <div id="reply" class="reply hidden inQ">
+               <span>-></span><span></span></div>
             <textarea id="replyBox" rows="2" cols="22"
                       onfocus="onMsgInptFocus.call(this)"
                       onblur="onMsgInptBlur.call(this)"></textarea>
-         <input id="replyBtn" type="Button" value="Reply"/>
-      </div>
-   </div></template>
-   <!--div id="land">
-      <div class=""><div id="compound-wall">
-         <div class="plot">
-            <div class="facade"></div>
-               <div class="name"></div>
-            </div>
-            <div class="fat plot">
-               <div class="facade"></div>
-               <div class="name"></div>
-            </div>
-            <div class="tall plot">
-               <div class="facade"></div>
-               <div class="name"></div>
-            </div>
-            <div class="jumbo plot">
-               <div class="facade"></div>
-               <div class="name"></div>
-            </div>
+            <input id="replyBtn" type="Button" value="Reply"/>
          </div>
-      </div></div>
-   </div-->
-      <br/>
-      <button id="loadBottom" value="load more ...">load more...</button>
-   <div id="chin">
-<div id="SVGS" hidden>
-   <svg id="SpiralSVG" class="fixedSize" viewBox="0 0 288 288"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink">
-      <g transform="matrix(2 0 0 2 -105 46)"
-         style="fill: rgb(0, 0, 0)">
-         <path
-            id="spiral"
-            style="stroke-width: 1px; 
-                   stroke-linecap: butt; stroke-linejoin: miter;
-                   stroke-opacity: 1;"
-            d="M 121.996 56.286
-               C 124.269 58.023 120.791 60.229 119.128 60.09
-               C 114.622 59.714 113.149 54.167 114.44 50.505
-               C 116.749 43.955 124.804 42.112 130.601 44.866
-               C 139.108 48.903 141.337 59.883 137.106 67.846
-               C 131.467 78.459 117.643 81.115 107.658 75.318
-               C 95.087 68.019 92.038 51.099 99.331 38.945
-               C 108.161 24.222 127.939 20.735 142.074 29.638
-               C 158.73 40.133 162.6 63.081 152.216 79.407
-               C 140.227 98.254 114.45 102.571 96.183 90.543
-               C 75.425 76.876 70.73 47.87 84.221 27.382
-               C 99.354 4.399 131.152 -0.749 153.546 14.412
-               C 178.408 31.243 183.93 66.324 167.328 90.965"
-            transform="matrix(0.305513, 0.952188, -0.952188, 0.305513,
-                       136.905878, -85.885062)">
-         </path>
-      </g>
-   </svg>
-   <svg id="FeetSVG" class="fixedSize" viewBox="0 0 288 288"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink">
-      <g transform="matrix(3 0 0 3 -65 -310)"
-         style="fill: rgb(0, 0, 0)">
-         <path
-            id="feet" 
-            style="fill-rule:evenodd;stroke-width:1px;
-                   stroke-linecap:butt;stroke-linejoin:miter;
-                   stroke-opacity:1"
-            d="M 87.949 138.608
-               C 107.858 165.629 80.451 119.108 80.676 152.671
-               C 80.901 186.233 107.682 139.349 88.137 166.634
-               C 68.592 193.919 104.366 153.477 72.515 164.062
-               C 40.665 174.648 93.53 185.63 61.541 175.473
-               C 29.552 165.316 79.069 186.842 59.159 159.822
-               C 39.25 132.801 45.141 186.473 44.916 152.91
-               C 44.691 119.348 39.52 173.094 59.066 145.809
-               C 78.611 118.524 29.387 140.712 61.237 130.127
-               C 93.087 119.541 40.374 131.232 72.363 141.389
-               C 104.353 151.546 68.039 111.588 87.949 138.608 Z">
-         </path>
-      </g>
-   </svg>
-   <svg id="BubbleSVG" class="fixedSize" viewBox="0 0 288 288"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink">
-      <g transform="matrix(2 0 0 2 -220 -180)"
-         style="fill: rgb(0, 0, 0)">
-         <path
-            id="bubble"
-            style="fill-rule: evenodd;
-                   stroke-width: 1px; stroke-linecap: butt;
-                   stroke-linejoin: miter; stroke-opacity: 1;"
-            d="M 195.953 173.753
-               C 104 102.422 271.148 117.1 167.868 170.734
-               C 107.962 201.844 156.588 245.827 179.456 182.317
-               C 218.88 72.822 256.572 236.325 173.648 154.674
-               C 125.549 107.313 98.745 167.151 166.213 169.274
-               C 282.531 172.933 138.678 259.305 190.708 155.208
-               C 220.887 94.828 155.695 87.826 174.525 152.649
-               C 206.99 264.405 80.392 154.283 195.472 171.599
-               C 262.223 181.642 248.736 117.477 192.906 155.417
-               C 96.651 220.827 162.263 66.395 181.356 181.194
-               C 192.431 247.781 249.288 215.127 195.953 173.753 Z">
-         </path>
-      </g>
-   </svg>
-</div>
+   </div></template>
+   <br/>
+   <button id="loadBottom" value="load more ...">load more...</button>
+   <div id="chin"></div>
+   <div id="SVGS" hidden class="js"><div>
 </body></html>
