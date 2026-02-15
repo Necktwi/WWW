@@ -1,9 +1,11 @@
+window.indexPromise= fetch('html/index.html?8').then(r=> r.text());
+window.thingsPromise= fetch('html/things.html').then(r=> r.text());
 window.oopPromise= fetch('img/OwlOnPerch.svg').then(r=> r.text());
 window.lockPromise= fetch('img/Lock.svg').then(r=> r.text());
 window.unlockPromise= fetch('img/Unlock.svg').then(r=> r.text());
 window.addThnPromise= fetch('img/AddThing.svg').then(r=> r.text());
 window.svgsPromise= fetch('img/placeHldr.svg').then(r=> r.text());
-var Footer,Logo,LogoDiv,LogoTd,Mbox,Inbox,Outbox,OwlOnPerch,owlMail;
+var MastHead,Logo,LogoDiv,LogoTd,Mbox,Inbox,Outbox,OwlOnPerch,owlMail;
 var LocationPin,LocationDDiv,LocationDiv,Location,LocTxt,LocTTimeout,LocTHide;
 var SearchTool,SearchToolOpacity=1,SearchBar,LoadTop,LoadBottom;
 var SearchToolBlink, GglSnD, GglSn, GglSnB, Gmail, PassBlk;
@@ -28,7 +30,7 @@ var locPlcHldr= "📍E.g. 12.3456,-78.9012";
 var caretPos=0;
 const MaxImgsPerThing=3;
 var browserID,isApple,blinker;
-var userData= {};
+var userData= {}, cnt= {};
 var LocatingULog;
 var lstThn, lstThnDtls, Chin;
 var Header,Htable;
@@ -309,8 +311,8 @@ var updateLocation= function (show) {
       Location.value=position.coords.latitude.toPrecision(9);
       Location.value+=","+position.coords.longitude.toPrecision(9);
       LocTxt.innerHTML=Location.value;
-      if (!browserID) {
-         window.cookieShuttle();
+      if (cnt.locked) {
+         window.getAllThnsArnd();
       }
       if (Location.classList.contains("hidden")) {
          LocTxt.classList.remove("hidden");
@@ -388,7 +390,7 @@ var toggleMbox= function () {
    }
 }
 var sendOwl= function () {
-   var showOwl=false;
+   var showOwl= false;
    OwlOnPerch.classList.add("owlSent");
    setTimeout(function () {
       if (!showOwl) {
@@ -706,7 +708,7 @@ function hasHardwareAcceleration() {
 var last= performance.now();
 var frames= 0;
 var noBlur= false;
-function monitorFPS() {
+function monitorFPS () {
    frames++;
    const now= performance.now();
    if (now - last >= 2000) { // 2 seconds
@@ -721,8 +723,54 @@ function monitorFPS() {
    if (!noBlur)
       requestAnimationFrame(monitorFPS);
 }
-
+var loadNodes= function (d) {
+   let lastElm;
+   while (d.children.length) {
+      let elm= d.children[0];
+      elm.remove();
+      let dhtml= elm.getAttribute("dhtml");
+      if (dhtml) {
+         let keyVal= dhtml.split(':');
+         let key= keyVal[0];
+         let val= keyVal[1];
+         let tgt= document.getElementById(val);
+         if (key== "endChildren") {
+            while (elm.children.length) {
+               let elmChild= elm.children[0];
+               elmChild.remove();
+               tgt.insertAdjacentElement("beforeEnd", elmChild);
+            }
+         } else if (key== "start") {
+            tgt.insertAdjacentElement("afterBegin", elm);
+         } else if (key== "end") {
+            tgt.insertAdjacentElement("beforeEnd", elm);
+         }  else if (key== "after") {
+            tgt.insertAdjacentElement("afterEnd", elm);
+         } else if (key== "parent") {
+            loadNodes(elm);
+         }
+      } else if (!lastElm) {
+         loadNodes(elm);
+      } else {
+         lastElm.insertAdjacentElement("afterEnd", elm);
+      }
+      lastElm= elm;
+   }   
+}
 window.init= async function () {
+   cnt.locked= true;
+   setCookie("js", 1, 7000);
+   makeDynamic();
+   let d= document.getElementsByTagName('dummy')[0];
+   let svg= await window.indexPromise;
+   d.innerHTML= svg;
+   loadNodes(d);
+   makeDynamic();
+   window.indexPromise= undefined;
+   svg= await window.thingsPromise;
+   d.innerHTML= svg;
+   loadNodes(d);
+   window.thingsPromise= undefined;
    if (!hasHardwareAcceleration()) {
       document.body.classList.add('noBlur');
       noBlur=true;
@@ -740,7 +788,7 @@ window.init= async function () {
             setTimeout(()=>{window.addEventListener('scroll', blurInput)},2000);
          });
    }
-   Footer=document.getElementsByTagName("footer")[0];
+   MastHead=document.getElementById("mastHead");
    Header=document.getElementsByTagName("header")[0];
    Htable=Header.firstElementChild;
    LoadTop=document.getElementById('loadTop');
@@ -762,8 +810,11 @@ window.init= async function () {
    Inbox.news=0;
    Inbox.replies=[]
    OwlOnPerch= document.getElementById('owlOnPerch');
-   let svg= await window.oopPromise;
-   OwlOnPerch.outerHTML= svg;
+   svg= await window.oopPromise;
+   OwlOnPerch.innerHTML= svg;
+   let temp= OwlOnPerch;
+   OwlOnPerch= temp.firstChild;
+   temp.replaceWith(OwlOnPerch);
    window.oopPromise= undefined;
 
    OwlOnPerch.onclick=toggleMbox;
@@ -780,6 +831,8 @@ window.init= async function () {
       Location.classList.add("hidden");
       LocTxt.classList.remove("hidden");
    }
+   LocationDDiv.remove();
+   LogoDiv.insertAdjacentElement("beforeEnd", LocationDDiv);
    ReplyDiv=document.getElementById('replyDiv');
    ReplyBtn=document.getElementById('replyBtn');
    ReplyBox=document.getElementById('replyBox');
@@ -795,10 +848,10 @@ window.init= async function () {
          this.dont=true;
          ferrylog("Ok, not locating you. Enter preferred location in "+
                   "YY.YYYY,XX.XXXX format");
-         LocationPin.onclick=cookieShuttle;
+         LocationPin.onclick= getAllThnsArnd;
       }
       if (event.keyCode==13) {
-         cookieShuttle();
+         getAllThnsArnd();
       }
    });
    LocTxt=document.getElementById('LocTxt');
@@ -818,7 +871,10 @@ window.init= async function () {
    LockBlock= document.getElementById("LockBlock");
    Lock= document.getElementById("lock");
    svg= await window.lockPromise;
-   Lock.outerHTML= svg;
+   Lock.innerHTML= svg;
+   temp= Lock;
+   Lock= temp.firstChild;
+   temp.replaceWith(Lock);
    CMPD= 0.8/Lock.getBoundingClientRect().width;
    Desc= document.getElementById("Desc");
    
@@ -893,7 +949,10 @@ window.init= async function () {
    addEvent(SubmitBtn, 'click', authenticateUser);
    Unlock= document.getElementById('unlock');
    svg= await window.unlockPromise;
-   Unlock.outerHTML= svg;
+   Unlock.innerHTML= svg;
+   temp= Unlock;
+   Unlock= temp.firstChild;
+   temp.replaceWith(Unlock);
    window.lockPromise= undefined;
    window.unlockPromise= undefined;
    Usermenu= document.getElementById('usermenu');
@@ -933,45 +992,32 @@ window.init= async function () {
    
    AddThingSVG= document.getElementById("AddThingSVG");
    svg= await window.addThnPromise;
-   AddThingSVG.outerHTML= svg;
+   AddThingSVG.innerHTML= svg;
+   temp= AddThingSVG;
+   AddThingSVG= temp.firstChild;
+   temp.replaceWith(AddThingSVG);
    window.addThnPromise= undefined;
 
    SVGS= document.getElementById("SVGS");
    svg= await window.svgsPromise;
-   SVGS.outerHTML= svg;
+   SVGS.innerHTML= svg;
+   temp= SVGS;
+   SVGS= temp.firstChild;
+   temp.replaceWith(SVGS);
+   temp= undefined;
    window.svgsPromise= undefined;
-   //SVGS.remove();
-   window.cookieShuttle= function () {
+   SVGS.remove();
+   window.getAllThnsArnd= function () {
       hideKeyboard();
-      if (location.protocol!="https:") {
-         setCookie("bid", "", 7);
-      }
       Location.classList.add("hidden");
-      let url= new URL(window.location.href);
-      url.searchParams.set("req", "cookie");
-      var f={};
-      if (location.pathname!="/") {
-         tgtUsr=location.pathname.substr(1);
-      }
       if (location.search) {
          const thing= urlQuery.get("thing");
          if (thing) {
             window.tgtThing= thing;
          }
       }
-      f.pstr= Location.value;
-      ferrylog("Location: " + f.pstr);
-      let cnt= {}
-      if (browserID) {
-         cnt.bid=browserID;
-      }
-      cnt.geoposition=f.pstr.split(",");
-      if (window.tgtUsr)
-         cnt.path=tgtUsr;
-      f.content=JSON.stringify(cnt);
-      f.postExpdtn=onBID;
-      f.reqHeaders=jsonCType;
-      window.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
+      mouth.value= "";
+		search();
       LocationPin.classList.remove('empty');
    }
    LocationPin.onclick= showBoxUpdtLoc;
@@ -986,8 +1032,10 @@ window.init= async function () {
          }
       }
    }
-   if (window.tgtUsr && window.location.search.indexOf("?thing=")==0) {
-      cookieShuttle();
+   if (location.pathname!= "/") {
+      window.tgtUsr= location.pathname.substr(1);
+		Location.value= "0,0";
+		getAllThnsArnd();
    }
    updateLocation();
    // window.onresize= function () {
@@ -1014,7 +1062,7 @@ var sendMsg= function () {
    var md= msgd.firstElementChild;
    var ld= md.firstElementChild;
    var id= parseInt(ld.innerHTML);
-   var mid=1;
+   var mid= 1;
    if (!isNaN(id)) {
       mid= parseInt(msgd.lastElementChild.firstElementChild.innerHTML);
       md= msgd.children[0].cloneNode(true);
@@ -1176,64 +1224,6 @@ var about= function () {
    }
 }
 
-var onBID= function (feed) {
-   var res= JSON.parse(feed.responseText);
-   if (res.bid) {
-      setCookie("bid", res.bid, 7);
-      window.bidLoc=feed.pstr.split(',');
-      browserID=getCookie("bid");
-      LogoDiv.classList.remove("if");
-      Log.classList.remove("if");
-      LogoTd.insertAdjacentElement("afterBegin",LogoDiv);
-      LogoDiv.parentElement.style.display="table-cell";
-      LocationDDiv.classList.remove("if");
-      Footer.classList.remove("if");
-      Logo.classList.add("small");
-      Logo.onclick= function () {
-         location.href=window.location.origin;
-      }
-      LocationPin.classList.remove("hidden");
-      LocTHide= function () {
-         LocTxt.classList.add("hidden");
-      };
-      LocTTimeout= setTimeout(LocTHide,7000);
-      LocationDiv.onmouseenter= LocDShow;
-      LocationDiv.onmouseleave= LocDHide;
-      addEvent(OwlOnPerch, 'mouseenter', function () {
-         LocTxt.classList.add("hidden");
-      });
-   }
-   if (res.sid) {
-   }
-   if (res.name && res.email) {
-      Username.value=res.name;
-      Email.value=res.email;
-      signin(feed);
-   } else {
-      updateThings(res);
-      if (res.things.length<20) {
-         LoadBottom.innerHTML="no more!";
-         LoadBottom.onclick=null;
-         LoadBottom.disable=true;
-      }
-   }
-   if (Logo.onclick==gotoHome) {
-      ferrylog("click logo to view all things around U",50000);
-   }
-   Location.classList.add("hidden");
-   LocTxt.innerHTML=Location.value;
-   LocTxt.classList.remove("hidden");
-   LocationPin.onclick= showBoxUpdtLoc;
-   LocationDDiv.classList.remove("hidden");
-   if (window.tgtUsr) {
-      TgtUsrLgHldr.innerHTML= tgtUsr;
-      TgtUsrLgHldr.onclick= function () {
-         window.location.href='/'+tgtUsr;
-      }
-      TgtUsrLgHldr.classList.remove("hidden");
-   }
-   delete window.shuttle;
-}
 var hideBlink= function () {
    let blinkElms= document.getElementsByClassName("blink");
    for (let i=0; i<blinkElms.length; ++i) {
@@ -1266,29 +1256,32 @@ var markUserThings= function () {
       uts[tid].classList.add("mine");
    }
 }
+var signInUI= function (res) {
+	document.body.classList.add("signed");
+   User.innerHTML= res.name;
+   User.setAttribute("title",location.origin+"/"+res.name);
+   User.obj= res;
+   if (!window.tgtThing || !Things.children.length) {
+      updateThings(res);
+   } else {
+      let thn= Things.children[0];
+      let imgsHldr= getElementInsideContainer(thn,"ImgsHldr");
+      showThingDetails.call(imgsHldr,true);
+   }
+   markUserThings();
+   owlMail= setInterval(sendOwl, 30000);
+   RecoverL.classList.add("hidden");
+   ferrylog("SignedIn!");
+   if (res.name=="gowtham") {
+      if (!res.notify) {
+         subscribe();
+      }
+   }
+}
 var signin= function(feed) {
    var res= JSON.parse(feed.responseText);
    if (res.email) {
-      document.body.classList.add("signed");
-      User.innerHTML=res.name;
-      User.setAttribute("title",location.origin+"/"+res.name);
-      User.obj=res;
-      if (!window.tgtThing || !Things.children.length) {
-         updateThings(res);
-      } else {
-         let thn= Things.children[0];
-         let imgsHldr= getElementInsideContainer(thn,"ImgsHldr");
-         showThingDetails.call(imgsHldr,true);
-      }
-      markUserThings();
-      owlMail=setInterval(sendOwl, 30000);
-      RecoverL.classList.add("hidden");
-      ferrylog("SignedIn!");
-      if (res.name=="gowtham") {
-         if (!res.notify) {
-            subscribe();
-         }
-      }
+		signInUI(res);
    } else {
       if (feed.cntnt.gid) {
          let passTry= "<br/>Try signing with password;<br/>"+
@@ -1305,13 +1298,13 @@ var signin= function(feed) {
             togglesignup();
             GglSnB.classList.add("hidden");
             Username.focus();
-         }
+			}
       } else {
          ferrylog("No No...! Check username and password :)");
          RecoverL.classList.remove("hidden");
       }
    }
-   delete Password.shuttle;
+	delete Password.shuttle;
 }
 var deleteThings= function () {
    Things.innerHTML="";
@@ -1584,7 +1577,7 @@ var updateThings= function (res) {
              thing.location;
          location.innerText=locStr;
          if (locStr.length) {
-            locPin.title=locStr;
+            locPin.title= locStr;
             locPin.classList.remove("empty");
             locPin.onclick=openMap;
             locPin.url="https://maps.google.com?q="+locStr;
@@ -1833,41 +1826,88 @@ var updateSearchedThings= function (feed) {
    var res= JSON.parse(feed.responseText);
    ferrylog(
       res.things.length+" thing"+(res.things.length==1?"":"s")+" found");
-   res.search=true;
+   res.search= true;
+	if (cnt.locked)
+		cnt.locked= undefined;
    //deleteThings();
-   searchCount+=res.things.length;
-   hideThings();
-   Things.classList.add("search");
-   updateThings(res);
-   if (res.things.length<20){
-      LoadBottom.innerHTML="no more!";
-      LoadBottom.onclick=null;
+   if (Log.classList.contains('if')) {
+      LogoDiv.classList.remove("if");
+      Log.classList.remove("if");
+      LogoTd.insertAdjacentElement("afterBegin", LogoDiv);
+      MouthPad.insertAdjacentElement("afterBegin", LocationDDiv);
+      LogoDiv.parentElement.style.display="table-cell";
+      LocationDDiv.classList.remove("if");
+      MastHead.classList.remove("if");
+      Logo.classList.add("small");
+      Logo.onclick= function () {
+         location.href=window.location.origin;
+      }
+      LocationPin.classList.remove("hidden");
+      LocTHide= function () {
+         LocTxt.classList.add("hidden");
+      };
+      LocTTimeout= setTimeout(LocTHide,7000);
+      LocationDiv.onmouseenter= LocDShow;
+      LocationDiv.onmouseleave= LocDHide;
+      addEvent(OwlOnPerch, 'mouseenter', function () {
+         LocTxt.classList.add("hidden");
+      });
+      if (res.name && res.email) {
+         Username.value=res.name;
+         Email.value=res.email;
+         signInUI(res);
+      }
+      if (Logo.onclick== gotoHome && window.tgtUsr) {
+         ferrylog("click logo to go home", 50000);
+      }
+      Location.classList.add("hidden");
+      LocTxt.innerHTML=Location.value;
+      LocTxt.classList.remove("hidden");
+      LocationPin.onclick= showBoxUpdtLoc;
+      LocationDDiv.classList.remove("hidden");
+      if (window.tgtUsr) {
+         TgtUsrLgHldr.innerHTML= tgtUsr;
+         TgtUsrLgHldr.onclick= function () {
+            window.location.href='/'+tgtUsr;
+         }
+         TgtUsrLgHldr.classList.remove("hidden");
+      }
+   } else {
+      hideThings();
+      Things.classList.add("search");
+   }
+   searchCount+= res.things.length;
+	if (!(res.email || res.name)) {
+		updateThings(res);
+	}
+	if (res.things.length< 20){
+      LoadBottom.innerHTML= "no more!";
+      LoadBottom.onclick= null;
    }
    document.body.scrollIntoView({behavior: "smooth", block: "start"});
    delete SearchTool.shuttle;
 }
-
 var search= function () {
-   window.searchCount=0;
-   if (mouth.value==mouth.plcHldr) {
+   window.searchCount= 0;
+   if (mouth.value== mouth.plcHldr) {
       showAllThings();
       event.preventDefault();
       return;
    }
    var pstr= Location.value;
    let url= window.location.search;
-   url+=url.length?"&":"?";
-   url+="req=search";
-   var f={};
-   let cnt= {};
-   cnt.bid=browserID;
-   cnt.search=mouth.value;
-   cnt.geoposition=pstr.split(",");
-   f.content=JSON.stringify(cnt);
-   f.postExpdtn=updateSearchedThings;
-   f.reqHeaders=jsonCType;
-   SearchTool.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
-   event.preventDefault();
+   url+= url.length?"&":"?";
+   url+= "req=search";
+   window.bidLoc= pstr.split(',');
+   var f= {};
+   cnt.search= mouth.value;
+   cnt.geoposition= window.bidLoc;
+   f.content= JSON.stringify(cnt);
+   f.postExpdtn= updateSearchedThings;
+   f.reqHeaders= jsonCType;
+   SearchTool.shuttle= new core.shuttle(url,f.content,f.postExpdtn,f);
+	if (event)
+		event.preventDefault();
 }
 var lock= function () {
    let url= window.location.search;
@@ -1907,7 +1947,8 @@ var signOutUi= function () {
 var signOut= function (feed) {
    var res= JSON.parse(feed.responseText);
    if (res.signOut===true) {
-      signOutUi();
+		owlMail= clearInterval(owlMail);
+		signOutUi();
    } else {
       setCookie("bid","",0);
       ferrylog("Huh! Something went wrong! Try again:) or close window.");
@@ -2100,7 +2141,7 @@ var makeid= function (length) {
 }
 
 var addThing= function () {
-   Footer.scrollIntoView({behavior: "smooth", block: "start"});
+   MastHead.scrollIntoView({behavior: "smooth", block: "start"});
    if (!userData["things"]) {
       userData["things"]=[];
    } else if (userData["things"][userData["things"].length-1].id==-1) {

@@ -2,283 +2,103 @@
     @author: Gowtham Kudupudi
 -->
 <!DOCTYPE html>
-<html lang="en" style="background-color: black;color: white;"><head>
+<html lang="en" style="background-color: black;color: white;"><head id="head">
    <title>FerryFair | Hyper fast spatial search</title>
    <link rel='icon' href='img/favicon2.ico' type='image/x-icon'/>
    <link rel='icon' href='img/favicon64.ico' type='image/x-icon' size="64x64"/>
-   <link rel='apple-touch-icon' href='img/favicon192.ico' type='image/x-icon'/>
-   <meta name='msapplication-TileImage' content='img/favicon192.ico'
-         type='image/x-icon' class="js"/>
-   <meta name="description"
-         content="Super quickly search for things U need among billions
-                  of things around U! Add things to the fair to ferry!"/>
-   <meta name="keywords"
-         content="fast,spatial,search,algorithm,things,near,around,items,
-                  goods,ferry fair,quad tree,quadtree"/>
-   <meta name="author" content="Gowtham Kudupudi"/>
-   <meta name="viewport" class="js"
-         content="width=device-width,initial-scale=1,
-                  maximum-scale=1,user-scalable=no,
-                  interactive-widget=resizes-content"/>
-   <meta name="language" content="English">
-   <meta http-equiv="content-language" content="en">
-   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
    <meta http-equiv="Content-Security-Policy-Report-Only" content=
-         "script-src https://accounts.google.com/gsi/client;
-          frame-src https://accounts.google.com/gsi/;
-          connect-src https://accounts.google.com/gsi/;" class="js"/>
+      "script-src https://accounts.google.com/gsi/client;
+      frame-src https://accounts.google.com/gsi/;
+      connect-src https://accounts.google.com/gsi/;" class="js"/>
    <meta name="google-signin-client_id" content=
       "91088616070-phsro3v29up7pts7od1e8snkee0ak774.apps.googleusercontent.com"
-         class="js"/>
-   <meta name="apple-mobile-web-app-title" content="FerryFair"/>
-   <script type="text/javascript" src="js/core.js?5" class="js"></script>
-   <script type="text/javascript" src="js/init.js?207" class="js"></script>
+      class="js"/>
    <script src="https://accounts.google.com/gsi/client" class="js" async>
    </script>
-   <link type="text/css" href="css/main.css?69" rel="stylesheet" class="js"/>
+   <link rel='apple-touch-icon' href='img/favicon192.ico' type='image/x-icon'/>
+   <meta name='msapplication-TileImage' content='img/favicon192.ico'
+      type='image/x-icon' class="js"/>
+   <meta name="description"
+      content="Super quickly search for things U need among billions
+      of things around U! Add things to the fair to ferry!"/>
+   <meta name="keywords"
+      content="fast,spatial,search,algorithm,things,near,around,items,
+      goods,ferry fair,quad tree,quadtree"/>
+   <meta name="author" content="Gowtham Kudupudi"/>
+   <meta name="viewport" class="js"
+      content="width=device-width,initial-scale=1,
+      maximum-scale=1,user-scalable=no,
+      interactive-widget=resizes-content"/>
+   <meta name="language" content="English"/>
+   <meta http-equiv="content-language" content="en"/>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+   <meta name="apple-mobile-web-app-title" content="FerryFair"/>
+   <script type="text/javascript" src="js/core.js?5" class="js"></script>
+   <link type="text/css" href="css/main.css?70" rel="stylesheet" class="js"/>
    <link type="text/css" href="css/main-dark.css" rel="stylesheet" class="js"/>
    <link type="text/css" href="css/svg.css?1" rel="stylesheet" class="js"/>
+   <script type="text/javascript" src="js/init.js?234" class="js"></script>
    <style>
      a {color: #8888ff;}
+     input {color:black;background-color:white;border:1px}
+     address {display: inline}
    </style>
+   <dummy></dummy>
 </head>
 <body onload="" class="dark hidden">
    <script class="js">0</script>
-   <footer onclick="about()" class="if">
-      <div id="cr">© FerryFair <span id="beta">β</span>
-      </div>
-      <address>
-         <a id="jackmail"
-            href="mailto:jack@ferryfair.com">jack@ferryfair.com</a>
-      </address>
-   </footer>
-   <div id="Log" class="if js">
+   <div id="mastHead" onclick="about()" class="if">
+      <div id="cr">© FerryFair <span id="beta">β</span></div>
+      <a id="jackmail" style="font-style: italic"
+         href="mailto:jack@ferryfair.com">jack@ferryfair.com</a>
+   </div>
+   <div id="Log" class="if">
       <div id="about" class="hidden">
          <a class="plain" href="https://github.com/gowthamkudupudi/ferryfair">
             Super fast spatial search!</a><br/>
-         <a class="plain" href="https://github.com/gowthamkudupudi/FFJSON">
-            Backed by FFJSON</a><br/>
-         <a href="files/md.html?files/HowTo.md">HowTo</a>
       </div>
    </div>
-   <pre style="color: yellow;" class="hidden"><code>
-         88             
-      : 8@8X8           
-   88S888S8 888         
-   888S8%@88@88         
-   88X88@S8@@X          
-  ;  888888:.  ;;;;;;   
-  ;           ;;;;  ;;; 
-  ;;          ;;;;   ;; 
-   ;;                ;; 
-     ;;             ;;  
-      ;;;;        ;;;   
-           8;;;;;       
-   </code></pre>
-   <div id="LocationDDiv" class="if">
-      <div id="LocationDiv">
-         <input id="LocationBox" class="labeled hidden"/>
-         <span class="hidden"> :location</span>
-         <span id="LocTxt" class="hidden js"></span>
-         <span id="LocationPin" class="empty hidden js">
-            <span id="pin">📍</span><span id="tin">⦾</span></span>
-      </div>
-   </div>
-   <div id="loadTop"></div>
-   <header class="">
-      <template><div id="mbox" class="hidden js">
-            <div id="inboxL">Inbox:</div>
-            <div id="inbox" class=""></div>
-            <div id="outboxL">Outbox:</div>
-            <div id="outbox" class=""></div>
-         </div>
+   <div id="loadTop" class="js"></div>
+   <header id="header" class="">
+      <template>
          <table id="htable"><tr>
                <td id="logoTd" style="vertical-align: top;">
                   <div id="logoDiv" class="if">
-                     <object data="img/logo.svg" id="logo" type="image/svg+xml"
-                             class="js">
-                     </object>
+                     <pre style="color: yellow;" class="hidden"><code>
+       88
+    : 8@8X8
+ 88S888S8 888
+ 888S8%@88@88
+ 88X88@S8@@X
+;  888888:.  ;;;;;;
+;           ;;;;  ;;;
+;;          ;;;;   ;;
+ ;;                ;;
+   ;;             ;;
+    ;;;;        ;;;
+         8;;;;;
+                     </code></pre>
                </div></td>
-               <td style="vertical-align: top; padding-top: 0.12cm">
-                  <span id="LockBlock" class="" onclick="unlock()">
-                     <span id="lock"></span>
-                     <span id="Desc" class="js">signin/signup<br/>
-                        to add ur things to the fair</span>
-                     <span class="hidden"><a href="?class=signin">signin</a>
-                        to add ur things to the fair</span></span>
-                  <div id="Credentials" class="hidden">
-                     <div id="gglSnD"><input id="gglSn" type="checkbox"/>
-                        Sign <span id="inUp">in</span> with Google
-                        <div id="gglSnB" class="hidden"></div>
-                        <div id="gmail" class="hidden"></div></div>
-                     <div id="UsernameL" class="inlBlk">Username: <br/>
-                        <input id="username" alt="Username" class="" autocorrect="off"
-                               autocapitalize="off"/></div>
-                     <div id="PasswordL" class="inlBlk hidden">Password: <br/>
-                        <input id="password" alt="Password" class=""/></div>
-                     <div id="signupdiv" class="hidden">
-                        <div id="EmailL">Email: 
-                           <input id="email" alt="Email" class=""
-                                  autocorrect="off"
-                                  autocapitalize="off"/></div>
-                        <div id="passBlk" class="hidden">
-                           <div id="Password1L">
-                              <span id="NewL" class="hidden">
-                                 New </span>Password: 
-                              <input id="passwords1" alt="Password"/></div>
-                           <div id="Password2L">Retype Password: 
-                              <input id="passwords2" alt="Password"
-                                     class=""/></div><br/>
-                           <label id="CaptchaL">Captcha: </label><br/>
-                           <input id="Captcha" alt="Captcha" autocorrect="off"
-                                  autocapitalize="off"/><br/>
-                           <img id="CaptchaImg" src="">
-                        </div>
-                        <div id="ConsentL">
-                           <input id="Consent" alt="Consent" type="checkbox">
-                           <a id="ConsentT"href="files/md.html?files/tnc.md">
-                              I agree to terms and condition</a>
-                        </div>
-                     </div>
-                     <input id="SubmitBtn" value="Submit" type="button"/>
-                     <div class="inlBlk">
-                        <nobr>
-                           <label id="SignInL">
-                              <input id="SignIn" alt="SignIn" type="radio"
-                                     value="0" checked
-                                     onclick="togglesignup()" name="accountIntx"/>
-                              SignIn </label></nobr>
-                        <nobr>
-                           <label id="RecoverL" class="hidden">
-                              <input id="Recover" alt="Recover" type="radio"
-                                     value="2" onclick="togglesignup()" name="accountIntx"/>
-                              ResetPassword</label></nobr>
-                        <nobr>
-                           <input id="SignUp" alt="SignUp" type="radio"
-                                  value="1"
-                                  onclick="togglesignup()" name="accountIntx"/>
-                           <label id="SignUpL">SignUp </label></nobr></div>
-                  </div>
-                  <div id="usermenu" class="hidden">
-                     <span id="unlock"></span>
-                     <span id="user"></span>
-                  </div>
-               </td>
-               <td  title="Mailbox">
-                  <span id="owlOnPerch"></span>
-               </td>
-               <td>
-                  <div id="UserActions" class="hidden">
-                     <button id="AddThing" onclick="addThing()"
-                             title="Add a thing to fair">
-                        <span id="AddThingSVG"></span>
-                     </button>
-                  </div>
-               </td>
       </tr></table></template>
       <div id="searchBar">
-         <div id="lips"><form id="mouthPad">
-               <input id="mouth" name="search" type="text" class="labeled"/>
-               <svg id="searchTool" viewBox="0 0 42 66"
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlns:xlink="http://www.w3.org/1999/xlink">
-                  <path
-                     id="mirror"
-                     d="M 21 41 A 20 20 0 0 1 21 1 A 20 20 0 1 1 21 41 L 21 45
-                        L 22 45 L 22 65 L 20 65 L 20 45 L 21 45 Z"
-                     style="stroke-width: 1;"/>
-                  <path
-                     id="stock"
-                     d="M 21 7 A 20 40 45 0 1 33 21 A 20 20 0 0 0 21 7 Z"
-                     style="stroke-opacity: 1.0;"/>
-         </svg></form></div>
+         <div id="lips"><form id="mouthPad" method="get">
+            <input id="req" name="req" type="hidden" value="search"
+               class="hidden"/>
+            <div id="LocationDDiv" class="if">
+               <div id="LocationDiv">
+                  <label class="hidden">Location: </label>
+                  <input id="LocationBox" class="labeled hidden"
+                     name="geoposition" value=""/>
+               </div>
+            </div>
+            <label class="hidden">Thing: </label>
+            <input id="mouth" name="search" type="text"
+               class="labeled"/>
+            <a href="?req=search&geoposition=0,0&search="  class="hidden">
+               <input type="image" alt="🔍" src="img/searchTool.jpg"
+                  style="height:4.5mm; vertical-align:bottom"
+                  align="bottom"/></a>
+         </form></div>
       </div>
    </header>
-   <div id="tgtUsrLgHldr"class="hidden">
-      <div id="ImgHldr" class="center">
-         <img id="ThingImg" class="fixedSize" loading="lazy" decoding="async"/>
-      </div>
-      <label id="chusPicBtnL" class="removable hidden">Browse...</label>
-      <input id="chusPicBtn" type="file" class="editBtn removable"
-             onchange="selectFiles.call(this, event);"/>
-   </div>
-   <template><div id="Things" class="hidden">
-         <div id="Thing" class="thing">
-            <div id="ImgsHldr"class="">
-               <div id='Imgs' class="">
-                  <div id="ImgHldr" class="center">
-                     <img id="ThingImg" class="fixedSize" loading="lazy"/>
-                  </div>
-               </div>
-               <label id="chusPicBtnL" class="removable hidden">
-                  Browse...</label>
-               <input id="chusPicBtn" type="file" class="editBtn removable"
-                      onchange="selectFiles.call(this, event);"/>
-               <div id="NxtBtnHldr">
-                  <input id="pImg" type="button" value="<" class="imgNxtBtns"
-                         onclick="nxtImg(1)"/>&nbsp &nbsp
-                  <input id="nImg" type="button" value=">" class="imgNxtBtns"
-                         onclick="nxtImg(0)"/>&nbsp &nbsp
-                  <input id="eImg" type="button" value="+" class="imgNxtBtns"
-                         onclick="incImg(0)"/>
-               </div>
-            </div>
-            <label id="ThingLocationL" class="removable">Location: </label>
-            <span id="ThingLocationPin">
-               <span id="pin">📍</span><span id="tin">⦾</span></span>
-            <span id="ThingLocation" class="hidden"></span>
-            <input id="ThingLocationBox" class="removable" type="text"/>
-            <label id="ThingNameL" class="removable"><br/>Name: </label>
-            <input id="ThingNameBox" class="removable" type="text"/>
-            <span id="ThingName" class="edtHide"></span>
-            <br/>
-            <div id="thnBtm">
-               <div id="thingInfo" class="hidden">
-                  <label id="ThingUsrL">Usr:</label>
-                  <span id="ThingUsr"></span>
-                  <nobr><label id="ThingIdL">ID:
-                        <span id="ThingId"></span></label>
-                  </nobr><br/>
-               </div>
-               <div id="lastModedD" class="hidden editHide">
-                  <span id="lastModed"></span>
-               </div>
-               <div id="ThingDetailsDiv" class="removable">
-                  <label id="ThingDetailsL">Details: <br/></label>
-                  <textarea id="ThingDetailsTA" rows="3"></textarea>
-               </div>
-               <div id="ThingDetails" class="hidden edtHide"></div>
-               <div id="msgdiv" class="hidden">
-                  <div id="msgs">
-                     <div class="query">
-                        <span class="hidden"></span><span></span><span></span>
-                     </div>
-                  </div>
-               </div>
-            </div>
-            <input id="showURLBtn" class="hidden" type="Button"
-                   value="^" onclick="showURL.call(this, event)"/>
-            <input id="cnclEdtBtn" class="removable" type="Button"
-                   value="Cancel"/>
-            <input id="ThingEditBtn" class="" type="Button" value="Edit"/>
-         </div>
-         <div id="qSendDiv" class="hidden">
-            <textarea id="msginpt" rows="2" cols="22"
-                      onfocus="onMsgInptFocus.call(this)"
-                      onblur="onMsgInptBlur.call(this)"></textarea><br/>
-            <input id="msgBtn" type="Button" value="Query"/>
-         </div>
-         <div id="replyDiv" class="hidden">
-            <div id="reply" class="reply hidden inQ">
-               <span>-></span><span></span></div>
-            <textarea id="replyBox" rows="2" cols="22"
-                      onfocus="onMsgInptFocus.call(this)"
-                      onblur="onMsgInptBlur.call(this)"></textarea>
-            <input id="replyBtn" type="Button" value="Reply"/>
-         </div>
-   </div></template>
-   <br/>
-   <button id="loadBottom" value="load more ...">load more...</button>
-   <div id="chin"></div>
-   <div id="SVGS" hidden class="js"><div>
 </body></html>
