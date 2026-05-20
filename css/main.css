@@ -132,7 +132,7 @@ header input {
    cursor: pointer;
    margin-left: 2mm;
 }
-footer.if {
+#mastHead.if {
    position: fixed;
    bottom: 2mm;
    left: 2mm;
@@ -642,6 +642,12 @@ svg.fixedSize {
    -webkit-backdrop-filter: none;
 }
 
+#mouthPad #LocationDDiv #LocationDiv {
+   position: fixed;
+   top: 1mm;
+   right: 1mm;
+}
+
 #ThingName {
    position:relative;
    top: -0.63mm;
@@ -696,7 +702,7 @@ svg.fixedSize {
    position: absolute;
    width: 22mm;
 }
-footer {
+#mastHead {
    /* position: relative; */
    /* bottom: 2mm; */
    /* left: 2mm; */
