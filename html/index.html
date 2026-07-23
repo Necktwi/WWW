@@ -1,0 +1,125 @@
+<span dhtml="end:about">
+   <a class="plain js" href="https://github.com/gowthamkudupudi/FFJSON">
+      Backed by FFJSON
+   </a><br/>
+   <a href="files/md.html?files/HowTo.md" class="js">HowTo</a>
+</span>
+<div dhtml="start:header" id="mbox" class="hidden js">
+   <div id="inboxL">Inbox:</div>
+   <div id="inbox" class=""></div>
+   <div id="outboxL">Outbox:</div>
+   <div id="outbox" class=""></div>
+</div>
+<object dhtml="end:logoDiv" data="img/logo.svg?2" id="logo"
+   type="image/svg+xml" class="js" onload="
+   if (document.body.classList.contains('dark')){
+   this.contentDocument.children[0].classList.add('dark');}">
+</object>
+<table dhtml="parent:"><tr><td dhtml="after:logoTd"
+   style="vertical-align: top; padding-top: 0.12cm">
+   <span id="LockBlock" class="" onclick="unlock()">
+      <span id="lock"></span>
+      <span id="Desc"><span class="js">SignIn/SignUp<br/></span>
+      <span  class="hidden">
+         <a href="">SignIn</a>&nbsp;</span>
+      to add ur things to the fair</span></span>
+   <div id="Credentials" class="hidden js">
+      <div id="gglSnD" class="js">
+         <input id="gglSn" type="checkbox"/>
+         Sign <span id="inUp">in</span> with Google
+         <div id="gglSnB" class="hidden"></div>
+         <div id="gmail" class="hidden"></div></div>
+      <div id="UsernameL" class="inlBlk">Username: <br/>
+      <input id="username" alt="Username" class=""
+         autocorrect="off"
+         autocapitalize="off"/></div>
+      <div id="PasswordL" class="inlBlk hidden">Password: <br/>
+      <input id="password" alt="Password" class=""/></div>
+      <div id="signupdiv" class="hidden js">
+         <div id="EmailL">Email: 
+            <input id="email" alt="Email" class=""
+               autocorrect="off"
+               autocapitalize="off"/></div>
+         <div id="passBlk" class="hidden">
+            <div id="Password1L">
+               <span id="NewL" class="hidden">
+                  New </span>Password: 
+               <input id="passwords1" alt="Password"/></div>
+            <div id="Password2L">Retype Password: 
+               <input id="passwords2" alt="Password"
+                  class=""/></div><br/>
+            <label id="CaptchaL">Captcha: </label><br/>
+            <input id="Captcha" alt="Captcha" autocorrect="off"
+               autocapitalize="off"/><br/>
+            <img id="CaptchaImg" src=""/>
+         </div>
+         <div id="ConsentL">
+            <input id="Consent" alt="Consent" type="checkbox"/>
+            <a id="ConsentT"href="files/md.html?files/tnc.md">
+               I agree to terms and condition</a>
+         </div>
+      </div>
+      <input id="SubmitBtn" value="Submit" type="button"/>
+      <div class="inlBlk js">
+         <nobr>
+            <label id="SignInL">
+               <input id="SignIn" alt="SignIn" type="radio" value="0"
+                  checked onclick="togglesignup()" name="accountIntx"/>
+               SignIn </label></nobr>
+         <nobr>
+            <label id="RecoverL" class="hidden">
+               <input id="Recover" alt="Recover" type="radio"
+                  value="2" onclick="togglesignup()"
+                  name="accountIntx"/>
+               ResetPassword</label></nobr>
+         <nobr>
+            <input id="SignUp" alt="SignUp" type="radio"
+               value="1" onclick="togglesignup()" name="accountIntx"/>
+            <label id="SignUpL">SignUp </label></nobr>
+      </div>
+   </div>
+   <div id="usermenu" class="hidden js">
+      <span id="unlock"></span>
+      <span id="user"></span>
+   </div>
+</td>
+<td title="Mailbox" class="js">
+   <span id="owlOnPerch"></span>
+</td>
+<td class="js">
+   <div id="UserActions" class="hidden">
+      <button id="AddThing" onclick="addThing()"
+         title="Add a thing to fair">
+         <span id="AddThingSVG"></span>
+      </button>
+   </div>
+</td></tr></table>
+<span dhtml="after:LocationBox" id="LocTxt" class="hidden js"></span>
+<span id="LocationPin" class="empty hidden">
+   <span id="pin">📍</span><span dhtml="after:pin" id="tin">⦾</span></span>
+<svg dhtml="after:mouth" class="js" id="searchTool" viewBox="0 0 42 66"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink">
+   <path
+      id="mirror"
+      d="M 21 41 A 20 20 0 0 1 21 1 A 20 20 0 1 1 21 41 L 21 45
+      L 22 45 L 22 65 L 20 65 L 20 45 L 21 45 Z"
+      style="stroke-width: 1;"/>
+   <path
+      id="stock"
+      d="M 21 7 A 20 40 45 0 1 33 21 A 20 20 0 0 0 21 7 Z"
+      style="stroke-opacity: 1.0;"/>
+</svg>
+<div dhtml="after:header" id="tgtUsrLgHldr"class="hidden js">
+   <div id="ImgHldr" class="center">
+      <img id="ThingImg" class="fixedSize" loading="lazy" decoding="async"/>
+   </div>
+   <label id="chusPicBtnL" class="removable hidden">Browse...</label>
+   <input id="chusPicBtn" type="file" class="editBtn removable"
+      onchange="selectFiles.call(this, event);"/>
+</div>
+<template id="thingsTmplt"></template>
+<br/>
+<button id="loadBottom" value="load more ...">load more...</button>
+<div id="chin"></div>
+<div id="SVGS" hidden class="js"></div>
