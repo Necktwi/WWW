@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+      <base id="bas"/>
+      <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js">
+      </script>
+      <script type="text/javascript" src="/js/core.js"></script>
+      <script type="text/javascript">
+         var init = function () {
+            let bas = document.getElementById("bas");
+            let hr = window.location.href;
+            bas.href=window.location.origin+"/"+
+               hr.substring(hr.lastIndexOf("?")+1, hr.lastIndexOf("/")+1);
+            let url = "/"+window.location.search.substr(1);
+            if (url.endsWith(".md")) {
+               let f={};
+               f.postExpdtn = function (feed) {
+                  //const sdc = new showdown.Converter();
+						//sdc.setOption('tables', true);
+						//sdc.setFlavor('github');
+                  //document.body.innerHTML=sdc.makeHtml(feed.responseText);
+                  document.body.innerHTML=marked.parse(feed.responseText);
+               }
+               let shuttle = new core.shuttle(url,f.content,f.postExpdtn,f);
+            } else {
+               document.body.innerHTML="Invalid URL!"
+            }
+         }
+      </script>
+      <style>
+         body {
+            background-color: black;
+            color: white;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+         }
+         a {
+            color: #9955ff;
+         }
+         h1 {
+            margin: 0mm;
+         }
+         h2 {
+            margin: 0mm;
+            margin-top: 5mm;
+            margin-bottom: 1mm;
+         }
+         ul {
+            padding-inline-start: 5mm;
+            margin: 0mm;
+         }
+         pre {
+            margin: 1mm;
+            /* padding: 1mm 3mm; */
+            border-radius: 1mm;
+            background-color: seagreen;
+				color: black;
+            max-width: calc(100vw-1cm);
+            overflow-x: scroll;
+         }
+         code {
+            background-color: #111111;
+            margin: 0.5mm 1mm;
+            border-radius: 0.5mm;            
+         }
+         pre code {
+            display: block;
+            overflow-x: auto;
+            max-width: calc(100vw-1.5cm);
+            background-color: inherit;
+         }
+			table {
+            table-layout: fixed;
+				max-width: 90%;
+			}
+         tabel tbody tr {
+            max-width: 90%;
+         }
+         table th,
+			table td {
+				background-color: #441111;
+				border-radius: 2px;
+				overflow-wrap: break-word;
+            word-wrap: break-word;
+            /*max-width: 5cm;*/
+			}
+			table th {
+				background-color:#ff6633;
+				color: black;
+				border-radius: 2px;
+				width: fit-content;
+			}
+      </style>
+   </head>
+   <body onload="init()" class="showdowncontainer"></body>
+</html>
