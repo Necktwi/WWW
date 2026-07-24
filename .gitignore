@@ -19,8 +19,8 @@ nb-configuration.xml
 
 vgcore.*
 
-rbs.ffjson
-users.ffjson
+#rbs.ffjson
+#users.ffjson
 
 upload/*
 
