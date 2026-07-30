@@ -31,7 +31,7 @@ var caretPos=0;
 const MaxImgsPerThing=3;
 var browserID,isApple,blinker;
 var userData= {}, cnt= {};
-var LocatingULog;
+var LocatingULog, pxlHtMm= 0;
 var lstThn, lstThnDtls, Chin;
 var Header,Htable;
 var jsonCType= [["content-type", "application/json"]];
@@ -371,7 +371,14 @@ var updateLocation= function (show) {
 		return;
 	}
 	if (!browserID) {
-		pxlHtMm=50/Logo.getBoundingClientRect().height;
+		browserID= getCookie("bid");
+		if (pxlHtMm==0) {
+			let logoHt= Logo.getBoundingClientRect().height;
+			if (logoHt==0) {
+				ferrylog("zero logo height!");
+			}
+			pxlHtMm= 50/Logo.getBoundingClientRect().height;
+		}
 		mbox.style.maxHeight=
 			window.visualViewport.height-Htable.offsetHeight-
 			mmToPxls(20)+"px";
@@ -1021,8 +1028,9 @@ window.init= async function () {
 				window.tgtThing= thing;
 			}
 		}
-		mouth.value= "";
+		Mouth.value= "";
 		search();
+		Mouth.value= Mouth.plcHldr;
 		LocationPin.classList.remove('empty');
 	}
 	LocationPin.onclick= showBoxUpdtLoc;
@@ -1101,35 +1109,35 @@ var proceedCompressedImage= function (compressedSrc) {
 	sendFileData(new Uint8Array(compressedSrc), 2048, l);
 }
 
-function resizeMe (img, qf, gotBlob, thumbNail) {	
+function resizeMe (img, qf, gotBlob, thumbNail) {
 	var canvas= document.createElement('canvas');
 	var width= img.width;
 	var height= img.height;
 	let lMaxWidth= thumbNail?mmToPxls(60):mmToPxls(150);
 	let lMaxHeight= lMaxWidth;
-  // calculate the width and height, constraining the proportions
-  if (width > height) {
-	 if (width > lMaxWidth) {
-		//height *= lMaxWidth / width;
-		height= Math.round(height *= lMaxWidth / width);
-		width= lMaxWidth;
-	 }
-  } else {
-	 if (height > lMaxHeight) {
-		//width *= lMaxHeight / height;
-		width= Math.round(width *= lMaxHeight / height);
-		height= lMaxHeight;
-	 }
-  }
-  // resize the canvas and draw the image data into it
-  canvas.width= width;
-  canvas.height= height;
-  //document.body.appendChild(canvas);
-  var ctx= canvas.getContext("2d");
-  ctx.drawImage(img, 0, 0, width, height);
-  // do the actual resized preview
-  // get the data from canvas as 70% JPG (can be also PNG, etc.)
-	return canvas.toBlob(gotBlob,"image/jpeg",qf);
+	// calculate the width and height, constraining the proportions
+	if (width > height) {
+		if (width > lMaxWidth) {
+			//height *= lMaxWidth / width;
+			height= Math.round(height *= lMaxWidth / width);
+			width= lMaxWidth;
+		}
+	} else {
+		if (height > lMaxHeight) {
+			//width *= lMaxHeight / height;
+			width= Math.round(width *= lMaxHeight / height);
+			height= lMaxHeight;
+		}
+	}
+	// resize the canvas and draw the image data into it
+	canvas.width= width;
+	canvas.height= height;
+	//document.body.appendChild(canvas);
+	var ctx= canvas.getContext("2d");
+	ctx.drawImage(img, 0, 0, width, height);
+	// do the actual resized preview
+	// get the data from canvas as 70% JPG (can be also PNG, etc.)
+	return canvas.toBlob(gotBlob, "image/jpeg", qf);
 }
 
 function selectFiles (ev) {
@@ -1180,6 +1188,10 @@ function selectFiles (ev) {
 				if (f.size>2000000) {
 					ferrylog("File size exceeded 2MB! Compressing");
 					resizeMe(image,0.7,(ablob)=>{
+						if (!ablob) {
+							ferrylog("resizeMe failed - ablob undefined");
+							return;
+						}
 						ferrylog("gotBlob: "+ablob.size);
 						if (ablob.bytes) {
 							ablob.bytes().then((bytes)=>{
@@ -1204,6 +1216,11 @@ function selectFiles (ev) {
 		image.onload= function () {
 			ferrylog("imageLoaded");
 			var resized= resizeMe(image,0.7,(tblob)=>{
+				if (!tblob) {
+					ferrylog("resizeMe failed - tblob undefined");
+					ontblob();
+					return;
+				}
 				ferrylog("gotThumbBlob: "+tblob.size);
 				if (tblob.bytes) {
 					tblob.bytes().then((tbytes)=>{
@@ -1899,7 +1916,7 @@ var updateSearchedThings= function (feed) {
 }
 var search= function () {
 	window.searchCount= 0;
-	if (mouth.value== mouth.plcHldr) {
+	if (Mouth.value==Mouth.plcHldr) {
 		showAllThings();
 		event.preventDefault();
 		return;
