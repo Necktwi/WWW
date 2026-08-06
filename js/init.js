@@ -1,11 +1,11 @@
-window.indexPromise= fetch('html/index.html?8').then(r=> r.text());
+window.indexPromise= fetch('html/index.html?16').then(r=> r.text());
 window.thingsPromise= fetch('html/things.html').then(r=> r.text());
 window.oopPromise= fetch('img/OwlOnPerch.svg').then(r=> r.text());
 window.lockPromise= fetch('img/Lock.svg').then(r=> r.text());
 window.unlockPromise= fetch('img/Unlock.svg').then(r=> r.text());
 window.addThnPromise= fetch('img/AddThing.svg').then(r=> r.text());
 window.svgsPromise= fetch('img/placeHldr.svg').then(r=> r.text());
-var MastHead,Logo,LogoDiv,LogoTd,Mbox,Inbox,Outbox,OwlOnPerch,owlMail;
+var MastHead,Logo,LogoDiv,LogoBox,LogoTd,Mbox,Inbox,Outbox,OwlOnPerch,owlMail;
 var LocationPin,LocationDDiv,LocationDiv,Location,LocTxt,LocTTimeout,LocTHide;
 var SearchTool,SearchToolOpacity=1,SearchBar,LoadTop,LoadBottom;
 var SearchToolBlink, GglSnD, GglSn, GglSnB, Gmail, PassBlk;
@@ -28,7 +28,7 @@ var SVGS, ReplyBox, ReplyDiv, Msginpt, QSendDiv, MsgBtn, AddThingSVG;
 var searchPlcHldr= 'Search things near U';
 var locPlcHldr= "📍E.g. 12.3456,-78.9012";
 var caretPos=0;
-const MaxImgsPerThing=3;
+const MaxImgsPerThing=3, MAX_UN_LENGTH= 48;
 var browserID,isApple,blinker;
 var userData= {}, cnt= {};
 var LocatingULog, pxlHtMm= 0;
@@ -154,7 +154,7 @@ var showAllThings= function () {
 	for (let i=0;i<Things.children.length;++i) {
 		let thing= Things.children[i];
 		if (thing.thingId!=-1) {
-			if (window.tgtUsr && thing.user!=window.tgtUsr)
+			if (window.tgtUsr && thing.user!=window.tgtUsr.toLowerCase())
 				continue;
 			thing.classList.remove("hidden");
 		}
@@ -501,7 +501,7 @@ var sendOwl= function () {
 			for (const stid in res["news"]) {
 				var tthing= res["news"][stid]
 				var tid= parseInt(stid);
-				var things= UserThings[User.innerHTML];
+				var things= UserThings[User.innerHTML.toLowerCase()];
 				var thing= things[tid];
 				var msgd= getElementInsideContainer(thing, "msgs");
 				md= msgd.firstElementChild;
@@ -749,7 +749,7 @@ var loadNodes= function (d) {
 			let keyVal= dhtml.split(':');
 			let key= keyVal[0];
 			let val= keyVal[1];
-			let tgt= document.getElementById(val);
+			let tgt= val.length? document.getElementById(val) : null;
 			if (key== "endChildren") {
 				while (elm.children.length) {
 					let elmChild= elm.children[0];
@@ -774,7 +774,11 @@ var loadNodes= function (d) {
 	}	 
 }
 window.init= async function () {
-	setCookie("js","1",99999999);
+	let isJs= getCookie("js")=="1";
+	if (!isJs) {
+		setCookie("js","1",99999999);
+		location.reload();
+	}
 	cnt.locked= true;
 	makeDynamic();
 	let d= document.getElementsByTagName('dummy')[0];
@@ -794,29 +798,30 @@ window.init= async function () {
 		requestAnimationFrame(monitorFPS);
 	}
 	makeDynamic();
-	isApple=/iPad|iPhone|iPod/.test(navigator.userAgent);
+	isApple= /iPad|iPhone|iPod/.test(navigator.userAgent);
 	window.urlQuery= new URLSearchParams(window.location.search);
-	inps=document.getElementsByTagName("input");
-	for (let i=0;i<inps.length;++i) {
+	inps= document.getElementsByTagName("input");
+	for (let i= 0; i<inps.length; ++i) {
 		inps[i].addEventListener(
 			'focus',(e)=>{
 				lastViewPortHeight=window.visualViewport.height;
 				setTimeout(()=>{window.addEventListener('scroll', blurInput)},2000);
 			});
 	}
-	MastHead=document.getElementById("mastHead");
-	Header=document.getElementsByTagName("header")[0];
-	Htable=Header.firstElementChild;
-	LoadTop=document.getElementById('loadTop');
-	LoadBottom=document.getElementById('loadBottom');
+	MastHead= document.getElementById("mastHead");
+	Header= document.getElementsByTagName("header")[0];
+	Htable= Header.firstElementChild;
+	LoadTop= document.getElementById('loadTop');
+	LoadBottom= document.getElementById('loadBottom');
 	LoadBottom.onclick= loadMore;
-	Logo=document.getElementById('logo');
-	LogoDiv=document.getElementById('logoDiv');
-	LogoTd=document.getElementById('logoTd');
+	Logo= document.getElementById('logo');
+	LogoDiv= document.getElementById('logoDiv');
+	LogoBox= document.getElementById('logoBox');
+	LogoTd= document.getElementById('logoTd');
 	LogoTd.setAttribute("title",window.location.origin);
 	LogoDiv.remove();
 	document.body.insertAdjacentElement('afterBegin',LogoDiv);
-	Chin=document.getElementById('chin');
+	Chin= document.getElementById('chin');
 	Inbox=document.getElementById('inbox');
 	Mbox=document.getElementById('mbox');
 	Outbox=document.getElementById('outbox');
@@ -833,24 +838,24 @@ window.init= async function () {
 	temp.replaceWith(OwlOnPerch);
 	window.oopPromise= undefined;
 
-	OwlOnPerch.onclick=toggleMbox;
-	LogoDiv.parentElement.style.display="block";
-	SearchTool=document.getElementById('searchTool');
-	SearchBar=document.getElementById('searchBar');
-	LocationPin=document.getElementById('LocationPin');
-	Location=document.getElementById('LocationBox');
+	OwlOnPerch.onclick= toggleMbox;
+	LogoDiv.parentElement.style.display= "block";
+	SearchTool= document.getElementById('searchTool');
+	SearchBar= document.getElementById('searchBar');
+	LocationPin= document.getElementById('LocationPin');
+	Location= document.getElementById('LocationBox');
 	Location.plcHldr=locPlcHldr;
 	Location.value=locPlcHldr;
-	LocationDiv=document.getElementById('LocationDiv');
-	LocationDDiv=document.getElementById('LocationDDiv');
+	LocationDiv= document.getElementById('LocationDiv');
+	LocationDDiv= document.getElementById('LocationDDiv');
 	LocationDDiv.remove();
-	LogoDiv.insertAdjacentElement("beforeEnd", LocationDDiv);
-	ReplyDiv=document.getElementById('replyDiv');
-	ReplyBtn=document.getElementById('replyBtn');
-	ReplyBox=document.getElementById('replyBox');
-	QSendDiv=document.getElementById('qSendDiv');
-	MsgBtn=document.getElementById('msgBtn');
-	Msginpt=document.getElementById('msginpt');
+	LogoBox.insertAdjacentElement("beforeEnd", LocationDDiv);
+	ReplyDiv= document.getElementById('replyDiv');
+	ReplyBtn= document.getElementById('replyBtn');
+	ReplyBox= document.getElementById('replyBox');
+	QSendDiv= document.getElementById('qSendDiv');
+	MsgBtn= document.getElementById('msgBtn');
+	Msginpt= document.getElementById('msginpt');
 	ReplyDiv.remove();
 	ReplyDiv.classList.remove("hidden");
 	QSendDiv.remove();
@@ -952,9 +957,9 @@ window.init= async function () {
 	}
 	User= document.getElementById('user');
 	User.onclick= function () {
-		location.href=User.innerHTML+"?gp="+Location.value;
+		location.href=User.innerHTML.toLowerCase()+"?gp="+Location.value;
 	}
-	TgtUsrLgHldr=document.getElementById("tgtUsrLgHldr");
+	TgtUsrLgHldr= document.getElementById("tgtUsrLgHldr");
 	addEvent(Username, 'keydown', usrnmEvent);
 	addEvent(Password, 'keydown', authenticateUser);
 	addEvent(SearchTool, 'click', search);
@@ -1274,7 +1279,7 @@ var onCaptcha= function(feed){
 	delete window.shuttle;
 }
 var markUserThings= function () {
-	var uts= UserThings[User.innerHTML];
+	var uts= UserThings[User.innerHTML.toLowerCase()];
 	for (var tid in uts) {
 		uts[tid].classList.add("mine");
 	}
@@ -1282,7 +1287,7 @@ var markUserThings= function () {
 var signInUI= function (res) {
 	document.body.classList.add("signed");
 	User.innerHTML= res.name;
-	User.setAttribute("title",location.origin+"/"+res.name);
+	User.setAttribute("title",location.origin+"/"+res.name.toLowerCase());
 	User.obj= res;
 	if (!window.tgtThing || !Things.children.length) {
 		updateThings(res);
@@ -1514,14 +1519,14 @@ var updateThings= function (res) {
 	}
 	Things.onclick= hideThingDetails;
 	var thingCount= res.things?res.things.length:0;
-	for (var i=0; i<thingCount; ++i) {
+	for (var i=res.addNewThing?thingCount-1:0; i<thingCount; ++i) {
 		var thing= res.things[i];
 		var newThing= true;
 		if (!thing.user && !userData["name"])
 			return;
 		var un;
 		if (!thing.user) {
-			un= userData["name"];
+			un= userData["name"].toLowerCase();
 		} else {
 			un= thing.user;
 		}
@@ -1535,7 +1540,7 @@ var updateThings= function (res) {
 			UserThings[un][-1]=undefined;
 			newThing=false;
 		}
-		var thisThingUser= User.innerHTML==thing.user;
+		var thisThingUser= User.innerHTML.toLowerCase()==thing.user;
 		var thingN=
 			 newThing?Thing.cloneNode(true):UserThings[un][thing.id];
 		if (Object.keys(thing).length==2) {
@@ -1560,14 +1565,14 @@ var updateThings= function (res) {
 			var img= imgHldr.children[0];
 			var pics= res.things[i].pics;
 			if (pics && pics.length) {
-				img.src="/upload/"+res.things[i].user+"/"+res.things[i].id+
-					"."+0+".jpg?t="+pics[0].ts;
+				img.src="/upload/"+res.things[i].user+"/"+
+					res.things[i].id+"."+0+".jpg?t="+pics[0].ts;
 				for (var j=1; j<pics.length; ++j) {
 					imgHldr= imgs.children[0].cloneNode(true);
 					imgHldr.classList.add("hidden");
 					img= imgHldr.children[0];
-					img.src="/upload/"+res.things[i].user+"/"+res.things[i].id+
-						"."+j+".jpg?"+pics[j].ts;
+					img.src= "/upload/"+res.things[i].user+"/"+
+						res.things[i].id+"."+j+".jpg?"+pics[j].ts;
 					imgs.children[j-1].insertAdjacentElement(
 						'afterEnd', imgHldr);
 				}
@@ -1576,14 +1581,14 @@ var updateThings= function (res) {
 				imgHldr.replaceChild(SVG, img);
 				imgHldr.classList.add("dummy");
 			}
-			UserThingEditBtn.onclick=editThing;
-			var tid=getElementInsideContainer(thingN, "ThingId");
-			tid.innerText=thing.id;
-			var tusr=getElementInsideContainer(thingN, "ThingUsr");
-			tusr.innerText=un;
+			UserThingEditBtn.onclick= editThing;
+			var tid= getElementInsideContainer(thingN, "ThingId");
+			tid.innerText= thing.id;
+			var tusr= getElementInsideContainer(thingN, "ThingUsr");
+			tusr.innerText= un;
 		}
 		if (window.tgtUsr) {
-			if (tgtUsr!=un)
+			if (tgtUsr.toLowerCase()!=un)
 				thingN.classList.add("hidden");
 		}
 		if (thing.name && thing.name.length) {
@@ -1704,23 +1709,26 @@ var updateThings= function (res) {
 				Things.insertAdjacentElement('afterBegin', thingN);
 			}
 		} else {
-			if (!window.tgtUsr || tgtUsr==un) {
+			if (!window.tgtUsr || tgtUsr.toLowerCase()==un) {
 				thingN.classList.remove("hidden");
 			}
 		}
 	}
 	Things.classList.remove("hidden");
-	
+	if (res.addNewThing) {
+		res.addNewThing= undefined;
+		return;
+	}
 	if (res.smsgs) {
-		for (var j=0; j<res.smsgs.length; ++j) {
-			var smsg=res.smsgs[j];
+		for (var j= 0; j<res.smsgs.length; ++j) {
+			var smsg= res.smsgs[j];
 			var to= smsg[0];
 			var isR= 0;
 			if (!to.length) {
 				to= User.innerHTML;
 				isR=1;
 			}
-			let toUser=UserThings[to];
+			let toUser= UserThings[to];
 			if (!toUser)
 				continue;
 			var thn= toUser[smsg[1]];
@@ -1728,33 +1736,33 @@ var updateThings= function (res) {
 				continue;
 			var msgDiv= getElementInsideContainer(thn, "msgdiv");
 			var msgd= getElementInsideContainer(msgDiv, "msgs");
-			for (var i=0; i<msgd.children.length; ++i) {
+			for (var i= 0; i<msgd.children.length; ++i) {
 				var md= msgd.children[i];
 				var mid= parseInt(md.children[0].innerHTML);
 				if (mid!=smsg[2]) {
 					continue;
 				}
 				if (isR) {
-					md=md.lastElementChild;
+					md= md.lastElementChild;
 				}
 				var smd= md.cloneNode(true);
 				if (!isR) {
 					var toelm= smd.removeChild(smd.children[1]);
 					toelm.innerHTML=" :"+to;
 					smd.insertAdjacentElement("beforeEnd",toelm);
-					md.imd=smd;
-					smd.md=md;
+					md.imd= smd;
+					smd.md= md;
 				} else {
-					md.imd=smd;
-					smd.rmd=md;
+					md.imd= smd;
+					smd.rmd= md;
 				}
 				Outbox.insertAdjacentElement("beforeEnd",smd);
 				smd.onclick=showThing;
 				if (!isR && md.children.length==4) {
 					var reply= smd.removeChild(smd.children[2]);
-					reply.rmd=md.lastElementChild;
-					md.lastElementChild.imd=reply;
-					for (var m=0; m<res.reps.length; m+=2) {
+					reply.rmd= md.lastElementChild;
+					md.lastElementChild.imd= reply;
+					for (var m= 0; m<res.reps.length; m+=2) {
 						var k= res.reps[m];
 						if (j==k) {
 							reply.classList.add("new");
@@ -1777,19 +1785,19 @@ var updateThings= function (res) {
 	}
 	if (window.tgtUsr && urlQuery.get("thing")) {
 		let thn= Things.children[0];
-		let inf=getElementInsideContainer(thn,"thingInfo");
-		let usr=getElementInsideContainer(thn,"ThingUsr");
-		let usrnm=thn.user;
+		let inf= getElementInsideContainer(thn,"thingInfo");
+		let usr= getElementInsideContainer(thn,"ThingUsr");
+		let usrnm= thn.user;
 		usr.innerHTML="<a href=\""+window.location.origin+"/"+usrnm+
 			"\">"+usrnm+"</a>";
 		inf.classList.remove("hidden");
 		let imgsHldr= getElementInsideContainer(thn,"ImgsHldr");
-		imgsHldr.onclick=null;
-		Things.onclick=null;
+		imgsHldr.onclick= null;
+		Things.onclick= null;
 		showThingDetails.call(imgsHldr,true);
 		let thnBtm= getElementInsideContainer(thn,"thnBtm");
 		let thnDtls= getElementInsideContainer(thn,"ThingDetails");
-		thnBtm.style.position="relative";
+		thnBtm.style.position= "relative";
 		thnDtls.classList.remove("hidden");
 		loadBottom.classList.add("hidden");
 	}
@@ -1836,7 +1844,7 @@ var authenticateUser= function (ggl) {
 			cntnt.username= Username.value;
 			cntnt.password= md5Pass;
 		}
-		//cntnt.geoposition=pstr.split(",");
+		//cntnt.gp=pstr.split(",");
 		f.cntnt= cntnt;
 		f.content=JSON.stringify(cntnt);
 		f.postExpdtn=signin;
@@ -1862,7 +1870,7 @@ var updateSearchedThings= function (feed) {
 		document.body.insertAdjacentElement("afterBegin", LocationDDiv);
 		LogoDiv.parentElement.style.display="table-cell";		  MastHead.classList.remove("if");
 		Logo.classList.add("small");
-		Logo.onclick= function () {
+		LogoDiv.onclick= function () {
 			location.href=window.location.origin;
 		}
 		LocationPin.classList.remove("hidden");
@@ -1893,9 +1901,10 @@ var updateSearchedThings= function (feed) {
 		LocationPin.onclick= showBoxUpdtLoc;
 		LocationDDiv.classList.remove("hidden");
 		if (window.tgtUsr) {
+			tgtUsr= res.name;
 			TgtUsrLgHldr.innerHTML= tgtUsr;
 			TgtUsrLgHldr.onclick= function () {
-				window.location.href='/'+tgtUsr;
+				window.location.href='/'+tgtUsr.toLowerCase();
 			}
 			TgtUsrLgHldr.classList.remove("hidden");
 		}
@@ -1904,7 +1913,7 @@ var updateSearchedThings= function (feed) {
 		Things.classList.add("search");
 	}
 	searchCount+= res.things.length;
-	if (!(res.email || res.name)) {
+	if (!res.email) {
 		updateThings(res);
 	}
 	if (res.things.length< 20){
@@ -1927,12 +1936,12 @@ var search= function () {
 	url+= "req=search";
 	window.bidLoc= pstr.split(',');
 	var f= {};
-	cnt.search= mouth.value;
-	cnt.geoposition= window.bidLoc;
+	url+= "&gp="+encodeURIComponent(pstr);
+	url+= "&search="+encodeURIComponent(mouth.value);
 	f.content= JSON.stringify(cnt);
 	f.postExpdtn= updateSearchedThings;
 	f.reqHeaders= jsonCType;
-	SearchTool.shuttle= new core.shuttle(url,f.content,f.postExpdtn,f);
+	SearchTool.shuttle= new core.shuttle(url, f.content, f.postExpdtn,f);
 	if (event)
 		event.preventDefault();
 }
@@ -1949,9 +1958,9 @@ var lock= function () {
 }
 var signOutUi= function () {
 	clearInterval(owlMail);
-	if (UserThings[User.innerHTML] && UserThings[User.innerHTML][-1]) {
-		UserThings[User.innerHTML][-1].remove();
-		delete UserThings[User.innerHTML][-1];
+	if (UserThings[User.innerHTML.toLowerCase()] && UserThings[User.innerHTML.toLowerCase()][-1]) {
+		UserThings[User.innerHTML.toLowerCase()][-1].remove();
+		delete UserThings[User.innerHTML.toLowerCase()][-1];
 	}
 	Username.value="";
 	Password.value="";
@@ -2173,7 +2182,7 @@ var addThing= function () {
 		userData["things"]=[];
 	} else if (userData["things"][userData["things"].length-1].id==-1) {
 		UserActions.classList.add("hidden");
-		UserThings[User.innerHTML][-1].classList.remove("hidden");
+		UserThings[User.innerHTML.toLowerCase()][-1].classList.remove("hidden");
 		return;
 	}
 	userData["things"][userData["things"].length]= {
@@ -2181,7 +2190,8 @@ var addThing= function () {
 		"location":"",
 		"pics":[]
 	};
-	userData["things"]["user"]=User.innerHTML;
+	userData["things"]["user"]= User.innerHTML.toLowerCase();
+	userData["addNewThing"]= 1;
 	updateThings(userData);
 	let thing= Things.children[0];
 	editThing.call(getElementInsideContainer(
@@ -2221,7 +2231,7 @@ var addDummyImgs= function (thing) {
 }
 var showURL= function () {
 	var thing= this.parentElement;
-	let ln= window.origin+"/"+thing.user+"?thing="+thing.thingId;
+	let ln= window.origin+"/"+thing.user.toLowerCase()+"?thing="+thing.thingId;
 	let fl= ferrylog(
 		"<a href=\""+ln+"\" onclick=\"return false;\"\">"+ln+"</a>");
 	fl.firstElementChild.onclick=function(){
@@ -2258,6 +2268,9 @@ var editThing= function (newThing) {
 	var ImgsHldr=imgs.parentElement;
 	ImgsHldr.onclick=null;
 	ThingLocationBox.value=ThingLocation.innerText;
+	if (ThingLocationBox.value == "") {
+		ThingLocationBox.value= Location.value;
+	}
 	ThingNameBox.value=ThingName.innerText;
 	ThingDetailsDiv.children[1].value=ThingDetails.innerHTML;
 	//ThingLocationB.classList.remove("hidden");
@@ -2418,14 +2431,15 @@ function getElementInsideContainer (container, childID) {
 function validUsername (name) {
 	for (var i=0; i<name.length;++i) {
 		if (!((name.charAt(i)>='a' && name.charAt(i)<='z') ||
+				(name.charAt(i)>='A' && name.charAt(i)<='Z') ||
 				(name.charAt(i)>='0' && name.charAt(i)<='9') ||
 				(name.charAt(i)=='.') || (name.charAt(i)=='_'))) {
 			ferrylog("Invalid Username, should be [a-z._]");
 			return false;
 		}
 	}
-	if (!(name.length && name.length <= 24)) {
-		ferrylog("Username length should be >0 && <=24");
+	if (!(name.length && name.length <= MAX_UN_LENGTH)) {
+		ferrylog("Username length should be >0 && <="+MAX_UN_LENGTH);
 		return false;
 	}
 	if (name=="upload" || name=="tmp" || name=="files") {

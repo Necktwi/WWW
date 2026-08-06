@@ -80,18 +80,20 @@ header input {
    padding-right: 0.1cm;
    border-radius: 1px;
    /* position: relative; */
-   cursor: pointer;
+   pointer-events: none;
 }
 #logo.big {
    height: 7cm;
 }
 #logo.small {
    height: 1cm;
+	margin-left: 2mm;
 }
 #logoDiv {
    /* position: relative; */
    width: 1cm;
    text-align:center;
+	cursor: pointer;
 }
 #logoDiv.if {
    position:fixed;
@@ -106,13 +108,19 @@ header input {
    /* justify-content: center; */
    /* align-items: center; */
 }
+#logoDiv.if #logoBox {
+   position: relative;
+   top: 45vh;
+   left: 50vw;
+   transform: translate(-50%,-50%);
+	width: fit-content;
+	display: grid;
+	place-items: center;
+}
 #logoDiv.if #logo {
    position: relative;
    height: 9cm;
-   top: 45vh;
-   left: 50vw;
    padding: 0mm;
-   transform: translate(-50%,-50%);
    border-radius: 7mm;
 }
 #gglSn {
@@ -550,7 +558,8 @@ svg.fixedSize {
    width: 38mm;
 }
 #Thing textarea {
-   width: 38mm;
+	width: 38mm;
+	background-color: white;
 }
 
 #Thing.editMode .edtHide {
@@ -575,16 +584,19 @@ svg.fixedSize {
    hover:pointer;
 }
 
+#pin {
+	font-size: 5mm;
+}
+
 #ThingLocationPin #pin {
    position: relative;
-   top: -0.8mm;
-   left: 0.8mm;
 }
+
 #LocationDiv {
    display: block;
    position: fixed;
-   top: 1mm;
-   right: 1mm;
+   top: 2mm;
+   right: 2mm;
    z-index:11;
    background-color: rgba(0,0,0,0.3);
    backdrop-filter: blur(2mm);
@@ -624,15 +636,12 @@ svg.fixedSize {
 }
 #LocationDDiv.if {
    position: fixed;
-   top: 50vh;
-   left: calc(50vw - 25mm);
-   /* transform: translate(-50%,0); */
    z-index: 11;
 }
 
 #LocationDDiv.if #LocationDiv {
    position: relative;
-   top: 32mm;
+   top: 45mm;
    left: 0cm;
    backdrop-filter: blur(1px);
    -webkit-backdrop-filter: blur(1px);
