@@ -342,17 +342,23 @@ var updateLocation= function (show) {
 	var options= {
 		enableHighAccuracy:true
 	}
-	let gp= urlQuery.get("gp");
-	if (gp) {
-		gp=gp.split(",");
+	if (Log.classList.contains("if") &&
+		 (window.tgtUsr || urlQuery.get("gp"))) {
+		let gp= urlQuery.get("gp")
 		let pos= {};
-		pos.coords={};
-		pos.coords.latitude=Number(gp[0]);
-		pos.coords.longitude=Number(gp[1]);
-		setTimeout(onPosition,0,pos);
+		pos.coords= {};
+		if (gp) {
+			gp= gp.split(",");
+			pos.coords.latitude= Number(gp[0]);
+			pos.coords.longitude= Number(gp[1]);
+		} else {
+			pos.coords.latitude= 0;
+			pos.coords.longitude= 0;			
+		}
+		setTimeout(onPosition, 0,pos);
 		const url= new URL(window.location.href);
 		url.searchParams.delete("gp");
-		history.replaceState({}, "", url)
+		history.replaceState({}, "", url);
 	} else if (navigator.geolocation) {
 		var options= {
 			enableHighAccuracy:false
@@ -1052,8 +1058,6 @@ window.init= async function () {
 	}
 	if (location.pathname!= "/") {
 		window.tgtUsr= location.pathname.substr(1);
-		Location.value= "0,0";
-		getAllThnsArnd();
 	}
 	updateLocation();
 	// window.onresize= function () {
@@ -1908,7 +1912,7 @@ var updateSearchedThings= function (feed) {
 			}
 			TgtUsrLgHldr.classList.remove("hidden");
 		}
-	} else {
+	} else if (!res.email) {
 		hideThings();
 		Things.classList.add("search");
 	}
@@ -2500,7 +2504,7 @@ function validPassword (name) {
 
 var validThingName= function (name) {
 	var numstart= false;
-	for (var i=0; i<name.length;++i) {
+	for (var i=0; i<name.length; ++i) {
 		if (name.charAt(i)==' ') {
 			if (i+1<name.length) {
 				if (name.charAt(i+1)==' ') {
@@ -2577,7 +2581,7 @@ async function subscribe () {
 
 	try {
 		const registration= await navigator.serviceWorker.register(
-			'js/service-worker.js');
+			'js/serviceWorker.js');
 		console.log('Service Worker registered');
 
 		await navigator.serviceWorker.ready;
