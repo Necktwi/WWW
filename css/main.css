@@ -1,561 +1,605 @@
 @font-face {
-   font-family:CascadiaMono;
-   src:url("/fnt/CascadiaMono.ttf");
+	font-family:CascadiaMono;
+	src:url("/fnt/CascadiaMono.ttf");
 }
 @font-face {
-   font-family:Quicksand;
-   src:url("/fnt/Quicksand.woff");
+	font-family:Quicksand;
+	src:url("/fnt/Quicksand.woff");
 }
 @font-face {
-   font-family:SourceCodePro;
-   src:url("/fnt/SourceCodePro.woff");
+	font-family:SourceCodePro;
+	src:url("/fnt/SourceCodePro.woff");
 }
 @font-face {
-   font-family:SourceCodeBold;
-   src:url("/fnt/SourceCodeBold.woff");
+	font-family:SourceCodeBold;
+	src:url("/fnt/SourceCodeBold.woff");
 }
 @font-face {
-   font-family: AB;
-   src:url("/fnt/AB.ttf");
+	font-family: AB;
+	src:url("/fnt/AB.ttf");
 }
 @font-face {
-   font-family: NSR;
-   src:url("/fnt/NSR.ttf");
+	font-family: NSR;
+	src:url("/fnt/NSR.ttf");
 }
 @font-face {
-   font-family: TrebuchetMS;
-   src:url("/fnt/trebuc.ttf");
+	font-family: TrebuchetMS;
+	src:url("/fnt/trebuc.ttf");
 }
 #user {
-   font-family: AB;
-   position: relative;
-   top: -0.06cm;
-   font-size: 6mm;
-   cursor: pointer;
-   max-width: 10ch;
-   display: inline-block;
-   overflow: hidden;
-   text-overflow: ellipsis;
+	font-family: AB;
+	position: relative;
+	top: -0.06cm;
+	font-size: 6mm;
+	cursor: pointer;
+	max-width: 10ch;
+	display: inline-block;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 * {
-   font-family: NSR;
-   font-size: 4mm;
+	font-family: NSR;
+	font-size: 4mm;
 }
 .inlBlk {
-   display: inline-block;
+	display: inline-block;
 }
 #jackmail {
-   color: rgb(96,96,256);
+	color: rgb(96,96,256);
 }
 body {
-   margin: 1px;
-   /* display: inline; */
+	/* margin: 1px; */
+	/* display: inline; */
+}
+#bg {
+	position:fixed;
+	top:0px;
+	left:0px;
+	width:100vw;
+	height:100vh;
+}
+#bg * {
+	position: fixed;
+	width: 1mm;
+	border-radius: 1px;
+}
+#bg #ln1 {
+	height: 50vh;
+	background-color: red;
+	right: 5mm;
+	top: 20mm;
+}
+#bg #ln2 {
+	height: 50vh;
+	background-color: blue;
+	right: 18mm;
+	top: 5mm;
+}
+#bg #ln3 {
+	height: 50vh;
+	background-color: grey;
+	right: 11mm;
+	top: 50mm;
 }
 header {
-   width: fit-content;
-   height: fit-content;
-   z-index: 10;
-   position: fixed;
-   bottom: 10mm;
-   left:0;
-   background-color: rgba(0,0,0,0.6);
-   backdrop-filter: blur(3px);
-   -webkit-backdrop-filter: blur(3px);
-   padding: 1mm;
-   padding-bottom: 3mm;
-   border-top-right-radius: 2mm;
-   border-bottom-right-radius: 2mm;
+	width: fit-content;
+	height: fit-content;
+	z-index: 10;
+	position: fixed;
+	bottom: 10mm;
+	left:0;
+	background-color: rgba(0,0,0,0.6);
+	backdrop-filter: blur(3px);
+	-webkit-backdrop-filter: blur(3px);
+	padding: 1mm;
+	padding-bottom: 3mm;
+	border-top-right-radius: 2mm;
+	border-bottom-right-radius: 2mm;
 }
 .noBlur header {
-   background-color: rgb(0,0,0);
-   backdrop-filter: none;
-   -webkit-backdrop-filter: none;
+	background-color: rgb(0,0,0);
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
 }
 header input {
-   font-size: 4mm;
-   margin: 1px;
+	font-size: 4mm;
+	margin: 1px;
+}
+#logoTd {
+	text-align: center;
+}
+#backToLock {
+	cursor: pointer;
 }
 #logo {
-   height: 1cm;
-   padding-right: 0.1cm;
-   border-radius: 1px;
-   /* position: relative; */
-   pointer-events: none;
+	height: 1cm;
+	padding-right: 0.1cm;
+	border-radius: 1px;
+	/* position: relative; */
+	pointer-events: none;
 }
 #logo.big {
-   height: 7cm;
+	height: 7cm;
 }
 #logo.small {
-   height: 1cm;
+	height: 1cm;
 	margin-left: 2mm;
 }
 #logoDiv {
-   /* position: relative; */
-   width: 1cm;
-   text-align:center;
+	/* position: relative; */
+	width: 1cm;
+	text-align:center;
 	cursor: pointer;
 }
 #logoDiv.if {
-   position:fixed;
-   z-index:11;
-   width: calc(100vw - 1px);
-   height: calc(100vh - 1px);
-   top:0px;
-   left:0px;
-   background-color: black;
-   text-align: left;
-   /* display: flex; */
-   /* justify-content: center; */
-   /* align-items: center; */
+	position:fixed;
+	z-index:11;
+	width: calc(100vw - 1px);
+	height: calc(100vh - 1px);
+	top:0px;
+	left:0px;
+	background-color: black;
+	text-align: left;
+	/* display: flex; */
+	/* justify-content: center; */
+	/* align-items: center; */
 }
 #logoDiv.if #logoBox {
-   position: relative;
-   top: 45vh;
-   left: 50vw;
-   transform: translate(-50%,-50%);
+	position: relative;
+	top: 45vh;
+	left: 50vw;
+	transform: translate(-50%,-50%);
 	width: fit-content;
 	display: grid;
 	place-items: center;
 }
 #logoDiv.if #logo {
-   position: relative;
-   height: 9cm;
-   padding: 0mm;
-   border-radius: 7mm;
+	position: relative;
+	height: 9cm;
+	padding: 0mm;
+	border-radius: 7mm;
 }
 #gglSn {
-   transform: scale(1.6);
-   width: 6mm;
-   position: relative;
-   bottom: 1mm;
-   margin-right: 1mm;
+	transform: scale(1.6);
+	width: 6mm;
+	position: relative;
+	bottom: 1mm;
+	margin-right: 1mm;
 }
 #gglSnB {
-   margin-top: 4mm;
-   margin-bottom: 4mm;
+	margin-top: 4mm;
+	margin-bottom: 4mm;
 }
 #tgtUsrLgHldr {
-   font-family: AB;
-   font-size: 8mm;
-   cursor: pointer;
-   margin-left: 2mm;
+	font-family: AB;
+	font-size: 8mm;
+	cursor: pointer;
+	margin-left: 2mm;
 }
 #mastHead.if {
-   position: fixed;
-   bottom: 2mm;
-   left: 2mm;
-   margin: 0mm;
-   z-index: 11; 
+	position: fixed;
+	bottom: 2mm;
+	left: 2mm;
+	margin: 0mm;
+	z-index: 11; 
 }
 #lock {
-   height: 0.8cm;
-   width: 0.8cm;
-   cursor: pointer;
+	height: 0.8cm;
+	width: 0.8cm;
+	cursor: pointer;
 }
 #unlock {
-   height: 0.8cm;
-   width: 0.8cm;
-   /* vertical-align: middle; */
-   cursor: pointer;
+	height: 0.8cm;
+	width: 0.8cm;
+	/* vertical-align: middle; */
+	cursor: pointer;
 }
 #owlOnPerch {
-   width: 1cm;
-   position: relative;
-   top:1mm;
-   cursor: pointer;
+	width: 1cm;
+	position: relative;
+	top:1mm;
+	cursor: pointer;
 }
 #username {
-   width: 5cm;
+	width: 5cm;
 }
 #email {
-   display:block;
-   width: 5cm;
+	display:block;
+	width: 5cm;
 }
 #passwords1 {
-   display:block;
-   width: 5cm;
+	display:block;
+	width: 5cm;
 }
 #passwords2 {
-   display:block;
-   width: 5cm;
+	display:block;
+	width: 5cm;
 }
 #Password1L {
-   display:inline-block;
+	display:inline-block;
 }
 #Password2L {
-   display:inline-block;
+	display:inline-block;
 }
 #Consent {
-   position: relative;
-   bottom: 0.5mm;
+	position: relative;
+	bottom: 0.5mm;
 }
 #ConsentL {
-   margin-top: 2mm;
-   margin-bottom: 2mm;
+	margin-top: 2mm;
+	margin-bottom: 2mm;
 }
 #ConsentT, #ConsentT:visited {
-   color: rgb(128,128,255);
+	color: rgb(128,128,255);
 }
 #ConsentImg{
-   width: 0.6cm;
-   position: relative;
-   top: 0.14cm;
+	width: 0.6cm;
+	position: relative;
+	top: 0.14cm;
 }
 #Captcha {
-   width: 5cm;
+	width: 5cm;
 }
 #CaptchaImg {
-   width: 5.2cm;
-   margin-top: 3px;
-   margin-left: 1px;
+	width: 5.2cm;
+	margin-top: 3px;
+	margin-left: 1px;
 }
 #signupSpan {
-   
+	
 }
 #signupdiv {
 }
 #password {
-   width: 5cm;
+	width: 5cm;
 }
 #usermenu {
 }
 #Desc {
-   position: relative;
-   top: -0.06cm;
-   float: right;
-   padding-left: 1mm;
+	position: relative;
+	top: -0.06cm;
+	float: right;
+	padding-left: 1mm;
 }
 #Log {
-   position: sticky;
-   top: 0.2cm;
-   left: 0.2cm;
-   width: fit-content;
-   max-height: 80vh;
-   overflow:auto;
-   background-color: rgba(0,0,0,0.3);
-   backdrop-filter: blur(2mm);
-   -webkit-backdrop-filter: blur(2mm);
-   border-radius: 1mm;
-   z-index:11;
-   text-align:left;
+	position: sticky;
+	top: 0.2cm;
+	left: 0.2cm;
+	padding-left: 2mm;
+	width: fit-content;
+	max-height: 80vh;
+	overflow:auto;
+	background-color: rgba(0,0,0,0.3);
+	backdrop-filter: blur(2mm);
+	-webkit-backdrop-filter: blur(2mm);
+	border-radius: 1mm;
+	z-index:11;
+	text-align:left;
 }
 .noBlur Log {
-   background-color: rgb(0,0,0);
-   backdrop-filter: none;
-   -webkit-backdrop-filter: none;
+	background-color: rgb(0,0,0);
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
 }
 
 #Log div:not(#about) {
-   background-color: yellow;
-   color: black;
-   width: fit-content;
-   border-radius: 3px;
-   padding-left: 1mm;
-   padding-right: 1mm;   
+	background-color: yellow;
+	color: black;
+	width: fit-content;
+	border-radius: 3px;
+	padding-left: 1mm;
+	padding-right: 1mm;	 
 }
 #Log.visible div {
-   background-color: inherit;
-   color: inherit;
-   width: inherit;
-   border-radius: inherit;
-   padding-left: inherit;
-   padding-right: inherit;
+	background-color: inherit;
+	color: inherit;
+	width: inherit;
+	border-radius: inherit;
+	padding-left: inherit;
+	padding-right: inherit;
 }
 #Log.visible div.hidden {
-   display: revert;
+	display: revert;
 }
 #Log div.dim:not(#about) {
-   background-color: inherit;
-   color: inherit;
+	background-color: inherit;
+	color: inherit;
 }
 
 a {
-   color: #8888ff;
+	color: #8888ff;
 }
 .hilit a {
-   color:#0000ff
+	color:#0000ff
 }
 #Log #about a {
-   color: #8888ff;
+	color: #8888ff;
 }
 #Log #about a.plain {
-   color: azure;
-   text-decoration: none;
-   font-size: 3mm;
+	color: azure;
+	text-decoration: none;
+	font-size: 3mm;
 }
 #Log.about {
-   display: revert;
+	display: revert;
 }
 #Log.about #about, #Log.if #about {
-   display: revert;
+	display: revert;
 }
 #Log #about #jack a.plain {
-   font-style: italic;
-   font-size: 4mm;
-   padding-left: 4mm;
+	font-style: italic;
+	font-size: 4mm;
+	padding-left: 4mm;
 }
 #Log.about #jack {
-   display: revert;
+	display: revert;
 }
 #searchBar {
-   width: 100%;
-   height: 1cm;
+	width: 100%;
+	height: 1cm;
 }
 #searchTool {
-   width:0.5292cm; /*20px on iphone 12 mini*/
-   height:0.7cm;
-   padding-left:0px;
-   padding-right:0px;
-   border-radius:0px;
-   position:relative;
-   margin-left:0.08cm;
+	width:0.5292cm; /*20px on iphone 12 mini*/
+	height:0.7cm;
+	padding-left:0px;
+	padding-right:0px;
+	border-radius:0px;
+	position:relative;
+	margin-left:0.08cm;
 }
 #mouth {
-   height: 0.83cm;
-   border-width:0px;
-   line-height: 0.8cm;
-   resize: none;
-   /* position: relative; */
-   font-family:TrebuchetMS;
-   font-size:0.72cm;
-   /* font-weight: 600; */
-   margin:0px;
-   padding:0;
-   padding-left:2px;
-   width:6.7cm;
-   caret-color: #4444ff;
+	height: 0.83cm;
+	border-width:0px;
+	line-height: 0.8cm;
+	resize: none;
+	/* position: relative; */
+	font-family:TrebuchetMS;
+	font-size:0.72cm;
+	/* font-weight: 600; */
+	margin:0px;
+	padding:0;
+	padding-left:2px;
+	width:6.7cm;
+	caret-color: #4444ff;
 }
 .inptTxtBx {
-   color: rgb(192,192,192);
+	color: rgb(192,192,192);
 }
 .inptTxtBx:focus {
-   outline:none;
-   color: rgb(192,192,192);
+	outline:none;
+	color: rgb(192,192,192);
 }
 .inptTxtBx.typing:focus {
-   outline:none;
-   color: black;
+	outline:none;
+	color: black;
 }
 .inptTxtBx.typing:blur {
-   color: black;
+	color: black;
 }
 #LockBloc {
-   width: 1cm;
-   text-align: center;
+	width: 1cm;
+	text-align: center;
 }
 body.signed #LockBlock, body.signed #Credentials, body.signed #signupdiv {
-   display: none;
+	display: none;
 }
 body.signed #usermenu, body.signed #UserActions, body.signed #owlOnPerch {
-   display: revert;
+	display: revert;
 }
 inptTxtBx.typing {
-   color: black;
+	color: black;
 }
 #lips {
-   position: relative;
-   height: .2cm;
-   top: 0.8cm;
-   border-left: 1px solid black;
-   border-right: 1px solid black;
-   border-bottom: 1px solid black;
-   border-bottom-left-radius:3px;
-   border-bottom-right-radius:3px;
-   -webkit-border-bottom-left-radius:3px;
-   -webkit-border-bottom-right-radius:3px;
-   display: inline-block;
+	position: relative;
+	height: .2cm;
+	top: 0.8cm;
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+	border-bottom: 1px solid black;
+	border-bottom-left-radius:3px;
+	border-bottom-right-radius:3px;
+	-webkit-border-bottom-left-radius:3px;
+	-webkit-border-bottom-right-radius:3px;
+	display: inline-block;
 }
 
 #mouthPad {
-   padding-left:2px;
-   padding-right:0px;
-   display:inline-block;
-   top:-0.7cm;
-   position:relative;
-   font-size:0px;
+	padding-left:2px;
+	padding-right:0px;
+	display:inline-block;
+	top:-0.7cm;
+	position:relative;
+	font-size:0px;
 }
 #searchTools {
-   position:relative;
-   dislpaly: inline-block;
-   height: 1cm;
+	position:relative;
+	dislpaly: inline-block;
+	height: 1cm;
 }
 #UserActions {
-   padding-left: 1mm;
+	padding-left: 1mm;
 }
 #AddThing {
-   text-align: center;
-   vertical-align: middle;
-   border: none;
-   cursor: pointer;
-   padding: 0px;
-   background-color: transparent;
+	text-align: center;
+	vertical-align: middle;
+	border: none;
+	cursor: pointer;
+	padding: 0px;
+	background-color: transparent;
 }
 #AddThingSVG {
-   width: 1cm;
-   height: 1cm;
-   vertical-align: middle;
-   fill: #77ff77;
+	width: 1cm;
+	height: 1cm;
+	vertical-align: middle;
+	fill: #77ff77;
 }
 #Things {
+	/* text-align: center; */
 }
 #Thing {
-   padding: 2mm;
-   border-radius: 1mm;
+	padding: 2mm;
+	border-radius: 1mm;
 }
 #Thing input[type=button] {
-   border: 0px;
-   vertical-align: middle;
-   text-align: center;
-   background-color: rgba(255,255,255,0.3);
-   backdrop-filter: blur(1mm);
-   -webkit-backdrop-filter: blur(1mm);
-   color: rgb(0,0,128);
+	border: 0px;
+	vertical-align: middle;
+	text-align: center;
+	background-color: rgba(255,255,255,0.2);
+	backdrop-filter: blur(0.5mm);
+	-webkit-backdrop-filter: blur(1mm);
+	color: rgb(0,0,128);
 }
 .noBlur #Thing input[type=button] {
-   background-color: rgba(180,180,180);
-   backdrop-filter: none;
-   -webkit-backdrop-filter: none;
+	background-color: rgba(180,180,180);
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
 }
 
 #thnBtm {
-   position: absolute;
-   z-index: 2;
-   background-color: rgba(0, 0, 0, 0.5);
-   backdrop-filter: blur(3px);
-   -webkit-backdrop-filter: blur(3px);
-   border-radius: 2mm;
-   padding: 1mm;
+	position: absolute;
+	z-index: 2;
+	background-color: rgba(0, 0, 0, 0.5);
+	backdrop-filter: blur(3px);
+	-webkit-backdrop-filter: blur(3px);
+	border-radius: 2mm;
+	padding: 1mm;
 }
 .noBlur #thnBtm {
-   background-color: rgb(0,0,0);
-   backdrop-filter: none;
-   -webkit-backdrop-filter: none;
+	background-color: rgb(0,0,0);
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
 }
 
 #Thing.editMode #thnBtm {
-   position: relative;
+	position: relative;
 }
 #showURLBtn {
-   position: absolute;
-   top: 1mm;
-   right: 15mm;
+	position: absolute;
+	top: 1mm;
+	right: 15mm;
 }
 #ThingEditBtn {
-   display: none;
-   position: absolute;
-   top: 2mm;
-   right: 2mm;
+	display: none;
+	position: absolute;
+	top: 2mm;
+	right: 2mm;
 }
 #Thing.mine #ThingEditBtn {
-   display:block;
+	display:block;
 }
 #Thing.mine #qSendDiv {
-   display: none;
+	display: none;
 }
 #Thing.active {
-   /* scale: 1.2; */
-   /* float: left; */
+	/* scale: 1.2; */
+	/* float: left; */
 }
 #Thing.active #ImgHldr {
-   /* height: revert; */
+	/* height: revert; */
 }
 #ImgsHldr {
-   position: relative;
-   margin-bottom: 0.1cm;
+	position: relative;
+	margin-bottom: 0.1cm;
 }
 #NxtBtnHldr {
-   position: absolute;
-   font-size: 0.5cm;
-   bottom:1mm;
-   left: 1mm;
-   margin:0.2cm;
+	position: absolute;
+	font-size: 0.5cm;
+	bottom:1mm;
+	left: 1mm;
+	margin:0.2cm;
 }
 .imgNxtBtns {
-   width: 7mm;
+	min-width: 7mm;
+	width: fit-content;
 }
-
+#eImg {
+	display: none;
+}
+.active #eImg {
+	display: revert;
+}
 #ThingNameBox {
-   /* position: relative; */
+	/* position: relative; */
 }
 
 body.signed #Thing.active #ThingDetails,
 body.signed #Thing.active #lastModedD,
 body.signed #Thing.active #msgdiv {
-   display:revert;
+	display:revert;
 }
 #lastModedD {
-   background-color: rgba(139,69,19,0.7);
-   backdrop-filter: blur(2mm);
-   border-radius: 1mm;
-   margin-bottom: 1mm;
-   padding-left: 1mm;
-   padding-right: 1mm;
-   font-size: 3.3mm;
+	background-color: rgba(139,69,19,0.7);
+	backdrop-filter: blur(2mm);
+	border-radius: 1mm;
+	margin-bottom: 1mm;
+	padding-left: 1mm;
+	padding-right: 1mm;
+	font-size: 3.3mm;
 }
 .noBlur #lastModedD {
-   background-color: rgb(139,69,19);
-   backdrop-filter: none;
-   -webkit-backdrop-filter: none;
+	background-color: rgb(139,69,19);
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
 }
 #ImgHldr {
-   height: 5cm;
-   height: fit-content;
+	height: 5cm;
+	height: fit-content;
 }
 #Imgs {
-   width: fit-content;
+	width: fit-content;
 }
 svg.fixedSize, img.fixedSize {
-   max-width: 9.5cm;
-   min-width: 4cm;
-   height: 5cm;
-   background-color: rgb(64,64,64);
-   border-radius: 2mm;
+	max-width: 9.5cm;
+	min-width: 4cm;
+	height: 5cm;
+	background-color: rgb(64,64,64);
+	border-radius: 2mm;
 }
 
 svg.plusSize, img.plusSize {
-   height: 61.8vh;
+	height: 61.8vh;
 }
 
 svg.fixedSize {
-   width: 4.5cm;
+	width: 4.5cm;
 }
 
 #NewThingImgs svg path {
-   fill: rgb(128, 128, 128);
+	fill: rgb(128, 128, 128);
 }
 
 #NewThingImgs div input.editBtn {
-   /* display: block; */
-   /* width: 0.8cm; */
-   /* height: 0.8cm; */
-   top: -1cm;
-   position: relative;
-   /* background-image: url('/img/images/myIconSet.png'); */
-   /* background-position: 0px -140px; */
-   /* background-size: 938px; */
-   /* filter: invert(1); */
-   /* border-color: black; */
-   /* border-left-width: 2px; */
-   /* border-right-width: 2px; */
-   /* border-top-width: 2px; */
-   /* border-bottom-width: 2px; */
+	/* display: block; */
+	/* width: 0.8cm; */
+	/* height: 0.8cm; */
+	top: -1cm;
+	position: relative;
+	/* background-image: url('/img/images/myIconSet.png'); */
+	/* background-position: 0px -140px; */
+	/* background-size: 938px; */
+	/* filter: invert(1); */
+	/* border-color: black; */
+	/* border-left-width: 2px; */
+	/* border-right-width: 2px; */
+	/* border-top-width: 2px; */
+	/* border-bottom-width: 2px; */
 }
 #I1 {
-   
+	
 }
 #ThingImg {
-   display:block;
-   max-width:90vw;
+	display:block;
+	max-width:90vw;
 }
 #Thing input {
-   font-size: 4mm;
-   border-radius: 1mm;
+	font-size: 4mm;
+	border-radius: 1mm;
 }
 #Thing input[type=text]:focus {
-   outline-width: 0mm;
+	outline-width: 0mm;
 }
 #Thing input[type=text] {
-   width: 38mm;
+	width: 38mm;
 }
 #Thing textarea {
 	width: 38mm;
@@ -563,25 +607,25 @@ svg.fixedSize {
 }
 
 #Thing.editMode .edtHide {
-   display:none;
+	display:none;
 }
 
 #Thing.editMode #ThingEditBtn {
-   position: relative;
-   top: 0px;
-   right: 0px;
-   display: inline-block;
+	position: relative;
+	top: 0px;
+	right: 0px;
+	display: inline-block;
 }
 
 #ThingLocationPin, #LocationPin {
-   display: inline-block;
-   /* width: 0.5cm; */
-   /* height: 0.48cm; */
-   /* background-image: url('/img/images/myIconSet.png'); */
-   /* background-position: -0.8cm -2.39cm; */
-   /* background-size: 15.5cm; */
-   /* filter: brightness(0) invert(1); */
-   hover:pointer;
+	display: inline-block;
+	/* width: 0.5cm; */
+	/* height: 0.48cm; */
+	/* background-image: url('/img/images/myIconSet.png'); */
+	/* background-position: -0.8cm -2.39cm; */
+	/* background-size: 15.5cm; */
+	/* filter: brightness(0) invert(1); */
+	hover:pointer;
 }
 
 #pin {
@@ -589,267 +633,268 @@ svg.fixedSize {
 }
 
 #ThingLocationPin #pin {
-   position: relative;
+	position: relative;
 }
 
 #LocationDiv {
-   display: block;
-   position: fixed;
-   top: 2mm;
-   right: 2mm;
-   z-index:11;
-   background-color: rgba(0,0,0,0.3);
-   backdrop-filter: blur(2mm);
-   -webkit-backdrop-filter: blur(2mm);
-   border-radius: 1mm;
+	display: block;
+	position: fixed;
+	top: 2mm;
+	right: 2mm;
+	z-index:11;
+	background-color: rgba(0,0,0,0.3);
+	backdrop-filter: blur(2mm);
+	-webkit-backdrop-filter: blur(2mm);
+	border-radius: 1mm;
 }
 .noBlur #LocationDiv {
-   background-color: rgb(0,0,0);
-   backdrop-filter: none;
-   -webkit-backdrop-filter: none;
+	background-color: rgb(0,0,0);
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
 }
 /* #LocationPin { */
-/*    top: 1.5mm; */
+/*		top: 1.5mm; */
 /* } */
 #LocTxt {
-   font-size: 4mm;
-   position:relative;
-   top: 0.4mm;
+	font-size: 4mm;
+	position:relative;
+	top: 0.4mm;
 }
 #ThingLocationPin:hover, #LocationPin:hover {
-   cursor: pointer;
+	cursor: pointer;
 }
 
 #ThingLocationPin #tin, #LocationPin #tin{
-   display: none;
+	display: none;
 }
 #ThingLocationPin.empty #pin, #LocationPin.empty #pin{
-   /* background-position: -4.75cm -3.18cm */
-   display: none;
+	/* background-position: -4.75cm -3.18cm */
+	display: none;
 }
 #ThingLocationPin.empty #tin, #LocationPin.empty #tin{
-   display: revert;
+	display: revert;
 }
 #LocationDDiv #LocationBox {
-   width: 45mm;
-   background:transparent;
+	width: 45mm;
+	background:transparent;
 }
 #LocationDDiv.if {
-   position: fixed;
-   z-index: 11;
+	position: fixed;
+	z-index: 11;
 }
 
 #LocationDDiv.if #LocationDiv {
-   position: relative;
-   top: 45mm;
-   left: 0cm;
-   backdrop-filter: blur(1px);
-   -webkit-backdrop-filter: blur(1px);
+	position: relative;
+	top: 45mm;
+	left: 0cm;
+	backdrop-filter: blur(1px);
+	-webkit-backdrop-filter: blur(1px);
 }
 .noBlur #LocationDDiv.if #LocationDiv {
-   backdrop-filter: none;
-   -webkit-backdrop-filter: none;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
 }
 
 #mouthPad #LocationDDiv #LocationDiv {
-   position: fixed;
-   top: 1mm;
-   right: 1mm;
+	position: fixed;
+	top: 1mm;
+	right: 1mm;
 }
 
 #ThingName {
-   position:relative;
-   top: -0.63mm;
-   font-size: 4mm;
+	position:relative;
+	top: -0.63mm;
+	font-size: 4mm;
 }
 #ThingDetails {
-   font-family: CascadiaMono.ttf;
-   font-size: 3.6mm;
-   background-color: rgb(40,40,40);
-   border-radius: 1mm;
+	font-family: CascadiaMono.ttf;
+	font-size: 3.6mm;
+	background-color: rgb(40,40,40);
+	border-radius: 1mm;
 }
 #picBrsr {
-   position: absolute;
-   top: 1mm;
-   left: 1mm;
-   z-index: 11;
-   background: rgba(0,0,0,0.5);
-   border-radius: 1mm;
-   backdrop-filter: blur(1mm);
-   -webkit-backdrop-filter: blur(1mm);
+	position: absolute;
+	top: 1mm;
+	left: 1mm;
+	z-index: 11;
+	background: rgba(0,0,0,0.5);
+	border-radius: 1mm;
+	backdrop-filter: blur(1mm);
+	-webkit-backdrop-filter: blur(1mm);
 }
 .noBlur #picBrsr {
-   background-color: rgb(0,0,0);
-   backdrop-filter: none;
-   -webkit-backdrop-filter: none;
+	background-color: rgb(0,0,0);
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
 }
 
 #mbox {
-   overflow: scroll;
+	overflow: scroll;
 }
 .reply {
-   background-color: rgb(120,120,234);
-   margin: 1mm;
-   border-radius:1mm;
-   width: fit-content;
+	background-color: rgb(120,120,234);
+	margin: 1mm;
+	border-radius:1mm;
+	width: fit-content;
 }
 #replyBtn, #msgBtn {
-   display:block;
+	display:block;
 }
 .query {
-   margin:1px;
-   border-radius:1mm;
-   font-size: 3.7mm;
-   background-color: rgb(96,96,234);
-   width: fit-content;
+	margin:1px;
+	border-radius:1mm;
+	font-size: 3.7mm;
+	background-color: rgb(96,96,234);
+	width: fit-content;
 }
 #Thing #msgBtn, #Thing.editMode #ThingEditBtn, #Thing #cnclEdtBtn{
-   background-color: rgb(200,200,200);
+	background-color: rgb(200,200,200);
 }
 #chusPicBtn {
-   top: 1mm;
-   position: absolute;
-   width: 22mm;
+	top: 1mm;
+	position: absolute;
+	width: 22mm;
 }
 #mastHead {
-   /* position: relative; */
-   /* bottom: 2mm; */
-   /* left: 2mm; */
-   margin: 2mm;
+	position: relative;
+	z-index: 1;
+	/* bottom: 2mm; */
+	/* left: 2mm; */
+	margin: 2mm;
 }
 #beta {
-   background-color: orange;
-   border-radius: 1mm;
-   color: black;
-   font-size: 3mm;
-   padding-left: 1mm;
-   padding-right: 1mm;
-   position: relative;
-   /* left: 1mm; */
+	background-color: orange;
+	border-radius: 1mm;
+	color: black;
+	font-size: 3mm;
+	padding-left: 1mm;
+	padding-right: 1mm;
+	position: relative;
+	/* left: 1mm; */
 }
 .transform2s3d {
-   -webkit-transition: width 2s, height 2s, -webkit-transform 2s linear;
-   -webkit-transform-style: preserve-3d;
-   -moz-transition: width 2s, height 2s, -moz-transform 2s linear;
-   -moz-transform-style: preserve-3d;
-   transition: width 2s, height 2s, transform 2s linear;
-   transform-style: preserve-3d;
+	-webkit-transition: width 2s, height 2s, -webkit-transform 2s linear;
+	-webkit-transform-style: preserve-3d;
+	-moz-transition: width 2s, height 2s, -moz-transform 2s linear;
+	-moz-transform-style: preserve-3d;
+	transition: width 2s, height 2s, transform 2s linear;
+	transform-style: preserve-3d;
 }
 /* @keyframes blink { */
-/* 	0% { opacity:1 } 75% { opacity:1 } 76% { opacity:0 } 100% { opacity:0 } */
+/*		0% { opacity:1 } 75% { opacity:1 } 76% { opacity:0 } 100% { opacity:0 } */
 /* } */
 
 /* blink, .blink-css { */
-/* 	animation:blink 0.75s ease-in infinite alternate!important; */
+/*		animation:blink 0.75s ease-in infinite alternate!important; */
 /* } */
 .middle {
-   position: relative;
-   display: block;
-   text-align: center;
+	position: relative;
+	display: block;
+	text-align: center;
 }
 .center {
-   text-align: center;
-   vertical-align: middle;
-   position: relative;
-   display: block;
-   margin: auto;
+	text-align: center;
+	vertical-align: middle;
+	position: relative;
+	display: block;
+	margin: auto;
 }
 .invisible {
-   opacity: 0;
-   filter: alpha(opacity=0);
+	opacity: 0;
+	filter: alpha(opacity=0);
 }
 .inQ {
-   background-color: gray;
+	background-color: gray;
 }
 .new {
-   background-color: blue;
+	background-color: blue;
 }
 #land {
-   width: 100%;
+	width: 100%;
 }
 #compound-wall {
-   padding-left:0px;
-   padding-right:0px;
-   display:inline-block;
-   position:relative;
+	padding-left:0px;
+	padding-right:0px;
+	display:inline-block;
+	position:relative;
 }
 .highlight {
-   background-color: yellow;
-   color: black;
+	background-color: yellow;
+	color: black;
 }
 .thing {
-   display: inline-block;
-   margin-right: 1mm;
-   position: relative;
-   vertical-align: top;
+	display: inline-block;
+	margin-right: 1mm;
+	position: relative;
+	vertical-align: top;
 }
 /* .hidden { */
-/*    position: absolute; */
-/*    width: 0px; */
-/*    height: 0px; */
-/*    display: none; */
-/*    padding: 0px; */
-/*    border: 0px; */
-/*    margin: 0px; */
+/*		position: absolute; */
+/*		width: 0px; */
+/*		height: 0px; */
+/*		display: none; */
+/*		padding: 0px; */
+/*		border: 0px; */
+/*		margin: 0px; */
 /* } */
 .hidden {
-   display: none;
+	display: none;
 }
 .mask {
-   visibility: hidden;
+	visibility: hidden;
 }
 #chin {
-   height: 5cm;
+	height: 5cm;
 }
 #chin.big {
-   height: 9cm;
+	height: 9cm;
 }
 .plot {
-   position: relative;
-   display: inline-block;
-   width: 4cm;
-   height: 4cm;
-   border-width:1px;
-   border-color:black;
-   border-style:solid;
-   vertical-align:top;
+	position: relative;
+	display: inline-block;
+	width: 4cm;
+	height: 4cm;
+	border-width:1px;
+	border-color:black;
+	border-style:solid;
+	vertical-align:top;
 }
 .fat.plot {
-   width: 8cm;
-   height: 4cm;
+	width: 8cm;
+	height: 4cm;
 }
 .tall.plot {
-   width:  4cm;
-   height: 8cm;
+	width:  4cm;
+	height: 8cm;
 }
 .jumbo.plot {
-   width: 8cm;
-   height: 8cm;
+	width: 8cm;
+	height: 8cm;
 }
 .plot .facade,
 .plot .name {
-   display:block;
-   position:relative;
+	display:block;
+	position:relative;
 }
 .plot .facade {
-   height:75%;/*192px;*/
-   border:0px;
-   border-bottom-width:1px;
-   border-color:black;
-   border-style:solid;
+	height:75%;/*192px;*/
+	border:0px;
+	border-bottom-width:1px;
+	border-color:black;
+	border-style:solid;
 }
 .plot .name {
-   height:25%;
+	height:25%;
 }
 /*.tall.plot .facade,
-      .jumbo.plot .facade{
-      height:384px;
-      }
-      .tall.plot .facade,
-      .jumbo.plot .facade{
-      height: 128px;
-      }
-      .tall.plot .facade,
-      .jumbo.plot .facade{
-      height:384px;
+		.jumbo.plot .facade{
+		height:384px;
+		}
+		.tall.plot .facade,
+		.jumbo.plot .facade{
+		height: 128px;
+		}
+		.tall.plot .facade,
+		.jumbo.plot .facade{
+		height:384px;
 }*/

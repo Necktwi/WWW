@@ -15,6 +15,8 @@
 	if (document.body.classList.contains('dark')){
 	this.contentDocument.children[0].classList.add('dark');}">
 </object></div>
+<div id="backToLock" dhtml="after:logoDiv" class="hidden"
+   onclick="showLock()">&lt;</div>
 <table dhtml="parent:"><tr><td dhtml="after:logoTd"
 	style="vertical-align: top; padding-top: 0.12cm">
 	<span id="LockBlock" class="" onclick="unlock()">
@@ -110,14 +112,21 @@
 		d="M 21 7 A 20 40 45 0 1 33 21 A 20 20 0 0 0 21 7 Z"
 		style="stroke-opacity: 1.0;"/>
 </svg>
-<div dhtml="after:header" id="tgtUsrLgHldr"class="hidden js">
-	<div id="ImgHldr" class="center">
-		<img id="ThingImg" class="fixedSize" loading="lazy" decoding="async"/>
-	</div>
-	<label id="chusPicBtnL" for="chusPicBtn"
-		class="removable hidden">Browse...</label>
-	<input id="chusPicBtn" type="file" class="editBtn removable"
-		onchange="selectFiles.call(this, event);"/>
+<div dhtml="after:header" id="tgtUsrBanner">
+   <div id="tgtUsrLgHldr" class="hidden js">
+	   <div id="ImgHldr" class="center">
+		   <img id="ThingImg" class="fixedSize" loading="lazy" decoding="async"/>
+	   </div>
+	   <label id="chusPicBtnL" for="chusPicBtn"
+		   class="removable hidden">Browse...</label>
+	   <input id="chusPicBtn" type="file" class="editBtn removable"
+		   onchange="selectFiles.call(this, event);"/>
+   </div>
+   <span id="tgtUsrDsc" class="hidden"></span>
+   <textarea id="tgtUsrDscEdtBx" class="hidden">
+   </textarea>
+   <button id="tgtUsrDscEdtBtn" class="hidden">Edit</button>
+   <button id="tgtUsrDscSbtBtn" class="hidden">Submit</button>
 </div>
 <template id="thingsTmplt"></template>
 <br/>

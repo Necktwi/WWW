@@ -1,75 +1,75 @@
-<div dhtml="after:tgtUsrLgHldr" id="Things" class="">
-   <div id="Thing" class="thing">
-      <div id="ImgsHldr"class="">
-         <div id='Imgs' class="">
-            <div id="ImgHldr" class="center">
-               <img id="ThingImg" class="fixedSize" loading="lazy"/>
-            </div>
-         </div>
-         <label id="chusPicBtnL" class="removable hidden">
-            Browse...</label>
-         <input id="chusPicBtn" type="file" class="editBtn removable"
-            onchange="selectFiles.call(this, event);"/>
-         <div id="NxtBtnHldr" class="js">
-            <input id="pImg" type="button" value="<" class="imgNxtBtns"
-               onclick="nxtImg(1)"/>&nbsp &nbsp
-            <input id="nImg" type="button" value=">" class="imgNxtBtns"
-            onclick="nxtImg(0)"/>&nbsp &nbsp
-            <input id="eImg" type="button" value="+" class="imgNxtBtns"
-               onclick="incImg(0)"/>
-         </div>
-      </div>
-      <label id="ThingLocationL" class="removable noJs">Location: </label>
-      <span id="ThingLocationPin" class="js">
-         <span id="pin">📍</span><span id="tin" class="js">⦾</span></span>
-      <span id="ThingLocation" class="hidden noJs"></span>
-      <input id="ThingLocationBox" class="removable" type="text"/>
-      <label id="ThingNameL" class="removable noJs"><br/>Name: </label>
-      <input id="ThingNameBox" class="removable" type="text"/>
-      <span id="ThingName" class="edtHide noJs"></span>
-      <br/>
-      <div id="thnBtm">
-         <div id="thingInfo" class="hidden noJs">
-            <label id="ThingUsrL">Usr:</label>
-            <span id="ThingUsr"></span>
-            <nobr><label id="ThingIdL">ID:
-               <span id="ThingId"></span></label>
-            </nobr><br/>
-         </div>
-         <div id="lastModedD" class="hidden editHide noJs">
-            <span id="lastModed"></span>
-         </div>
-         <div id="ThingDetailsDiv" class="removable">
-            <label id="ThingDetailsL">Details: <br/></label>
-            <textarea id="ThingDetailsTA" rows="3"></textarea>
-         </div>
-         <div id="ThingDetails" class="hidden edtHide noJs"></div>
-         <div id="msgdiv" class="hidden">
-            <div id="msgs">
-               <div class="query">
-                  <span class="hidden"></span><span></span><span></span>
-               </div>
-            </div>
-         </div>
-      </div>
-      <input id="showURLBtn" class="hidden" type="Button"
-         value="^" onclick="showURL.call(this, event)"/>
-      <input id="cnclEdtBtn" class="removable" type="Button"
-         value="Cancel"/>
-      <input id="ThingEditBtn" class="js" type="Button" value="Edit"/>
-   </div>
-   <div id="qSendDiv" class="hidden js">
-      <textarea id="msginpt" rows="2" cols="22"
-         onfocus="onMsgInptFocus.call(this)"
-         onblur="onMsgInptBlur.call(this)"></textarea><br/>
-         <input id="msgBtn" type="Button" value="Query"/>
-   </div>
-   <div id="replyDiv" class="hidden js">
-      <div id="reply" class="reply hidden inQ">
-         <span>-></span><span></span></div>
-      <textarea id="replyBox" rows="2" cols="22"
-         onfocus="onMsgInptFocus.call(this)"
-         onblur="onMsgInptBlur.call(this)"></textarea>
-      <input id="replyBtn" type="Button" value="Reply"/>
-   </div>
+<div dhtml="after:tgtUsrBanner" id="Things" class="">
+	<div id="Thing" class="thing">
+		<div id="ImgsHldr"class="">
+			<div id='Imgs' class="">
+				<div id="ImgHldr" class="center">
+					<img id="ThingImg" class="fixedSize" loading="lazy"/>
+				</div>
+			</div>
+			<label id="chusPicBtnL" class="removable hidden">
+				Browse...</label>
+			<input id="chusPicBtn" type="file" class="editBtn removable"
+				onchange="selectFiles.call(this, event);"/>
+			<div id="NxtBtnHldr" class="js">
+				<input id="pImg" type="button" value="<" class="imgNxtBtns"
+					onclick="nxtImg(1)"/>&nbsp &nbsp
+				<input id="nImg" type="button" value=">" class="imgNxtBtns"
+				onclick="nxtImg(0)"/>&nbsp &nbsp
+				<input id="eImg" type="button" value="<=>" class="imgNxtBtns"
+					onclick="incImg(0)"/>
+			</div>
+		</div>
+		<label id="ThingLocationL" class="removable noJs">Location: </label>
+		<span id="ThingLocationPin" class="js">
+			<span id="pin">📍</span><span id="tin" class="js">⦾</span></span>
+		<span id="ThingLocation" class="hidden noJs"></span>
+		<input id="ThingLocationBox" class="removable" type="text"/>
+		<label id="ThingNameL" class="removable noJs"><br/>Name: </label>
+		<input id="ThingNameBox" class="removable" type="text"/>
+		<span id="ThingName" class="edtHide noJs"></span>
+		<br/>
+		<div id="thnBtm">
+			<div id="thingInfo" class="hidden noJs">
+				<label id="ThingUsrL">Usr:</label>
+				<span id="ThingUsr"></span>
+				<nobr><label id="ThingIdL">ID:
+					<span id="ThingId"></span></label>
+				</nobr><br/>
+			</div>
+			<div id="lastModedD" class="hidden editHide noJs">
+				<span id="lastModed"></span>
+			</div>
+			<div id="ThingDetailsDiv" class="removable">
+				<label id="ThingDetailsL">Details: <br/></label>
+				<textarea id="ThingDetailsTA" rows="3"></textarea>
+			</div>
+			<div id="ThingDetails" class="hidden edtHide noJs"></div>
+			<div id="msgdiv" class="hidden">
+				<div id="msgs">
+					<div class="query">
+						<span class="hidden"></span><span></span><span></span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<input id="showURLBtn" class="hidden" type="Button"
+			value="^" onclick="showURL.call(this, event)"/>
+		<input id="cnclEdtBtn" class="removable" type="Button"
+			value="Cancel"/>
+		<input id="ThingEditBtn" class="js" type="Button" value="Edit"/>
+	</div>
+	<div id="qSendDiv" class="hidden js">
+		<textarea id="msginpt" rows="2" cols="22"
+			onfocus="onMsgInptFocus.call(this)"
+			onblur="onMsgInptBlur.call(this)"></textarea><br/>
+			<input id="msgBtn" type="Button" value="Query"/>
+	</div>
+	<div id="replyDiv" class="hidden js">
+		<div id="reply" class="reply hidden inQ">
+			<span>-></span><span></span></div>
+		<textarea id="replyBox" rows="2" cols="22"
+			onfocus="onMsgInptFocus.call(this)"
+			onblur="onMsgInptBlur.call(this)"></textarea>
+		<input id="replyBtn" type="Button" value="Reply"/>
+	</div>
 </div>
