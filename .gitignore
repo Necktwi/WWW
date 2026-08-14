@@ -23,6 +23,7 @@ vgcore.*
 #users.ffjson
 
 #upload/*
+red/
 
 # emacs
 ._*

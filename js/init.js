@@ -2645,10 +2645,10 @@ async function subscribe () {
 	try {
 		const registration= await navigator.serviceWorker.register(
 			'js/serviceWorker.js');
-		console.log('Service Worker registered');
+		ferrylog('Service Worker registered');
 
 		await navigator.serviceWorker.ready;
-		console.log('Service Worker ready');
+		ferrylog('Service Worker ready');
 
 		const response= await fetch('/vapid-public-key');
 		const vapidPublicKey= await response.text();
@@ -2659,7 +2659,7 @@ async function subscribe () {
 			applicationServerKey: convertedVapidKey
 		});
 
-		console.log('Push subscription successful:', subscription);
+		ferrylog('Push subscription successful:', subscription);
 
 		await fetch('/?req=notify', {
 			method: 'POST',
