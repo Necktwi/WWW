@@ -2657,7 +2657,7 @@ async function subscribe () {
 		}
 		ferrylog('Service Worker ready');
 
-		const response= await fetch('/vapid-public-key');
+		const response= await fetch('/?req=vapidpublickey');
 		const vapidPublicKey= await response.text();
 		const convertedVapidKey= urlBase64ToUint8Array(vapidPublicKey);
 
