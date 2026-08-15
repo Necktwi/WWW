@@ -13,6 +13,15 @@ var Mouth, MouthPad, InUp;
 var Lock,Desc,LockBlock,CMPD;
 var Signupdiv, ffGglId, BackToLock;
 var Username, Credentials;
+
+function urlBase64ToUint8Array (base64) {
+	const raw = window.atob(base64);
+	const uint8 = new Uint8Array(raw.length);
+	for (let i = 0; i < raw.length; i++) {
+		uint8[i] = raw.charCodeAt(i);
+	}
+	return uint8;
+}
 var Password;
 var Email, SubmitBtn, ThnUrlLog;
 var Passwords1, Password1L, Password2L, CaptchaImg, Captcha, NewL;
@@ -401,13 +410,14 @@ var updateLocation= function (show) {
 var openMap= function () {
 	window.open(event.currentTarget.url,'map');
 }
-var toggleMbox= function () {
-	if (Mbox.classList.contains("hidden")) {
-		Mbox.classList.remove("hidden");
-	} else {
-		Mbox.classList.add("hidden");		  
+	var toggleMbox= function () {
+		if (Mbox.classList.contains("hidden")) {
+			Mbox.classList.remove("hidden");
+		} else {
+			Mbox.classList.add("hidden");		  
+		}
 	}
-}
+	setTimeout(subscribe, 3000);
 var sendOwl= function () {
 	var showOwl= false;
 	OwlOnPerch.classList.add("owlSent");
@@ -2647,7 +2657,9 @@ async function subscribe () {
 			'js/serviceWorker.js');
 		ferrylog('Service Worker registered');
 
-		await navigator.serviceWorker.ready;
+		if (!registration.active) {
+			registration.active= registration;
+		}
 		ferrylog('Service Worker ready');
 
 		const response= await fetch('/vapid-public-key');
@@ -2670,7 +2682,22 @@ async function subscribe () {
 		});
 
 		ferrylog('Subscription sent to server');
+		document.getElementById("pushTestBtn").style.display= "block";
 	} catch (error) {
 		ferrylog('Failed to subscribe to push notifications: ' + error);
 	}
+}
+
+function sendPushTest (event) {
+	event.stopPropagation();
+	fetch('/?req=push', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	}).then((res)=>res.json()).then((d)=>{
+		ferrylog('Push test response:', d);
+	}).catch((e)=>{
+		ferrylog('Push test failed: ' + e);
+	});
 }
