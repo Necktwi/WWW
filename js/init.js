@@ -415,9 +415,9 @@ var openMap= function () {
 			Mbox.classList.remove("hidden");
 		} else {
 			Mbox.classList.add("hidden");		  
+			setTimeout(subscribe, 3000);
 		}
 	}
-	setTimeout(subscribe, 3000);
 var sendOwl= function () {
 	var showOwl= false;
 	OwlOnPerch.classList.add("owlSent");
@@ -1373,11 +1373,6 @@ var signInUI= function (res) {
 	owlMail= setInterval(sendOwl, 30000);
 	RecoverL.classList.add("hidden");
 	ferrylog("SignedIn!");
-	if (res.name=="gowtham") {
-		if (!res.notify) {
-			subscribe();
-		}
-	}
 }
 var signin= function(feed) {
 	var res= JSON.parse(feed.responseText);
