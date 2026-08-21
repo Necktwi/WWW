@@ -305,7 +305,10 @@ header input {
 	background-color: inherit;
 	color: inherit;
 }
-
+.plain {
+	text-decoration: none;
+	color: unset;
+}
 a {
 	color: #8888ff;
 }
@@ -317,7 +320,6 @@ a {
 }
 #Log #about a.plain {
 	color: azure;
-	text-decoration: none;
 	font-size: 3mm;
 }
 #Log.about {
@@ -454,7 +456,33 @@ inptTxtBx.typing {
 	backdrop-filter: none;
 	-webkit-backdrop-filter: none;
 }
-
+#MThings {
+	display: none;
+}
+#UThings {
+	display: none;
+}
+.mThns #MThings {
+	display: revert;
+}
+.mThns #Thing {
+	display: none;
+}
+.mThns #Thing.mThn {
+	display: inline-block;
+}
+.uThns #MThings {
+	display: none;
+}
+.uThns #Thing {
+	display: none;
+}
+.uThns #Thing.mine {
+	display: inline-block;
+}
+.uThns #UThings {
+	display: revert;
+}
 #thnBtm {
 	position: absolute;
 	z-index: 2;
@@ -484,7 +512,7 @@ inptTxtBx.typing {
 	top: 2mm;
 	right: 2mm;
 }
-#Thing.mine #ThingEditBtn {
+body.signed #SThings #Thing.mine #ThingEditBtn {
 	display:block;
 }
 #Thing.mine #qSendDiv {
@@ -507,6 +535,10 @@ inptTxtBx.typing {
 	bottom:1mm;
 	left: 1mm;
 	margin:0.2cm;
+	display: none;
+}
+#Thing.mltImg #NxtBtnHldr, #Thing.editMode #NxtBtnHldr {
+	display: revert;
 }
 .imgNxtBtns {
 	min-width: 7mm;
