@@ -21,10 +21,10 @@
 		type='image/x-icon' class="js"/>
 	<meta name="description"
 		content="Super quickly search for things U need among billions
-		of things around U! Add things to the fair to ferry!"/>
+		of things around U! Post a thing to the Fair in just 1 minute!"/>
 	<meta name="keywords"
-		content="fast,spatial,search,algorithm,things,near,around,items,
-		goods,ferry fair,quad tree,quadtree"/>
+		content="fast,spatial,search,algorithm,things,near,near me,around,items,
+		goods,ferry fair,quad tree,quadtree,proximity"/>
 	<meta name="author" content="Gowtham Kudupudi"/>
 	<meta name="viewport" class="js"
 		content="width=device-width,initial-scale=1,
@@ -35,10 +35,11 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 	<meta name="apple-mobile-web-app-title" content="FerryFair"/>
 	<script type="text/javascript" src="js/core.js?5" class="js"></script>
-	<link type="text/css" href="css/main.css?83" rel="stylesheet" class="js"/>
-	<link type="text/css" href="css/main-dark.css" rel="stylesheet" class="js"/>
+	<link type="text/css" href="css/main.css?92" rel="stylesheet" class="js"/>
+	<link type="text/css" href="css/main-dark.css" rel="stylesheet"
+      class="js"/>
 	<link type="text/css" href="css/svg.css?1" rel="stylesheet" class="js"/>
-	<script type="text/javascript" src="js/init.js?295" class="js"></script>
+	<script type="text/javascript" src="js/init.js?331" class="js"></script>
 	<style>
 		a {color: #8888ff;}
 		input {color:black;background-color:white;border:1px}
@@ -46,10 +47,10 @@
 	</style>
 	<dummy></dummy>
 </head>
-<body onload="" class="dark hidden">
+<body onload="" class="dark hidden proxima">
 	<script class="js">0</script>
 	<div id="mastHead" onclick="about()" class="if">
-		<div id="cr">© FerryFair <span id="beta">β</span></div>
+		<div id="cr">© <a class="plain" href="/" style="color:white">FerryFair</a> <span id="beta">β</span></div>
 		<a id="jackmail" style="font-style: italic"
 			href="mailto:jack@ferryfair.com">jack@ferryfair.com</a>
 		<div id="pushTestBtn" onclick="sendPushTest(event)" style="cursor:pointer">🔔 PushTest</div>
@@ -58,9 +59,15 @@
       <div id="ln1"></div><div id="ln2"></div><div id="ln3"></div>
    </div>
 	<div id="Log" class="if">
-		<div id="about" class="hidden">
+		<div id="about" class="hidden">Super fast
 			<a class="plain" href="https://github.com/gowthamkudupudi/ferryfair">
-				Super fast spatial search!</a><br/>
+            spatial search</a><a class="plain" href="/users/">!</a><br/>
+         <span id="backedby">Backed by
+	         <a class="plain js"
+               href="https://github.com/gowthamkudupudi/FFJSON">
+		         FFJSON
+	         </a><br/>
+         </span>
 		</div>
 	</div>
 	<div id="loadTop" class="js"></div>
@@ -70,18 +77,18 @@
 					<td id="logoTd" style="vertical-align: top;">
 						<div id="logoDiv" class="if">
 							<pre style="color: yellow;" class="hidden"><code>
-		 88
-	 : 8@8X8
+       88
+    : 8@8X8
  88S888S8 888
  888S8%@88@88
  88X88@S8@@X
-;	888888:.	 ;;;;;;
-;				;;;;	;;;
-;;				;;;;	 ;;
- ;;					 ;;
-	;;					;;
-	 ;;;;			 ;;;
-			8;;;;;
+;  888888:.  ;;;;;;
+;           ;;;;  ;;;
+;;          ;;;;   ;;
+ ;;                ;;
+   ;;             ;;
+    ;;;;        ;;;
+         8;;;;;
 							</code></pre>
 					</div></td>
 		</tr></table></template>

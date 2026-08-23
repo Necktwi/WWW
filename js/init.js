@@ -1,5 +1,5 @@
-window.indexPromise= fetch('html/index.html?22').then(r=> r.text());
-window.thingsPromise= fetch('html/things.html?2').then(r=> r.text());
+window.indexPromise= fetch('html/index.html?25').then(r=> r.text());
+window.thingsPromise= fetch('html/things.html?3').then(r=> r.text());
 window.oopPromise= fetch('img/OwlOnPerch.svg').then(r=> r.text());
 window.lockPromise= fetch('img/Lock.svg').then(r=> r.text());
 window.unlockPromise= fetch('img/Unlock.svg').then(r=> r.text());
@@ -9,25 +9,15 @@ var MastHead,Logo,LogoDiv,LogoBox,LogoTd,Mbox,Inbox,Outbox,OwlOnPerch,owlMail;
 var LocationPin,LocationDDiv,LocationDiv,Location,LocTxt,LocTTimeout,LocTHide;
 var SearchTool,SearchToolOpacity=1,SearchBar,LoadTop,LoadBottom;
 var SearchToolBlink, GglSnD, GglSn, GglSnB, Gmail, PassBlk;
-var Mouth, MouthPad, InUp;
-var Lock,Desc,LockBlock,CMPD;
+var Mouth, MouthPad, InUp, Banner, LndngTxt, LndngDsc, ThnEdtBtn;
+var Lock, Desc, LockBlock, CMPD;
 var Signupdiv, ffGglId, BackToLock;
-var Username, Credentials;
-
-function urlBase64ToUint8Array (base64) {
-	const raw = window.atob(base64);
-	const uint8 = new Uint8Array(raw.length);
-	for (let i = 0; i < raw.length; i++) {
-		uint8[i] = raw.charCodeAt(i);
-	}
-	return uint8;
-}
-var Password;
+var Username, Credentials, Password;
 var Email, SubmitBtn, ThnUrlLog;
 var Passwords1, Password1L, Password2L, CaptchaImg, Captcha, NewL;
 var Passwords2, ConsentL, Consent, NonRecovery;
 var SignIn,SignUp,Recover;
-var Usermenu, TgtUsrDscSbtBtn;
+var Usermenu, TgtUsrDscSbtBtn, SThings, MThings, UThings;
 var User, TgtUsrLgHldr, TgtUsrDsc, TgtUsrDscEdtBx, TgtUsrDscEdtBtn;
 var Unlock, Log, ThingRemovables=[], imageCompressor;
 var ThingLocationL, ThingLocationBox, ThingNameL, ThingNameBox;
@@ -46,6 +36,16 @@ var LocatingULog, pxlHtMm= 0;
 var lstThn, lstThnDtls, Chin;
 var Header,Htable;
 var jsonCType= [["content-type", "application/json"]];
+
+var urlBase64ToUint8Array= function (base64) {
+	const std = base64.replace(/-/g, '+').replace(/_/g, '/');
+	const raw = window.atob(std);
+	const uint8 = new Uint8Array(raw.length);
+	for (let i = 0; i < raw.length; i++) {
+		uint8[i] = raw.charCodeAt(i);
+	}
+	return uint8;
+}
 var hideLogDiv= function (elm) {
 	if (elm.tOut)
 		clearTimeout(elm.tOut);
@@ -418,6 +418,7 @@ var openMap= function () {
 			setTimeout(subscribe, 3000);
 		}
 	}
+}
 var sendOwl= function () {
 	var showOwl= false;
 	OwlOnPerch.classList.add("owlSent");
@@ -955,18 +956,27 @@ window.init= async function () {
 	TgtUsrDscEdtBtn= document.getElementById("tgtUsrDscEdtBtn");
 	TgtUsrDscSbtBtn= document.getElementById("tgtUsrDscSbtBtn");
 	TgtUsrDscEdtBx= document.getElementById("tgtUsrDscEdtBx");
+	LndngTxt= document.getElementById("LndngTxt");
+	LndngDsc= document.getElementById("LndngDsc");
 	//Email.plcHldr='Email:';
 	//Passwords1.plcHldr='New password:';
 	//Passwords2.plcHldr='Retype password:';
 	//Email.value=Email.plcHldr;
 	//Passwords1.value=Passwords1.plcHldr;
 	//Passwords2.value=Passwords2.plcHldr;
-	Passwords1.type='password';
-	Passwords2.type='password';
+	Passwords1.type= 'password';
+	Passwords2.type= 'password';
 	CaptchaImg=document.getElementById("CaptchaImg");
 	Captcha=document.getElementById("Captcha");
 	Log=document.getElementById("Log");
 	Log.onclick=toggleLog;
+	window.addEventListener('message', e=>{
+		if (e.data && e.data.type === 'ffPush') {
+			var d= e.data.data;
+			ferrylog('Push: ' + (d.user || '') + ': ' +
+				(d.thingName || '') + '< ' + (d.msg || ''));
+		}
+	});
 	NonRecovery=document.getElementById("NonRecovery");
 	var inputs=document.getElementsByClassName("labeled");
 	for (var i=0; i<inputs.length; ++i) {
@@ -983,7 +993,13 @@ window.init= async function () {
 	}
 	User= document.getElementById('user');
 	User.onclick= function () {
-		location.href=User.innerHTML.toLowerCase()+"?gp="+Location.value;
+		ferrylog("Switching to Ur things, for proximity view click Logo")
+		history.pushState(
+			{}, '', User.innerHTML.toLowerCase()+"?gp="+Location.value);
+		document.body.classList.remove("proxima");
+		document.body.classList.remove("mThns");
+		document.body.classList.add("uThns");
+		TgtUsrLgHldr.classList.remove("hidden");
 	}
 	TgtUsrLgHldr= document.getElementById("tgtUsrLgHldr");
 	addEvent(Username, 'keydown', usrnmEvent);
@@ -1000,10 +1016,16 @@ window.init= async function () {
 	window.unlockPromise= undefined;
 	Usermenu= document.getElementById('usermenu');
 	Things= document.getElementById('Things');
+	SThings= document.getElementById('SThings');
+	MThings= document.getElementById('MThings');
+	UThings= document.getElementById('UThings');
 	Consent= document.getElementById('Consent');
 	ConsentL= document.getElementById('ConsentL');
 	Thing= getElementInsideContainer(Things, "Thing");
 	lstThn= Thing;
+	ThnEdtBtn= getElementInsideContainer(Thing, "ThingEditBtn");
+	ThnEdtBtn.onclick= editThing;
+	ThnEdtBtn.remove();
 	UserThings= {};
 	let ctrs= Thing.getElementsByClassName("removable");
 	chusPicBtnL= getElementInsideContainer(Thing, "chusPicBtnL");
@@ -1095,7 +1117,16 @@ window.init= async function () {
 		{ theme: "outline", size: "medium" }  // customization attributes
 	);
 	makeDynamic();
+	//setTimeOut(showHelp, 5000);
 };
+var showHelp= function () {
+	if (Log.offsetHeight) {
+		setTimeOut(showHelp, 1000);
+	} else {
+		//if ()
+		ferrylog("Click User")
+	}
+}
 var cnclTUsrDscEdt= function () {
 	TgtUsrDscEdtBx.classList.add("hidden");
 	TgtUsrDscEdtBtn.innerHTML= "Edit";
@@ -1147,7 +1178,7 @@ var sendMsg= function () {
 	ferrylog("Ur query will b sent by next owl!");
 }
 var gotoHome= function () {
-	window.location.href=window.location.origin;
+	window.location.href= window.location.origin;
 }
 var proceedCompressedImage= function (compressedSrc) {
 	sendFileData(new Uint8Array(compressedSrc), 2048, l);
@@ -1195,11 +1226,7 @@ function selectFiles (ev) {
 	var imgs= imgsHldr.children[0];
 	var imgHldr= imgs.children[imgs.cid];
 	var img= imgHldr.firstElementChild;
-	if (!l.teb) {
-		var teb= getElementInsideContainer(thisThing, "ThingEditBtn");
-		teb.disabled=true;
-		l.teb=teb;
-	}
+	ThnEdtBtn.disabled=true;
 	r.onload= function () {
 		//ev.target.value= '';
 		l.postChunk= function() {
@@ -1212,7 +1239,7 @@ function selectFiles (ev) {
 			thisThing.thingId=this.thingId;
 			var tid= getElementInsideContainer(thisThing, "ThingId");
 			tid.innerHTML=this.thingId.toString();
-			this.teb.disabled=false;
+			ThnEdtBtn.disabled=false;
 		}
 		var limg=r.result;
 		var image;
@@ -1329,6 +1356,11 @@ var signInUI= function (res) {
 	User.innerHTML= res.name;
 	User.setAttribute("title",location.origin+"/"+res.name.toLowerCase());
 	User.obj= res;
+	TgtUsrLgHldr.innerHTML= res.name;
+	TgtUsrLgHldr.onclick= function () {
+		window.location.href= '/'+res.name.toLowerCase();
+	}
+	TgtUsrLgHldr.classList.remove("hidden");
 	if (window.tgtUsr) {
 		TgtUsrDsc.innerHTML= res.tdesc?res.tdesc:dscUrSlf;
 		if (User.innerHTML==TgtUsrLgHldr.innerHTML) {
@@ -1428,12 +1460,14 @@ var showThingDetails= function (show) {
 		if (event.target!=eImg) {
 			if (eImg.value=="><")
 				incImg.call(eImg, 1);
+			ThnEdtBtn.remove();
 			lstThn.classList.remove("active");
 			Chin.classList.remove("big");
 		}
 		return;
 	}
 	if (show===false) {
+		ThnEdtBtn.remove();
 		lstThn.classList.remove("active");
 		Chin.classList.remove("big");
 		let eImg= getElementInsideContainer(lstThn, "eImg");
@@ -1444,9 +1478,12 @@ var showThingDetails= function (show) {
 	lstThn.classList.remove("active");
 	lstThn= this.parentElement;
 	lstThn.classList.add("active");
-	if (document.body.classList.contains("signed") &&
-		 !lstThn.classList.contains("mine")) {
-		popQueryBtn.call(lstThn);
+	if (document.body.classList.contains("signed")) {
+		if (lstThn.classList.contains("mine")) {
+			lstThn.append(ThnEdtBtn);
+		} else {
+			popQueryBtn.call(lstThn);
+		}
 	}
 	Chin.classList.add("big");
 	// let shUrB= getElementInsideContainer(lstThn,"showURLBtn");
@@ -1526,10 +1563,28 @@ var showThing= function () {
 	Mbox.classList.add("hidden");
 	var thing;
 	if (this.md) {
-		thing=this.md.parentElement.parentElement.parentElement.parentElement;
+		thing= this.md.parentElement.parentElement.parentElement.parentElement;
 	} else {
-		thing=this.rmd.parentElement.parentElement.parentElement.parentElement.
+		thing= this.rmd.parentElement.parentElement.parentElement.parentElement.
 			parentElement;
+	}
+	if (thing.parentElement.id==="MThings" &&
+		 !document.body.classList.contains("mThns")) {
+		ferrylog("Switching to Mailbox view, for proximity view press Logo");
+		document.body.classList.remove("uThns");
+		document.body.classList.remove("proxima");
+		document.body.classList.add("mThns");
+	} else if (thing.parentElement.id==="UThings" &&
+				  !document.body.classList.contains("uThns")) {
+		ferrylog("Switching to Ur things, for proximity view press Logo");
+		document.body.classList.remove("mThns");
+		document.body.classList.remove("proxima");
+		document.body.classList.add("uThns");
+	} else if (document.body.classList.contains("uThns") ||
+				  document.body.classList.contains("mThns")) {
+		document.body.classList.remove("mThns");
+		document.body.classList.remove("uThns");
+		document.body.classList.add("proxima");
 	}
 	showThingDetails.call(getElementInsideContainer(thing, "ThingName"), true);
 	md= this.md?this.md:this.rmd;
@@ -1559,10 +1614,10 @@ var thingDist= function (thingN) {
 	}
 	return 1000000.000;
 }
-var insertThing= function (thingN) {
+var insertThingByDist= function (thingN) {
 	thingN.d= thingDist(thingN);
 	
-	if (!Things.children.length) {
+	if (!lThings.children.length) {
 		Things.appendChild(thingN);
 		return;
 	}
@@ -1594,9 +1649,24 @@ var updateThings= function (res) {
 		userData= res;
 	}
 	Things.onclick= hideThingDetails;
-	var thingCount= res.things?res.things.length:0;
-	for (var i=res.addNewThing?thingCount-1:0; i<thingCount; ++i) {
-		var thing= res.things[i];
+	let thingCount= 0;
+	let lThings, resthings, tClass;
+	if (res.things) {
+		resthings= res.things;
+		lThings= SThings;
+		tClass= "proximity";
+	} else if (res.mthings) {
+		resthings= res.mthings;
+		lThings= MThings;
+		tClass= "mThn";
+	} else if (res.uthings) {
+		resthings= res.uthings;
+		lThings= UThings;
+		tClass= "mine";
+	}
+	thingCount= resthings.length;
+	for (var i= res.addNewThing? thingCount-1 : 0; i<thingCount; ++i) {
+		var thing= resthings[i];
 		var newThing= true;
 		if (!thing.user && !userData["name"])
 			return;
@@ -1607,20 +1677,36 @@ var updateThings= function (res) {
 			un= thing.user;
 		}
 		if (!UserThings[un]) {
-			UserThings[un]={};
+			UserThings[un]= {};
 		}
 		if (UserThings[un][thing.id]) {
-			newThing=false;
+			newThing= false;
 		} else if (UserThings[un][-1]) {
-			UserThings[un][thing.id]=UserThings[un][-1];
-			UserThings[un][-1]=undefined;
-			newThing=false;
+			UserThings[un][thing.id]= UserThings[un][-1];
+			UserThings[un][-1]= undefined;
+			newThing= false;
 		}
 		var thisThingUser= User.innerHTML.toLowerCase()==thing.user;
 		var thingN=
-			 newThing?Thing.cloneNode(true):UserThings[un][thing.id];
+			 newThing? Thing.cloneNode(true) : UserThings[un][thing.id];
+		thingN.classList.remove("hidden");
+		thingN.classList.add(tClass);
 		if (Object.keys(thing).length==2) {
-			thingN.classList.remove("hidden");
+			if (i+1==thingCount && !res.addNewThing) {
+				i= -1;
+				if (lThings===SThings) {
+					resthings= res.mthings;
+					lThings= MThings;
+					tClass= "mThn";
+				} else if (lThings===MThings) {
+					resthings= res.uthings;
+					lThings= UThings;
+					tClass= "mine";
+				} else {
+					break;
+				}
+				thingCount= resthings.length;
+			}
 			continue;
 		}
 		thingN.thingId=thing.id;
@@ -1633,22 +1719,23 @@ var updateThings= function (res) {
 		resizeObserver.observe(imgs);
 		var msgDiv= getElementInsideContainer(thingN, "msgdiv");
 		var msgd= getElementInsideContainer(msgDiv, "msgs");
-		var UserThingEditBtn=
-			 getElementInsideContainer(thingN, "ThingEditBtn");
+		var pics= resthings[i].pics;
+		if (pics && pics.length>1) {
+			thingN.classList.add("mltImg");
+		}
 		if (newThing) {
 			imgsHldr.onclick=showThingDetails;
 			var imgHldr= imgs.children[0];
 			var img= imgHldr.children[0];
-			var pics= res.things[i].pics;
 			if (pics && pics.length) {
-				img.src="/upload/"+res.things[i].user+"/"+
-					res.things[i].id+"."+0+".jpg?t="+pics[0].ts;
+				img.src="/upload/"+resthings[i].user+"/"+
+					resthings[i].id+"."+0+".jpg?t="+pics[0].ts;
 				for (var j=1; j<pics.length; ++j) {
 					imgHldr= imgs.children[0].cloneNode(true);
 					imgHldr.classList.add("hidden");
 					img= imgHldr.children[0];
-					img.src= "/upload/"+res.things[i].user+"/"+
-						res.things[i].id+"."+j+".jpg?"+pics[j].ts;
+					img.src= "/upload/"+resthings[i].user+"/"+
+						resthings[i].id+"."+j+".jpg?"+pics[j].ts;
 					imgs.children[j-1].insertAdjacentElement(
 						'afterEnd', imgHldr);
 				}
@@ -1657,7 +1744,6 @@ var updateThings= function (res) {
 				imgHldr.replaceChild(SVG, img);
 				imgHldr.classList.add("dummy");
 			}
-			UserThingEditBtn.onclick= editThing;
 			var tid= getElementInsideContainer(thingN, "ThingId");
 			tid.innerText= thing.id;
 			var tusr= getElementInsideContainer(thingN, "ThingUsr");
@@ -1668,9 +1754,9 @@ var updateThings= function (res) {
 				thingN.classList.add("hidden");
 		}
 		if (thing.name && thing.name.length) {
-			var name=getElementInsideContainer(thingN, "ThingName");
-			name.innerText=thing.name;
-			name.onclick=showThingDetails;
+			let name= getElementInsideContainer(thingN, "ThingName");
+			name.innerText= thing.name;
+			name.onclick= showThingDetails;
 			name.classList.remove("hidden");
 		}
 		var locPin= getElementInsideContainer(thingN, "ThingLocationPin");
@@ -1692,7 +1778,7 @@ var updateThings= function (res) {
 		} else {
 			locPin.classList.add("empty");
 		}
-		var dtls=getElementInsideContainer(thingN, "ThingDetails");
+		var dtls= getElementInsideContainer(thingN, "ThingDetails");
 		var dtlsDiv;
 		if (thing.details) {
 			dtls.innerHTML=thing.details;
@@ -1704,7 +1790,7 @@ var updateThings= function (res) {
 		let lm= getElementInsideContainer(thingN, "lastModed");
 		if (thing.lastModed) {
 			const time= new Date(thing.lastModed*1000);
-			lm.innerHTML=time.toLocaleString(undefined, {
+			lm.innerHTML= time.toLocaleString(undefined, {
 				year: '2-digit',
 				month: '2-digit',
 				day: '2-digit',
@@ -1713,18 +1799,18 @@ var updateThings= function (res) {
 				hour12: false
 			});
 		} else {
-			lm.innerHTML="-";
+			lm.innerHTML= "-";
 		}
-		var rmsgs=thing.rmsgs;
+		var rmsgs= thing.rmsgs;
 		var itms;
 		if (!Inbox.things[thing.id]) {
-			itms=Inbox.things[thing.id]=new Set();
+			itms= Inbox.things[thing.id]=new Set();
 		} else {
-			itms=Inbox.things[thing.id];
+			itms= Inbox.things[thing.id];
 		}
 		if (rmsgs && newThing) {
-			for (var l=0,m=0; l<rmsgs.length; ++l,++m) {
-				var rmsg=rmsgs[l];
+			for (var l= 0,m= 0; l<rmsgs.length; ++l,++m) {
+				var rmsg= rmsgs[l];
 				var md;
 				if (l<msgd.children.length) {
 					md= msgd.children[m];
@@ -1758,36 +1844,49 @@ var updateThings= function (res) {
 						md.classList.add("new");
 						++Inbox.news;
 					}
-					imd.md=md;
-					md.imd=imd;
-					imd.onclick=showThing;
+					imd.md= md;
+					md.imd= imd;
+					imd.onclick= showThing;
 					itms.add(rmsg["id"]);  
 				}
 				if (rmsg["rep"]) {
-					var reply=ReplyDiv.firstElementChild.cloneNode(true);
-					reply.lastElementChild.innerHTML=rmsg["rep"];
+					var reply= ReplyDiv.firstElementChild.cloneNode(true);
+					reply.lastElementChild.innerHTML= rmsg["rep"];
 					md.insertAdjacentElement("beforeEnd", reply);
 					reply.classList.remove("inQ");
 					reply.classList.remove("hidden");
 				} else {
 					if (!md.onclick && thisThingUser) {
-						md.onclick=popReplyBtn;
+						md.onclick= popReplyBtn;
 					}
 				}
 			}
 		}
-		UserThings[un][thing.id]=thingN;
-		thingN.user=un;
+		UserThings[un][thing.id]= thingN;
+		thingN.user= un;
 		if (newThing) {
 			if (thing.id!="-1") {
-				insertThing(thingN);
+				lThings.appendChild(thingN);
 			} else {
-				Things.insertAdjacentElement('afterBegin', thingN);
+				lThings.insertAdjacentElement('afterBegin', thingN);
 			}
-		} else {
-			if (!window.tgtUsr || tgtUsr==un) {
-				thingN.classList.remove("hidden");
+		}
+		if (i+1==thingCount && !res.addNewThing) {
+			i= -1;
+			if (lThings===SThings) {
+				resthings= res.mthings;
+				lThings= MThings;
+				tClass= "mThn";
+			} else if (lThings===MThings) {
+				resthings= res.uthings;
+				lThings= UThings;
+				tClass= "mine";
+			} else {
+				break;
 			}
+			if (!resthings)
+				break;
+			thingCount= resthings.length;
 		}
 	}
 	Things.classList.remove("hidden");
@@ -1938,17 +2037,17 @@ var authenticateUser= function (ggl) {
 
 var updateSearchedThings= function (feed) {
 	var res= JSON.parse(feed.responseText);
-	ferrylog(
-		res.things.length+" thing"+(res.things.length==1?"":"s")+" found");
+	if (res.things)
+		ferrylog(
+			res.things.length+" thing"+(res.things.length==1?"":"s")+" found");
 	res.search= true;
 	if (cnt.locked)
 		cnt.locked= undefined;
 	if (window.tgtUsr && res.tname) {
-		TgtUsrLgHldr.innerHTML= res.tname;
-		TgtUsrLgHldr.onclick= function () {
-			window.location.href='/'+tgtUsr;
+		LndngTxt.innerHTML= res.tname;
+		LndngTxt.onclick= function () {
+			window.location.href= '/'+tgtUsr;
 		}
-		TgtUsrLgHldr.classList.remove("hidden");
 	}
 	//deleteThings();
 	if (Log.classList.contains('if')) {
@@ -1958,10 +2057,19 @@ var updateSearchedThings= function (feed) {
 		LocationDDiv.classList.remove("if");
 		LocationDDiv.remove();
 		document.body.insertAdjacentElement("afterBegin", LocationDDiv);
-		LogoDiv.parentElement.style.display="table-cell";		  MastHead.classList.remove("if");
+		LogoDiv.parentElement.style.display="table-cell";
+		MastHead.classList.remove("if");
 		Logo.classList.add("small");
 		LogoDiv.onclick= function () {
-			location.href=window.location.origin;
+			if (document.body.classList.contains("mThns")||
+				 document.body.classList.contains("uThns")) {
+				history.pushState({}, '', '/');
+				document.body.classList.remove("uThns");
+				document.body.classList.remove("mThns");
+				document.body.classList.add("proxima");
+			} else {
+				location.href= window.location.origin;
+			}
 		}
 		LocationPin.classList.remove("hidden");
 		LocTHide= function () {
@@ -1994,7 +2102,8 @@ var updateSearchedThings= function (feed) {
 		hideThings();
 		Things.classList.add("search");
 	}
-	searchCount+= res.things.length;
+	if (res.things)
+		searchCount+= res.things.length;
 	if (!res.email) {
 		updateThings(res);
 	}
@@ -2055,6 +2164,8 @@ var signOutUi= function () {
 	while (mine.length) {
 		mine[0].classList.remove("mine");
 	}
+	document.body.classList.remove("uThns");
+	UThings.innerHTML= "";
 	TgtUsrDscEdtBtn.classList.add("hidden");
 	if (TgtUsrDsc.innerHTML===dscUrSlf)
 		TgtUsrDsc.classList.add("hidden");
@@ -2280,8 +2391,8 @@ var addThing= function () {
 	userData["addNewThing"]= 1;
 	updateThings(userData);
 	let thing= Things.children[0];
-	editThing.call(getElementInsideContainer(
-		thing, "ThingEditBtn"));
+	thing.append(ThnEdtBtn);
+	editThing.call(ThnEdtBtn);
 }
 var addRemovables= function (thing) {
 	for (let i=0; i<ThingRemovables.length; ++i) {
@@ -2413,16 +2524,16 @@ var updateThing= function() {
 		UserThing.classList.add("hidden");
 		return;
 	}
-	edtBtn.onclick=editThing;
-	edtBtn.value="Edit";
+	edtBtn.onclick= editThing;
+	edtBtn.value= "Edit";
 	if (cncl) {
 		return false;
 	}
 	if (!validThingName(ThingNameBox.value)) {
 		return false;
 	}
-	var thing={};thing.id=UserThing.thingId;
-	thing.name=ThingNameBox.value;
+	var thing= {}; thing.id=UserThing.thingId;
+	thing.name= ThingNameBox.value;
 	var location= ThingLocationBox.value.split(',');
 	thing.location= [parseFloat(location[0]), parseFloat(location[1])];
 	var ThingDetailsTA= ThingDetailsDiv.children[1];
@@ -2431,11 +2542,11 @@ var updateThing= function() {
 	}
 	thing.details= ThingDetailsTA.value;
 	content.things.push(thing);
-	f.user=content;
-	f.content=JSON.stringify(content);
-	f.reqHeaders=jsonCType;
+	f.user= content;
+	f.content= JSON.stringify(content);
+	f.reqHeaders= jsonCType;
 	f.postExpdtn= function (feed) {
-		var res=JSON.parse(feed.responseText);
+		var res= JSON.parse(feed.responseText);
 		if (!signOk(res)) {
 			return;
 		}
@@ -2447,7 +2558,7 @@ var updateThing= function() {
 		}
 		delete f.shuttle;
 	};
-	f.shuttle=new core.shuttle(url,f.content,f.postExpdtn,f);
+	f.shuttle= new core.shuttle(url,f.content,f.postExpdtn,f);
 }
 
 // Send a large blob of data chunk by chunk
@@ -2481,7 +2592,7 @@ var sendFileData= function(data, chunkSize, l) {
 							return;
 						}
 						ferrylog('Error: ' + text);
-						l.teb.disabled=false;
+						ThnEdtBtn.disabled=false;
 					} catch (e) {
 						ferrylog(e+"|"+text);
 					}
@@ -2522,9 +2633,9 @@ function validUsername (name) {
 	for (var i=0; i<name.length;++i) {
 		if (!((name.charAt(i)>='a' && name.charAt(i)<='z') ||
 				(name.charAt(i)>='A' && name.charAt(i)<='Z') ||
-				(name.charAt(i)>='0' && name.charAt(i)<='9') ||
-				(name.charAt(i)=='.') || (name.charAt(i)=='_'))) {
-			ferrylog("Invalid Username, should be [a-z._]");
+				(name.charAt(i)>='0' && name.charAt(i)<='9'))) {
+			ferrylog(
+				"Invalid Username, should be small/capital letters or numbers");
 			return false;
 		}
 	}
@@ -2649,7 +2760,7 @@ async function subscribe () {
 
 	try {
 		const registration= await navigator.serviceWorker.register(
-			'js/serviceWorker.js');
+			'serviceWorker.js', { scope: '/' });
 		ferrylog('Service Worker registered');
 
 		if (!registration.active) {
@@ -2657,16 +2768,30 @@ async function subscribe () {
 		}
 		ferrylog('Service Worker ready');
 
+		const prevSubscription= await registration.pushManager
+			.getSubscription();
+		const srvSub= User.obj? User.obj.wpSub : null;
+		if (prevSubscription && srvSub &&
+				prevSubscription.endpoint=== srvSub.endpoint) {
+			ferrylog('Push already subscribed');
+			return;
+		}
+
 		const response= await fetch('/?req=vapidpublickey');
 		const vapidPublicKey= await response.text();
-		const convertedVapidKey= urlBase64ToUint8Array(vapidPublicKey);
+		const rawKey= urlBase64ToUint8Array(vapidPublicKey);
+		// DER-encoded EC public key: raw P-256 key is last 65 bytes
+		const rawP256= rawKey.slice(rawKey.length - 65);
 
+		if (prevSubscription) {
+			ferrylog('Push subscription stale, replacing');
+			await prevSubscription.unsubscribe();
+		}
 		const subscription= await registration.pushManager.subscribe({
 			userVisibleOnly: true,
-			applicationServerKey: convertedVapidKey
+			applicationServerKey: rawP256
 		});
-
-		ferrylog('Push subscription successful:', subscription);
+		ferrylog('Push subscription successful:'+JSON.stringify(subscription));
 
 		await fetch('/?req=notify', {
 			method: 'POST',
@@ -2677,22 +2802,7 @@ async function subscribe () {
 		});
 
 		ferrylog('Subscription sent to server');
-		document.getElementById("pushTestBtn").style.display= "block";
 	} catch (error) {
 		ferrylog('Failed to subscribe to push notifications: ' + error);
 	}
-}
-
-function sendPushTest (event) {
-	event.stopPropagation();
-	fetch('/?req=push', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		}
-	}).then((res)=>res.json()).then((d)=>{
-		ferrylog('Push test response:', d);
-	}).catch((e)=>{
-		ferrylog('Push test failed: ' + e);
-	});
 }

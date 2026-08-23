@@ -140,6 +140,7 @@ header input {
 	left:0px;
 	background-color: black;
 	text-align: left;
+	cursor: default;
 	/* display: flex; */
 	/* justify-content: center; */
 	/* align-items: center; */
@@ -170,17 +171,18 @@ header input {
 	margin-top: 4mm;
 	margin-bottom: 4mm;
 }
+#Banner {
+	margin-left: 2mm;
+}
 #tgtUsrLgHldr {
 	font-family: AB;
 	font-size: 8mm;
 	cursor: pointer;
-	margin-left: 2mm;
 }
 #mastHead.if {
 	position: fixed;
 	bottom: 2mm;
 	left: 2mm;
-	margin: 0mm;
 	z-index: 11; 
 }
 #lock {
@@ -295,8 +297,6 @@ header input {
 	color: inherit;
 	width: inherit;
 	border-radius: inherit;
-	padding-left: inherit;
-	padding-right: inherit;
 }
 #Log.visible div.hidden {
 	display: revert;
@@ -305,7 +305,10 @@ header input {
 	background-color: inherit;
 	color: inherit;
 }
-
+.plain {
+	text-decoration: none;
+	color: unset;
+}
 a {
 	color: #8888ff;
 }
@@ -317,7 +320,6 @@ a {
 }
 #Log #about a.plain {
 	color: azure;
-	text-decoration: none;
 	font-size: 3mm;
 }
 #Log.about {
@@ -454,7 +456,39 @@ inptTxtBx.typing {
 	backdrop-filter: none;
 	-webkit-backdrop-filter: none;
 }
-
+#MThings {
+	display: none;
+}
+#UThings {
+	display: none;
+}
+.mThns #MThings {
+	display: revert;
+}
+.mThns #Thing {
+	display: none;
+}
+.mThns #Thing.mThn {
+	display: inline-block;
+}
+.uThns #MThings {
+	display: none;
+}
+.uThns #Thing {
+	display: none;
+}
+.uThns #Thing.mine {
+	display: inline-block;
+}
+.uThns #UThings {
+	display: revert;
+}
+#LndngBnr, #OutboxBnr, #tgtUsrBanner {
+	display: none;
+}
+.proxima #LndngBnr, .mThns #OutboxBnr, .uThns #tgtUsrBanner {
+	display: revert;
+}
 #thnBtm {
 	position: absolute;
 	z-index: 2;
@@ -479,14 +513,14 @@ inptTxtBx.typing {
 	right: 15mm;
 }
 #ThingEditBtn {
-	display: none;
+	/* display: none; */
 	position: absolute;
 	top: 2mm;
 	right: 2mm;
 }
-#Thing.mine #ThingEditBtn {
-	display:block;
-}
+/* body.signed #Thing.mine #ThingEditBtn { */
+/* 	display:block; */
+/* } */
 #Thing.mine #qSendDiv {
 	display: none;
 }
@@ -507,6 +541,10 @@ inptTxtBx.typing {
 	bottom:1mm;
 	left: 1mm;
 	margin:0.2cm;
+	display: none;
+}
+#Thing.mltImg #NxtBtnHldr, #Thing.editMode #NxtBtnHldr {
+	display: revert;
 }
 .imgNxtBtns {
 	min-width: 7mm;
