@@ -418,6 +418,7 @@ var openMap= function () {
 			setTimeout(subscribe, 3000);
 		}
 	}
+}
 var sendOwl= function () {
 	var showOwl= false;
 	OwlOnPerch.classList.add("owlSent");
