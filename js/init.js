@@ -2751,6 +2751,7 @@ var onMsgInptBlur= function (event) {
 		Header.classList.remove("hidden");
 }
 
+var postedSub= null;
 async function subscribe () {
 	if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
 		ferrylog('Push messaging is not supported');
@@ -2769,7 +2770,7 @@ async function subscribe () {
 
 		const prevSubscription= await registration.pushManager
 			.getSubscription();
-		const srvSub= User.obj? User.obj.wpSub : null;
+		const srvSub= (User.obj && User.obj.wpSub) || postedSub;
 		if (prevSubscription && srvSub &&
 				prevSubscription.endpoint=== srvSub.endpoint) {
 			ferrylog('Push already subscribed');
@@ -2799,7 +2800,10 @@ async function subscribe () {
 				'Content-Type': 'application/json'
 			}
 		});
-
+		postedSub= subscription;
+		if (User.obj) {
+			User.obj.wpSub= subscription;
+		}
 		ferrylog('Subscription sent to server');
 	} catch (error) {
 		ferrylog('Failed to subscribe to push notifications: ' + error);
