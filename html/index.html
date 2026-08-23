@@ -1,9 +1,5 @@
-<span dhtml="end:about">
-	<a class="plain js" href="https://github.com/gowthamkudupudi/FFJSON">
-		Backed by FFJSON
-	</a><br/>
-	<a href="files/md.html?files/HowTo.md" class="js">HowTo</a>
-</span>
+<a dhtml="end:backedby" href="files/md.html?files/HowTo.md" 
+   class="js">HowTo</a>
 <div dhtml="start:header" id="mbox" class="hidden js">
 	<div id="inboxL">Inbox:</div>
 	<div id="inbox" class=""></div>
@@ -90,8 +86,7 @@
 </td>
 <td class="js">
 	<div id="UserActions" class="hidden">
-		<button id="AddThing" onclick="addThing()"
-			title="Add a thing to fair">
+		<button id="AddThing" onclick="addThing()" title="Add a thing to fair">
 			<span id="AddThingSVG"></span>
 		</button>
 	</div>
@@ -112,21 +107,30 @@
 		d="M 21 7 A 20 40 45 0 1 33 21 A 20 20 0 0 0 21 7 Z"
 		style="stroke-opacity: 1.0;"/>
 </svg>
-<div dhtml="after:header" id="tgtUsrBanner">
-   <div id="tgtUsrLgHldr" class="hidden js">
-	   <div id="ImgHldr" class="center">
-		   <img id="ThingImg" class="fixedSize" loading="lazy" decoding="async"/>
-	   </div>
-	   <label id="chusPicBtnL" for="chusPicBtn"
-		   class="removable hidden">Browse...</label>
-	   <input id="chusPicBtn" type="file" class="editBtn removable"
-		   onchange="selectFiles.call(this, event);"/>
-   </div>
-   <span id="tgtUsrDsc" class="hidden"></span>
-   <textarea id="tgtUsrDscEdtBx" class="hidden"></textarea>
-   <button id="tgtUsrDscEdtBtn" class="hidden">Edit</button>
-   <button id="tgtUsrDscSbtBtn" class="hidden">Submit</button>
+<div dhtml="after:header" id="Banner"><div id="LndngBnr">
+   <div id="LndngTxt">Things in proximity...</div>
+   <div id="LndngImgHldr" class="center hidden">
+		<img id="LndngImg" class="fixedSize" loading="lazy" decoding="async"/>
+	</div>
+   <div id="LndngDsc" class="hidden"></div>
 </div>
+<div id="OutboxBnr">Outbox</div>
+<div id="tgtUsrBanner">
+	<div id="tgtUsrLgHldr" class="hidden js">
+		<div id="ImgHldr" class="center">
+			<img id="ThingImg" class="fixedSize" loading="lazy"
+				decoding="async"/>
+	   </div>
+		<label id="chusPicBtnL" for="chusPicBtn"
+			class="removable hidden">Browse...</label>
+		<input id="chusPicBtn" type="file" class="editBtn removable"
+			onchange="selectFiles.call(this, event);"/>
+	</div>
+	<span id="tgtUsrDsc" class="hidden"></span>
+	<textarea id="tgtUsrDscEdtBx" class="hidden"></textarea>
+	<button id="tgtUsrDscEdtBtn" class="hidden">Edit</button>
+	<button id="tgtUsrDscSbtBtn" class="hidden">Submit</button>
+</div></div>
 <template id="thingsTmplt"></template>
 <br/>
 <button id="loadBottom" value="load more ...">load more...</button>

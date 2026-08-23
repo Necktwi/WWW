@@ -1,4 +1,4 @@
-window.indexPromise= fetch('html/index.html?22').then(r=> r.text());
+window.indexPromise= fetch('html/index.html?25').then(r=> r.text());
 window.thingsPromise= fetch('html/things.html?3').then(r=> r.text());
 window.oopPromise= fetch('img/OwlOnPerch.svg').then(r=> r.text());
 window.lockPromise= fetch('img/Lock.svg').then(r=> r.text());
@@ -9,21 +9,10 @@ var MastHead,Logo,LogoDiv,LogoBox,LogoTd,Mbox,Inbox,Outbox,OwlOnPerch,owlMail;
 var LocationPin,LocationDDiv,LocationDiv,Location,LocTxt,LocTTimeout,LocTHide;
 var SearchTool,SearchToolOpacity=1,SearchBar,LoadTop,LoadBottom;
 var SearchToolBlink, GglSnD, GglSn, GglSnB, Gmail, PassBlk;
-var Mouth, MouthPad, InUp;
-var Lock,Desc,LockBlock,CMPD;
+var Mouth, MouthPad, InUp, Banner, LndngTxt, LndngDsc, ThnEdtBtn;
+var Lock, Desc, LockBlock, CMPD;
 var Signupdiv, ffGglId, BackToLock;
-var Username, Credentials;
-
-function urlBase64ToUint8Array (base64) {
-	const std = base64.replace(/-/g, '+').replace(/_/g, '/');
-	const raw = window.atob(std);
-	const uint8 = new Uint8Array(raw.length);
-	for (let i = 0; i < raw.length; i++) {
-		uint8[i] = raw.charCodeAt(i);
-	}
-	return uint8;
-}
-var Password;
+var Username, Credentials, Password;
 var Email, SubmitBtn, ThnUrlLog;
 var Passwords1, Password1L, Password2L, CaptchaImg, Captcha, NewL;
 var Passwords2, ConsentL, Consent, NonRecovery;
@@ -47,6 +36,16 @@ var LocatingULog, pxlHtMm= 0;
 var lstThn, lstThnDtls, Chin;
 var Header,Htable;
 var jsonCType= [["content-type", "application/json"]];
+
+var urlBase64ToUint8Array= function (base64) {
+	const std = base64.replace(/-/g, '+').replace(/_/g, '/');
+	const raw = window.atob(std);
+	const uint8 = new Uint8Array(raw.length);
+	for (let i = 0; i < raw.length; i++) {
+		uint8[i] = raw.charCodeAt(i);
+	}
+	return uint8;
+}
 var hideLogDiv= function (elm) {
 	if (elm.tOut)
 		clearTimeout(elm.tOut);
@@ -956,14 +955,16 @@ window.init= async function () {
 	TgtUsrDscEdtBtn= document.getElementById("tgtUsrDscEdtBtn");
 	TgtUsrDscSbtBtn= document.getElementById("tgtUsrDscSbtBtn");
 	TgtUsrDscEdtBx= document.getElementById("tgtUsrDscEdtBx");
+	LndngTxt= document.getElementById("LndngTxt");
+	LndngDsc= document.getElementById("LndngDsc");
 	//Email.plcHldr='Email:';
 	//Passwords1.plcHldr='New password:';
 	//Passwords2.plcHldr='Retype password:';
 	//Email.value=Email.plcHldr;
 	//Passwords1.value=Passwords1.plcHldr;
 	//Passwords2.value=Passwords2.plcHldr;
-	Passwords1.type='password';
-	Passwords2.type='password';
+	Passwords1.type= 'password';
+	Passwords2.type= 'password';
 	CaptchaImg=document.getElementById("CaptchaImg");
 	Captcha=document.getElementById("Captcha");
 	Log=document.getElementById("Log");
@@ -994,8 +995,10 @@ window.init= async function () {
 		ferrylog("Switching to Ur things, for proximity view click Logo")
 		history.pushState(
 			{}, '', User.innerHTML.toLowerCase()+"?gp="+Location.value);
-		Things.classList.remove("mThns");
-		Things.classList.add("uThns");
+		document.body.classList.remove("proxima");
+		document.body.classList.remove("mThns");
+		document.body.classList.add("uThns");
+		TgtUsrLgHldr.classList.remove("hidden");
 	}
 	TgtUsrLgHldr= document.getElementById("tgtUsrLgHldr");
 	addEvent(Username, 'keydown', usrnmEvent);
@@ -1019,6 +1022,9 @@ window.init= async function () {
 	ConsentL= document.getElementById('ConsentL');
 	Thing= getElementInsideContainer(Things, "Thing");
 	lstThn= Thing;
+	ThnEdtBtn= getElementInsideContainer(Thing, "ThingEditBtn");
+	ThnEdtBtn.onclick= editThing;
+	ThnEdtBtn.remove();
 	UserThings= {};
 	let ctrs= Thing.getElementsByClassName("removable");
 	chusPicBtnL= getElementInsideContainer(Thing, "chusPicBtnL");
@@ -1219,11 +1225,7 @@ function selectFiles (ev) {
 	var imgs= imgsHldr.children[0];
 	var imgHldr= imgs.children[imgs.cid];
 	var img= imgHldr.firstElementChild;
-	if (!l.teb) {
-		var teb= getElementInsideContainer(thisThing, "ThingEditBtn");
-		teb.disabled=true;
-		l.teb=teb;
-	}
+	ThnEdtBtn.disabled=true;
 	r.onload= function () {
 		//ev.target.value= '';
 		l.postChunk= function() {
@@ -1236,7 +1238,7 @@ function selectFiles (ev) {
 			thisThing.thingId=this.thingId;
 			var tid= getElementInsideContainer(thisThing, "ThingId");
 			tid.innerHTML=this.thingId.toString();
-			this.teb.disabled=false;
+			ThnEdtBtn.disabled=false;
 		}
 		var limg=r.result;
 		var image;
@@ -1353,6 +1355,11 @@ var signInUI= function (res) {
 	User.innerHTML= res.name;
 	User.setAttribute("title",location.origin+"/"+res.name.toLowerCase());
 	User.obj= res;
+	TgtUsrLgHldr.innerHTML= res.name;
+	TgtUsrLgHldr.onclick= function () {
+		window.location.href= '/'+res.name.toLowerCase();
+	}
+	TgtUsrLgHldr.classList.remove("hidden");
 	if (window.tgtUsr) {
 		TgtUsrDsc.innerHTML= res.tdesc?res.tdesc:dscUrSlf;
 		if (User.innerHTML==TgtUsrLgHldr.innerHTML) {
@@ -1452,12 +1459,14 @@ var showThingDetails= function (show) {
 		if (event.target!=eImg) {
 			if (eImg.value=="><")
 				incImg.call(eImg, 1);
+			ThnEdtBtn.remove();
 			lstThn.classList.remove("active");
 			Chin.classList.remove("big");
 		}
 		return;
 	}
 	if (show===false) {
+		ThnEdtBtn.remove();
 		lstThn.classList.remove("active");
 		Chin.classList.remove("big");
 		let eImg= getElementInsideContainer(lstThn, "eImg");
@@ -1468,9 +1477,12 @@ var showThingDetails= function (show) {
 	lstThn.classList.remove("active");
 	lstThn= this.parentElement;
 	lstThn.classList.add("active");
-	if (document.body.classList.contains("signed") &&
-		 !lstThn.classList.contains("mine")) {
-		popQueryBtn.call(lstThn);
+	if (document.body.classList.contains("signed")) {
+		if (lstThn.classList.contains("mine")) {
+			lstThn.append(ThnEdtBtn);
+		} else {
+			popQueryBtn.call(lstThn);
+		}
 	}
 	Chin.classList.add("big");
 	// let shUrB= getElementInsideContainer(lstThn,"showURLBtn");
@@ -1556,19 +1568,22 @@ var showThing= function () {
 			parentElement;
 	}
 	if (thing.parentElement.id==="MThings" &&
-		 !Things.classList.contains("mThns")) {
+		 !document.body.classList.contains("mThns")) {
 		ferrylog("Switching to Mailbox view, for proximity view press Logo");
-		Things.classList.remove("uThns");
-		Things.classList.add("mThns");
+		document.body.classList.remove("uThns");
+		document.body.classList.remove("proxima");
+		document.body.classList.add("mThns");
 	} else if (thing.parentElement.id==="UThings" &&
-				  !Things.classList.contains("uThns")) {
+				  !document.body.classList.contains("uThns")) {
 		ferrylog("Switching to Ur things, for proximity view press Logo");
-		Things.classList.remove("mThns");
-		Things.classList.add("uThns");
-	} else if (Things.classList.contains("uThns") ||
-				  Things.classList.contains("mThns")) {
-		Things.classList.remove("mThns");
-		Things.classList.add("uThns");
+		document.body.classList.remove("mThns");
+		document.body.classList.remove("proxima");
+		document.body.classList.add("uThns");
+	} else if (document.body.classList.contains("uThns") ||
+				  document.body.classList.contains("mThns")) {
+		document.body.classList.remove("mThns");
+		document.body.classList.remove("uThns");
+		document.body.classList.add("proxima");
 	}
 	showThingDetails.call(getElementInsideContainer(thing, "ThingName"), true);
 	md= this.md?this.md:this.rmd;
@@ -1703,8 +1718,6 @@ var updateThings= function (res) {
 		resizeObserver.observe(imgs);
 		var msgDiv= getElementInsideContainer(thingN, "msgdiv");
 		var msgd= getElementInsideContainer(msgDiv, "msgs");
-		var UserThingEditBtn=
-			 getElementInsideContainer(thingN, "ThingEditBtn");
 		var pics= resthings[i].pics;
 		if (pics && pics.length>1) {
 			thingN.classList.add("mltImg");
@@ -1730,7 +1743,6 @@ var updateThings= function (res) {
 				imgHldr.replaceChild(SVG, img);
 				imgHldr.classList.add("dummy");
 			}
-			UserThingEditBtn.onclick= editThing;
 			var tid= getElementInsideContainer(thingN, "ThingId");
 			tid.innerText= thing.id;
 			var tusr= getElementInsideContainer(thingN, "ThingUsr");
@@ -2031,11 +2043,10 @@ var updateSearchedThings= function (feed) {
 	if (cnt.locked)
 		cnt.locked= undefined;
 	if (window.tgtUsr && res.tname) {
-		TgtUsrLgHldr.innerHTML= res.tname;
-		TgtUsrLgHldr.onclick= function () {
+		LndngTxt.innerHTML= res.tname;
+		LndngTxt.onclick= function () {
 			window.location.href= '/'+tgtUsr;
 		}
-		TgtUsrLgHldr.classList.remove("hidden");
 	}
 	//deleteThings();
 	if (Log.classList.contains('if')) {
@@ -2049,11 +2060,12 @@ var updateSearchedThings= function (feed) {
 		MastHead.classList.remove("if");
 		Logo.classList.add("small");
 		LogoDiv.onclick= function () {
-			if (Things.classList.contains("mThns")||
-				 Things.classList.contains("uThns")) {
-				history.pushState({}, '', '');
-				Things.classList.remove("uThns");
-				Things.classList.remove("mThns");
+			if (document.body.classList.contains("mThns")||
+				 document.body.classList.contains("uThns")) {
+				history.pushState({}, '', '/');
+				document.body.classList.remove("uThns");
+				document.body.classList.remove("mThns");
+				document.body.classList.add("proxima");
 			} else {
 				location.href= window.location.origin;
 			}
@@ -2151,7 +2163,7 @@ var signOutUi= function () {
 	while (mine.length) {
 		mine[0].classList.remove("mine");
 	}
-	Things.classList.remove("uThns");
+	document.body.classList.remove("uThns");
 	UThings.innerHTML= "";
 	TgtUsrDscEdtBtn.classList.add("hidden");
 	if (TgtUsrDsc.innerHTML===dscUrSlf)
@@ -2378,8 +2390,8 @@ var addThing= function () {
 	userData["addNewThing"]= 1;
 	updateThings(userData);
 	let thing= Things.children[0];
-	editThing.call(getElementInsideContainer(
-		thing, "ThingEditBtn"));
+	thing.append(ThnEdtBtn);
+	editThing.call(ThnEdtBtn);
 }
 var addRemovables= function (thing) {
 	for (let i=0; i<ThingRemovables.length; ++i) {
@@ -2579,7 +2591,7 @@ var sendFileData= function(data, chunkSize, l) {
 							return;
 						}
 						ferrylog('Error: ' + text);
-						l.teb.disabled=false;
+						ThnEdtBtn.disabled=false;
 					} catch (e) {
 						ferrylog(e+"|"+text);
 					}
@@ -2755,12 +2767,6 @@ async function subscribe () {
 		}
 		ferrylog('Service Worker ready');
 
-		const response= await fetch('/?req=vapidpublickey');
-		const vapidPublicKey= await response.text();
-		const rawKey= urlBase64ToUint8Array(vapidPublicKey);
-		// DER-encoded EC public key: raw P-256 key is last 65 bytes
-		const rawP256= rawKey.slice(rawKey.length - 65);
-
 		const prevSubscription= await registration.pushManager
 			.getSubscription();
 		const srvSub= User.obj? User.obj.wpSub : null;
@@ -2769,6 +2775,13 @@ async function subscribe () {
 			ferrylog('Push already subscribed');
 			return;
 		}
+
+		const response= await fetch('/?req=vapidpublickey');
+		const vapidPublicKey= await response.text();
+		const rawKey= urlBase64ToUint8Array(vapidPublicKey);
+		// DER-encoded EC public key: raw P-256 key is last 65 bytes
+		const rawP256= rawKey.slice(rawKey.length - 65);
+
 		if (prevSubscription) {
 			ferrylog('Push subscription stale, replacing');
 			await prevSubscription.unsubscribe();
