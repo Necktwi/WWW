@@ -410,13 +410,12 @@ var updateLocation= function (show) {
 var openMap= function () {
 	window.open(event.currentTarget.url,'map');
 }
-	var toggleMbox= function () {
-		if (Mbox.classList.contains("hidden")) {
-			Mbox.classList.remove("hidden");
-		} else {
-			Mbox.classList.add("hidden");		  
-			setTimeout(subscribe, 3000);
-		}
+var toggleMbox= function () {
+	if (Mbox.classList.contains("hidden")) {
+		Mbox.classList.remove("hidden");
+	} else {
+		Mbox.classList.add("hidden");		  
+		setTimeout(subscribe, 3000);
 	}
 }
 var sendOwl= function () {
