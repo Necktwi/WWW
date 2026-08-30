@@ -179,6 +179,11 @@ header input {
 	font-size: 8mm;
 	cursor: pointer;
 }
+body.tgtUsr #LndngTxt {
+	font-family: AB;
+	font-size: 8mm;
+	cursor: pointer;
+}
 #mastHead.if {
 	position: fixed;
 	bottom: 2mm;

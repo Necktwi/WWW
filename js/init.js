@@ -1,5 +1,5 @@
 window.indexPromise= fetch('html/index.html?25').then(r=> r.text());
-window.thingsPromise= fetch('html/things.html?3').then(r=> r.text());
+window.thingsPromise= fetch('html/things.html?4').then(r=> r.text());
 window.oopPromise= fetch('img/OwlOnPerch.svg').then(r=> r.text());
 window.lockPromise= fetch('img/Lock.svg').then(r=> r.text());
 window.unlockPromise= fetch('img/Unlock.svg').then(r=> r.text());
@@ -8,9 +8,9 @@ window.svgsPromise= fetch('img/placeHldr.svg').then(r=> r.text());
 var MastHead,Logo,LogoDiv,LogoBox,LogoTd,Mbox,Inbox,Outbox,OwlOnPerch,owlMail;
 var LocationPin,LocationDDiv,LocationDiv,Location,LocTxt,LocTTimeout,LocTHide;
 var SearchTool,SearchToolOpacity=1,SearchBar,LoadTop,LoadBottom;
-var SearchToolBlink, GglSnD, GglSn, GglSnB, Gmail, PassBlk;
+var SearchToolBlink, GglSnD, GglSn, GglSnB, Gmail, PassBlk, allSrchCnt;
 var Mouth, MouthPad, InUp, Banner, LndngTxt, LndngDsc, ThnEdtBtn;
-var Lock, Desc, LockBlock, CMPD;
+var Lock, Desc, LockBlock, CMPD, allThnsLdd;
 var Signupdiv, ffGglId, BackToLock;
 var Username, Credentials, Password;
 var Email, SubmitBtn, ThnUrlLog;
@@ -38,11 +38,11 @@ var Header,Htable;
 var jsonCType= [["content-type", "application/json"]];
 
 var urlBase64ToUint8Array= function (base64) {
-	const std = base64.replace(/-/g, '+').replace(/_/g, '/');
-	const raw = window.atob(std);
-	const uint8 = new Uint8Array(raw.length);
-	for (let i = 0; i < raw.length; i++) {
-		uint8[i] = raw.charCodeAt(i);
+	const std= base64.replace(/-/g, '+').replace(/_/g, '/');
+	const raw= window.atob(std);
+	const uint8= new Uint8Array(raw.length);
+	for (let i= 0; i<raw.length; ++i) {
+		uint8[i]= raw.charCodeAt(i);
 	}
 	return uint8;
 }
@@ -55,7 +55,7 @@ var hideLogDiv= function (elm) {
 	elm.classList.add("hidden");
 	if (document.getElementsByClassName("blink").length==0) {
 		clearTimeout(blinker);
-		blinker=null;
+		blinker= null;
 	}
 }
 var updateFL= function (nl, msg) {
@@ -162,13 +162,20 @@ var isPrintable= function (keycode) {
 		(keycode > 218 && keycode < 223);		 // [\]' (in order)
 }
 var showAllThings= function () {
-	for (let i=0;i<Things.children.length;++i) {
-		let thing= Things.children[i];
+	for (let i=0;i<SThings.children.length;++i) {
+		let thing= SThings.children[i];
 		if (thing.thingId!=-1) {
 			if (window.tgtUsr && thing.user!=window.tgtUsr)
 				continue;
 			thing.classList.remove("hidden");
 		}
+	}
+	if (allThnsLdd) {
+		LoadBottom.innerHTML= "no more!";
+		loadBottom.onclick= null;
+	} else {
+		LoadBottom.innerHTML= LoadBottom.value;
+		loadBottom.onclick= loadMore;
 	}
 	setTimeout(function(){
 		document.body.scrollIntoView({behavior: "smooth", block: "start"});
@@ -612,11 +619,15 @@ var makeDynamic= function () {
 }
 var onMoreThings= function (feed) {
 	var res= JSON.parse(feed.responseText);
-	if (res.things.length)
+	if (res.things.length) {
 		updateThings(res);
-	else {
-		LoadBottom.innerHTML="no more!";
-		LoadBottom.onclick=null;
+		if (!res.search)
+			allSrchCnt+= res.things.length;
+	} else {
+		if (!res.search)
+			allThnsLdd= true;
+		LoadBottom.innerHTML= "no more!";
+		LoadBottom.onclick= null;
 	}
 }
 var loadMore= function () {
@@ -1099,6 +1110,7 @@ window.init= async function () {
 	}
 	if (location.pathname!= "/") {
 		window.tgtUsr= location.pathname.substr(1);
+		document.body.classList.add("tgtUsr");
 	}
 	updateLocation();
 	// window.onresize= function () {
@@ -1393,10 +1405,10 @@ var signInUI= function (res) {
 			}
 		}
 	}
-	if (!window.tgtThing || !Things.children.length) {
+	if (!window.tgtThing || !SThings.children.length) {
 		updateThings(res);
 	} else {
-		let thn= Things.children[0];
+		let thn= SThings.children[0];
 		let imgsHldr= getElementInsideContainer(thn,"ImgsHldr");
 		showThingDetails.call(imgsHldr,true);
 	}
@@ -1440,7 +1452,7 @@ var deleteThings= function () {
 }
 
 var hideThings= function () {
-	for (var thing of Things.children) {
+	for (var thing of SThings.children) {
 		thing.classList.add("hidden");
 	}
 }
@@ -1617,17 +1629,17 @@ var insertThingByDist= function (thingN) {
 	thingN.d= thingDist(thingN);
 	
 	if (!lThings.children.length) {
-		Things.appendChild(thingN);
+		SThings.appendChild(thingN);
 		return;
 	}
 	
 	let start= 0;
-	let end= Things.children.length - 1;
-	let insertIndex= Things.children.length; // Default to append at end
+	let end= SThings.children.length - 1;
+	let insertIndex= SThings.children.length; // Default to append at end
 	
 	while (start <= end) {
 		let mid= Math.floor((start + end) / 2);
-		let midThing= Things.children[mid];
+		let midThing= SThings.children[mid];
 		
 		if (midThing.d > thingN.d) {
 			insertIndex= mid;
@@ -1637,10 +1649,10 @@ var insertThingByDist= function (thingN) {
 		}
 	}
 	
-	if (insertIndex >= Things.children.length) {
-		Things.appendChild(thingN);
+	if (insertIndex >= SThings.children.length) {
+		SThings.appendChild(thingN);
 	} else {
-		Things.insertBefore(thingN, Things.children[insertIndex]);
+		SThings.insertBefore(thingN, SThings.children[insertIndex]);
 	}
 }
 var updateThings= function (res) {
@@ -1664,6 +1676,7 @@ var updateThings= function (res) {
 		tClass= "mine";
 	}
 	thingCount= resthings.length;
+	let lastThingN= SThings.children? SThings.children[allSrchCnt-1]:null;
 	for (var i= res.addNewThing? thingCount-1 : 0; i<thingCount; ++i) {
 		var thing= resthings[i];
 		var newThing= true;
@@ -1673,7 +1686,7 @@ var updateThings= function (res) {
 		if (!thing.user) {
 			un= userData["name"].toLowerCase();
 		} else {
-			un= thing.user;
+			un= thing.user.toLowerCase();
 		}
 		if (!UserThings[un]) {
 			UserThings[un]= {};
@@ -1691,6 +1704,15 @@ var updateThings= function (res) {
 		thingN.classList.remove("hidden");
 		thingN.classList.add(tClass);
 		if (Object.keys(thing).length==2) {
+			if (res.search) {
+				if (thingN.parentElement!=SThings) {
+					SThings.appendChild(lastThingN);
+				}
+			} else {
+				if (tClass==="proximity"&&lastThingN.nextElementSibling!=thingN) {
+					lastThingN.insertAdjacentElement('afterEnd', thingN);
+				}
+			}
 			if (i+1==thingCount && !res.addNewThing) {
 				i= -1;
 				if (lThings===SThings) {
@@ -1706,9 +1728,10 @@ var updateThings= function (res) {
 				}
 				thingCount= resthings.length;
 			}
+			lastThingN= thingN;
 			continue;
 		}
-		thingN.thingId=thing.id;
+		thingN.thingId= thing.id;
 		if (thing.id==-1) {
 			thingN.classList.add("mine");
 		}
@@ -1760,10 +1783,10 @@ var updateThings= function (res) {
 		}
 		var locPin= getElementInsideContainer(thingN, "ThingLocationPin");
 		if (thing.location && thing.location.length) {
-			var location=getElementInsideContainer(thingN, "ThingLocation");
-			thingN.loc=thing.location;
-			var locStr=thing.location.length?thing.location.join(","):
-				 thing.location;
+			var location= getElementInsideContainer(thingN, "ThingLocation");
+			thingN.loc= thing.location;
+			var locStr= thing.location.length?thing.location.join(","):
+				thing.location;
 			location.innerText=locStr;
 			if (locStr.length) {
 				locPin.title= locStr;
@@ -1865,7 +1888,10 @@ var updateThings= function (res) {
 		thingN.user= un;
 		if (newThing) {
 			if (thing.id!="-1") {
-				lThings.appendChild(thingN);
+				if (lastThingN && !res.search)
+					lastThingN.insertAdjacentElement('afterEnd', thingN);
+				else
+					lThings.appendChild(thingN);
 			} else {
 				lThings.insertAdjacentElement('afterBegin', thingN);
 			}
@@ -1887,6 +1913,7 @@ var updateThings= function (res) {
 				break;
 			thingCount= resthings.length;
 		}
+		lastThingN= thingN;
 	}
 	Things.classList.remove("hidden");
 	if (res.addNewThing) {
@@ -1958,7 +1985,7 @@ var updateThings= function (res) {
 		OwlOnPerch.classList.add("nonews");
 	}
 	if (window.tgtUsr && urlQuery.get("thing")) {
-		let thn= Things.children[0];
+		let thn= SThings.children[0];
 		let inf= getElementInsideContainer(thn,"thingInfo");
 		let usr= getElementInsideContainer(thn,"ThingUsr");
 		let usrnm= thn.user;
@@ -2040,8 +2067,10 @@ var updateSearchedThings= function (feed) {
 		ferrylog(
 			res.things.length+" thing"+(res.things.length==1?"":"s")+" found");
 	res.search= true;
-	if (cnt.locked)
+	if (cnt.locked) {
 		cnt.locked= undefined;
+		allSrchCnt= res.things.length;
+	}
 	if (window.tgtUsr && res.tname) {
 		LndngTxt.innerHTML= res.tname;
 		LndngTxt.onclick= function () {
@@ -2106,9 +2135,12 @@ var updateSearchedThings= function (feed) {
 	if (!res.email) {
 		updateThings(res);
 	}
-	if (res.things.length< 20) {
-		LoadBottom.innerHTML= "no more!";
-		LoadBottom.onclick= null;
+	if (res.search) {
+		document.body.classList.add("srchView");
+		if (res.things.length< 20) {
+			LoadBottom.innerHTML= "no more!";
+			LoadBottom.onclick= null;
+		}
 	}
 	document.body.scrollIntoView({behavior: "smooth", block: "start"});
 	delete SearchTool.shuttle;
@@ -2389,7 +2421,7 @@ var addThing= function () {
 	userData["things"]["user"]= User.innerHTML.toLowerCase();
 	userData["addNewThing"]= 1;
 	updateThings(userData);
-	let thing= Things.children[0];
+	let thing= SThings.children[0];
 	thing.append(ThnEdtBtn);
 	editThing.call(ThnEdtBtn);
 }
