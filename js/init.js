@@ -129,7 +129,7 @@ var setCaretPos= function (elem, caretPos) {
 	}
 };
 var inputOnFocus= function () {
-	if (this.value=== this.plcHldr) {
+	if (this.value===this.plcHldr) {
 		setCaretPos(this,0);
 		this.classList.remove("typing");
 		//this.style.color="rgb(192,192,192)";
@@ -149,7 +149,7 @@ var showPlaceHolder= function () {
 	setCaretPos(this,0);
 };
 var inputOnBlur= function () {
-	if (this.value=== '') {
+	if (this.value==='') {
 		this.classList.remove("typing");
 		showPlaceHolder.call(this);
 	}
@@ -192,8 +192,8 @@ var inputOnKeyDown= function () {
 			showAllThings();
 			Things.classList.remove("search");
 		}
-	} else if(this.value=== this.plcHldr) {
-		if (event.data !== null || isPrintable(event.keyCode)) {
+	} else if (this.value===this.plcHldr) {
+		if (event.data!==null || isPrintable(event.keyCode)) {
 			this.value=event.data;
 			this.classList.add("typing");
 			// if(this.ctype==='password')
@@ -837,7 +837,12 @@ window.init= async function () {
 		inps[i].addEventListener(
 			'focus',(e)=>{
 				lastViewPortHeight=window.visualViewport.height;
-				setTimeout(()=>{window.addEventListener('scroll', blurInput)},2000);
+				setTimeout(()=>{window.addEventListener('scroll',blurInput)},2000);
+				if (e.target===Username && Username.value.length &&
+					 !Password.offsetWidth) {
+					GglSnD.classList.add("hidden");
+					PasswordL.classList.remove("hidden");
+				}
 			});
 	}
 	MastHead= document.getElementById("mastHead");
@@ -915,8 +920,8 @@ window.init= async function () {
 		window.visualViewport.addEventListener("resize", viewportHandler);
 		},2000);
 	*/
-	Mouth.plcHldr=searchPlcHldr;
-	Mouth.value=Mouth.plcHldr;
+	Mouth.plcHldr= searchPlcHldr;
+	Mouth.value= Mouth.plcHldr;
 	addEvent(MouthPad, 'submit', search);
 	LockBlock= document.getElementById("LockBlock");
 	Lock= document.getElementById("lock");
@@ -936,32 +941,32 @@ window.init= async function () {
 	NonRecovery= document.getElementById("NonRecovery");
 	//Username.plcHldr= 'Username:';
 	//Password.plcHldr= 'Password:';
-	Password.type='password';
+	Password.type= 'password';
 	//Password.value=Password.plcHldr;
-	Signupdiv=document.getElementById("signupdiv");
-	InUp=document.getElementById("inUp");
-	GglSnD=document.getElementById("gglSnD");
-	GglSn=document.getElementById("gglSn");
-	GglSnB=document.getElementById("gglSnB");
-	Gmail=document.getElementById("gmail");
-	GglSn.onchange=hideUserSignIn;
-	Username.onkeydown=userKeyDown;
-	Username.oninput=userKeyDown;
-	PassBlk=document.getElementById("passBlk");
-	SignIn=document.getElementById("SignIn");
-	Recover=document.getElementById("Recover");
-	SignUp=document.getElementById("SignUp");
-	SubmitBtn=document.getElementById("SubmitBtn");
-	SignIn.checked=true;
-	Email=document.getElementById("email");
-	EmailL=document.getElementById("EmailL");
+	Signupdiv= document.getElementById("signupdiv");
+	InUp= document.getElementById("inUp");
+	GglSnD= document.getElementById("gglSnD");
+	GglSn= document.getElementById("gglSn");
+	GglSnB= document.getElementById("gglSnB");
+	Gmail= document.getElementById("gmail");
+	GglSn.onchange= hideUserSignIn;
+	Username.onkeydown= userKeyDown;
+	Username.oninput= userKeyDown;
+	PassBlk= document.getElementById("passBlk");
+	SignIn= document.getElementById("SignIn");
+	Recover= document.getElementById("Recover");
+	SignUp= document.getElementById("SignUp");
+	SubmitBtn= document.getElementById("SubmitBtn");
+	SignIn.checked= true;
+	Email= document.getElementById("email");
+	EmailL= document.getElementById("EmailL");
 	Email.onkeydown= emailKeyDown;
 	Email.oninput= emailKeyDown;
-	Passwords1=document.getElementById("passwords1");
-	Passwords2=document.getElementById("passwords2");
-	Password1L=document.getElementById("Password1L");
-	Password2L=document.getElementById("Password2L");
-	NewL=document.getElementById("NewL");
+	Passwords1= document.getElementById("passwords1");
+	Passwords2= document.getElementById("passwords2");
+	Password1L= document.getElementById("Password1L");
+	Password2L= document.getElementById("Password2L");
+	NewL= document.getElementById("NewL");
 	TgtUsrDsc= document.getElementById("tgtUsrDsc");
 	TgtUsrDscEdtBtn= document.getElementById("tgtUsrDscEdtBtn");
 	TgtUsrDscSbtBtn= document.getElementById("tgtUsrDscSbtBtn");
@@ -987,11 +992,11 @@ window.init= async function () {
 				(d.thingName || '') + '< ' + (d.msg || ''));
 		}
 	});
-	NonRecovery=document.getElementById("NonRecovery");
-	var inputs=document.getElementsByClassName("labeled");
+	NonRecovery= document.getElementById("NonRecovery");
+	var inputs= document.getElementsByClassName("labeled");
 	for (var i=0; i<inputs.length; ++i) {
 		var elm= inputs[i];
-		if(elm.type!="text")continue;
+		if (elm.type!="text") continue;
 		elm.classList.add("inptTxtBx");
 		addEvent(elm, 'focus', inputOnFocus);
 		addEvent(elm, 'blur', inputOnBlur);
@@ -2028,7 +2033,7 @@ var onKeyDown= function () {
 }
 
 var usrnmEvent= function () {
-	if (event.keyCode==13 && this.value !== this.plcHldr) { //13==enter
+	if (event.keyCode==13 && this.value!==this.plcHldr) { //13==enter
 		Password.focus();
 	}
 }
