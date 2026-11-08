@@ -1,0 +1,8 @@
+maxThings: 5,
+maxThingPics: 3,
+maxMsgs: 25,
+thing: ["id", "user", "name", "location", "pics", "lm"],
+secret: file://red/secret.obj.txj,
+users: file://red/users.obj.txj,
+rbs: file://red/rbs.obj.txj,
+nameints: file://red/nameints.obj.txj
